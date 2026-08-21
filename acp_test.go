@@ -20,6 +20,11 @@ type clientFuncs struct {
 	ReadTextFileFunc      func(context.Context, ReadTextFileRequest) (ReadTextFileResponse, error)
 	RequestPermissionFunc func(context.Context, RequestPermissionRequest) (RequestPermissionResponse, error)
 	SessionUpdateFunc     func(context.Context, SessionNotification) error
+	// Elicitation became a stable part of Client in schema 1.21.0; before that
+	// the generator probed for it with a type assertion and answered
+	// MethodNotFound when it was absent.
+	CreateElicitationFunc   func(context.Context, CreateElicitationRequest) (CreateElicitationResponse, error)
+	CompleteElicitationFunc func(context.Context, CompleteElicitationNotification) error
 	// Terminal-related handlers
 	CreateTerminalFunc      func(context.Context, CreateTerminalRequest) (CreateTerminalResponse, error)
 	KillTerminalFunc        func(context.Context, KillTerminalRequest) (KillTerminalResponse, error)
@@ -58,6 +63,22 @@ func (c clientFuncs) RequestPermission(ctx context.Context, p RequestPermissionR
 func (c clientFuncs) SessionUpdate(ctx context.Context, n SessionNotification) error {
 	if c.SessionUpdateFunc != nil {
 		return c.SessionUpdateFunc(ctx, n)
+	}
+	return nil
+}
+
+func (c clientFuncs) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
+	if c.CreateElicitationFunc != nil {
+		return c.CreateElicitationFunc(ctx, p)
+	}
+	// Decline rather than accept: a test double that silently accepted would let
+	// a handler under test believe a user answered.
+	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+}
+
+func (c clientFuncs) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {
+	if c.CompleteElicitationFunc != nil {
+		return c.CompleteElicitationFunc(ctx, p)
 	}
 	return nil
 }
@@ -434,6 +455,84 @@ func TestAgentDispatch_AllowsPartialUnstableMethodImplementation(t *testing.T) {
 	}
 	if resp.SessionId != "forked-session" {
 		t.Fatalf("unexpected response session id: %q", resp.SessionId)
+	}
+}
+
+// Elicitation graduated from the experimental surface in schema 1.21.0: the two
+// methods moved into Client, so the generated dispatch calls them directly
+// instead of probing for them and answering MethodNotFound. These pin that the
+// dispatch reaches an implementation and carries the payload both ways — the
+// previous graduation (session/delete, schema 1.20.0) had no such test, and the
+// regeneration that promoted this one broke every Client implementation in the
+// repo without a single test noticing.
+func TestClientDispatch_CreateElicitation(t *testing.T) {
+	var got CreateElicitationRequest
+	client := &clientFuncs{
+		CreateElicitationFunc: func(_ context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
+			got = p
+			return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+		},
+	}
+	conn := &ClientSideConnection{client: client}
+
+	// The URL arm, because it is the one CompleteElicitation later refers to by id.
+	params, err := json.Marshal(CreateElicitationRequest{Url: &CreateElicitationUrl{
+		ElicitationId: "elic-1",
+		Message:       "sign in to continue",
+		Url:           "https://example.com/auth",
+	}})
+	if err != nil {
+		t.Fatalf("marshal request params: %v", err)
+	}
+
+	result, reqErr := conn.handle(context.Background(), ClientMethodElicitationCreate, params)
+	if reqErr != nil {
+		t.Fatalf("unexpected request error: %+v", reqErr)
+	}
+	if got.Url == nil {
+		t.Fatalf("handler lost the url arm: %+v", got)
+	}
+	if got.Url.ElicitationId != "elic-1" {
+		t.Fatalf("handler saw elicitation id %q, want %q", got.Url.ElicitationId, "elic-1")
+	}
+	resp, ok := result.(CreateElicitationResponse)
+	if !ok {
+		t.Fatalf("expected CreateElicitationResponse, got %T", result)
+	}
+	if resp.Decline == nil {
+		t.Fatalf("response lost the decline arm: %+v", resp)
+	}
+}
+
+func TestClientDispatch_CompleteElicitation(t *testing.T) {
+	var got CompleteElicitationNotification
+	called := false
+	client := &clientFuncs{
+		CompleteElicitationFunc: func(_ context.Context, p CompleteElicitationNotification) error {
+			got = p
+			called = true
+			return nil
+		},
+	}
+	conn := &ClientSideConnection{client: client}
+
+	params, err := json.Marshal(CompleteElicitationNotification{ElicitationId: "elic-2"})
+	if err != nil {
+		t.Fatalf("marshal notification params: %v", err)
+	}
+
+	result, reqErr := conn.handle(context.Background(), ClientMethodElicitationComplete, params)
+	if reqErr != nil {
+		t.Fatalf("unexpected request error: %+v", reqErr)
+	}
+	if result != nil {
+		t.Fatalf("a notification must not produce a result, got %T", result)
+	}
+	if !called {
+		t.Fatal("expected CompleteElicitation to be invoked")
+	}
+	if got.ElicitationId != "elic-2" {
+		t.Fatalf("handler saw elicitation id %q, want %q", got.ElicitationId, "elic-2")
 	}
 }
 
