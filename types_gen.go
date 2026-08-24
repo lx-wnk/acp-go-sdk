@@ -1756,8 +1756,17 @@ type CreateElicitationForm struct {
 	// A human-readable message describing what input is needed.
 	Message string `json:"message"`
 	Mode    string `json:"mode"`
+	// The request this elicitation is tied to.
+	RequestId *RequestId `json:"requestId,omitempty"`
 	// A JSON Schema describing the form fields to present to the user.
 	RequestedSchema ElicitationSchema `json:"requestedSchema"`
+	// The session this elicitation is tied to.
+	SessionId *SessionId `json:"sessionId,omitempty"`
+	// Optional tool call within the session.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean the elicitation is scoped to the
+	// session without a specific tool call.
+	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
 }
 
 // URL-based elicitation where the client directs the user to a URL.
@@ -1775,6 +1784,15 @@ type CreateElicitationUrl struct {
 	// A human-readable message describing what input is needed.
 	Message string `json:"message"`
 	Mode    string `json:"mode"`
+	// The request this elicitation is tied to.
+	RequestId *RequestId `json:"requestId,omitempty"`
+	// The session this elicitation is tied to.
+	SessionId *SessionId `json:"sessionId,omitempty"`
+	// Optional tool call within the session.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean the elicitation is scoped to the
+	// session without a specific tool call.
+	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
 	// The URL to direct the user to.
 	Url string `json:"url"`
 }
@@ -1805,6 +1823,15 @@ type CreateElicitationOther struct {
 	// extensions. Unknown values that do not begin with '_' are reserved for
 	// future ACP variants.
 	Mode string `json:"mode"`
+	// The request this elicitation is tied to.
+	RequestId *RequestId `json:"requestId,omitempty"`
+	// The session this elicitation is tied to.
+	SessionId *SessionId `json:"sessionId,omitempty"`
+	// Optional tool call within the session.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean the elicitation is scoped to the
+	// session without a specific tool call.
+	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
 }
 
 type CreateElicitationRequest struct {

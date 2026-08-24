@@ -829,6 +829,36 @@ func jenTypeFor(d *load.Definition) Code {
 	}
 }
 
+// yieldsPointer reports whether jenTypeForOptional already produces a pointer for d,
+// so a field is not wrapped twice.
+func yieldsPointer(d *load.Definition) bool {
+	if d == nil {
+		return false
+	}
+	if arr, ok := d.Type.([]any); ok && len(arr) == 2 {
+		for _, v := range arr {
+			if s, ok2 := v.(string); ok2 && s == "null" {
+				return true
+			}
+		}
+	}
+	list := d.AnyOf
+	if len(list) == 0 {
+		list = d.OneOf
+	}
+	if len(list) == 2 {
+		for _, e := range list {
+			if e == nil {
+				continue
+			}
+			if s, ok := e.Type.(string); ok && s == "null" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // namesAType reports whether a schema carries enough structure for jenTypeFor to
 // produce something better than any. `additionalProperties: true` does not.
 func namesAType(d *load.Definition) bool {
@@ -1091,8 +1121,35 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 				for r := range sharedRequired {
 					req[r] = struct{}{}
 				}
-				mergedProps := make(map[string]*load.Definition, len(sharedProps)+len(v.Properties))
+				// A variant composed through allOf can inherit a sibling anyOf that is a
+				// mixin rather than a nested union: every member contributes properties to
+				// this same object, and exactly one applies per payload. ACP uses it for
+				// elicitation scope (session vs request). expandAllOf propagates the anyOf
+				// but the struct below is built from properties alone, so without this the
+				// mixin's fields never reach the wire. Merged as optional, since only one
+				// member applies at a time.
+				mixinProps := map[string]*load.Definition{}
+				if len(v.AnyOf) > 0 {
+					for _, alt := range v.AnyOf {
+						res := expandAllOf(schema, alt)
+						if res != nil && res.Ref != "" && strings.HasPrefix(res.Ref, "#/$defs/") {
+							res = expandAllOf(schema, schema.Defs[res.Ref[len("#/$defs/"):]])
+						}
+						if res == nil || len(res.Properties) == 0 {
+							// Not a property mixin. Leave the anyOf alone.
+							mixinProps = nil
+							break
+						}
+						for pk, pDef := range res.Properties {
+							mixinProps[pk] = pDef
+						}
+					}
+				}
+				mergedProps := make(map[string]*load.Definition, len(sharedProps)+len(mixinProps)+len(v.Properties))
 				for pk, pDef := range sharedProps {
+					mergedProps[pk] = pDef
+				}
+				for pk, pDef := range mixinProps {
 					mergedProps[pk] = pDef
 				}
 				for pk, pDef := range v.Properties {
@@ -1116,7 +1173,17 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					if _, ok := req[pk]; !ok {
 						tag = pk + ",omitempty"
 					}
-					st = append(st, Id(field).Add(jenTypeForOptional(pDef)).Tag(map[string]string{"json": tag}))
+					fieldType := jenTypeForOptional(pDef)
+					if _, fromMixin := mixinProps[pk]; fromMixin {
+						if _, own := v.Properties[pk]; !own && !yieldsPointer(pDef) {
+							// Only one mixin member applies per payload, so every field it
+							// contributes is optional. A value type cannot express absence:
+							// omitempty does nothing for a struct, so a zero RequestId would
+							// be marshalled and fail as a union with no variant set.
+							fieldType = Op("*").Add(jenTypeFor(pDef))
+						}
+					}
+					st = append(st, Id(field).Add(fieldType).Tag(map[string]string{"json": tag}))
 				}
 			} else if !isNull && !isObj && v.Title != "" {
 				// Title-only variants: check if they're extension types
