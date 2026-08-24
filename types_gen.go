@@ -24,6 +24,46 @@ type AgentAuthCapabilities struct {
 	Logout *LogoutCapabilities `json:"logout,omitempty"`
 }
 
+func (v *AgentAuthCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AgentAuthCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "logout"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AgentAuthCapabilities(a)
+	return nil
+}
+
 // Capabilities supported by the agent.
 //
 // Advertised during initialization to inform the client about
@@ -98,7 +138,33 @@ func (v *AgentCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias AgentCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "auth", "loadSession", "mcpCapabilities", "nes", "positionEncoding", "promptCapabilities", "providers", "sessionCapabilities"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["auth"]
@@ -314,6 +380,46 @@ type Annotations struct {
 	Priority *float64 `json:"priority,omitempty"`
 }
 
+func (v *Annotations) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Annotations
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "audience", "lastModified", "priority"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Annotations(a)
+	return nil
+}
+
 // Audio provided to or from an LLM.
 type AudioContent struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -328,6 +434,46 @@ type AudioContent struct {
 	Data string `json:"data"`
 	// MIME type describing the encoded media payload.
 	MimeType string `json:"mimeType"`
+}
+
+func (v *AudioContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AudioContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AudioContent(a)
+	return nil
 }
 
 // Authentication capabilities supported by the client.
@@ -367,7 +513,33 @@ func (v *AuthCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias AuthCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "terminal"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["terminal"]
@@ -588,6 +760,46 @@ type AuthMethodAgent struct {
 	Name string `json:"name"`
 }
 
+func (v *AuthMethodAgent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AuthMethodAgent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AuthMethodAgent(a)
+	return nil
+}
+
 // Typed identifier used for auth method values on the wire.
 type AuthMethodId string
 
@@ -618,6 +830,46 @@ type AuthMethodTerminal struct {
 	Name string `json:"name"`
 }
 
+func (v *AuthMethodTerminal) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AuthMethodTerminal
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "args", "description", "env"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AuthMethodTerminal(a)
+	return nil
+}
+
 // Request parameters for the authenticate method.
 //
 // Specifies which authentication method to use.
@@ -633,6 +885,46 @@ type AuthenticateRequest struct {
 	MethodId AuthMethodId `json:"methodId"`
 }
 
+func (v *AuthenticateRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AuthenticateRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AuthenticateRequest(a)
+	return nil
+}
+
 func (v *AuthenticateRequest) Validate() error {
 	return nil
 }
@@ -645,6 +937,46 @@ type AuthenticateResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *AuthenticateResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AuthenticateResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AuthenticateResponse(a)
+	return nil
 }
 
 func (v *AuthenticateResponse) Validate() error {
@@ -665,6 +997,46 @@ type AvailableCommand struct {
 	Input *AvailableCommandInput `json:"input,omitempty"`
 	// Command name (e.g., 'create_plan', 'research_codebase').
 	Name string `json:"name"`
+}
+
+func (v *AvailableCommand) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AvailableCommand
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "input"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AvailableCommand(a)
+	return nil
 }
 
 // The input specification for a command.
@@ -749,6 +1121,46 @@ type AvailableCommandsUpdate struct {
 	AvailableCommands []AvailableCommand `json:"availableCommands"`
 }
 
+func (v *AvailableCommandsUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias AvailableCommandsUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "availableCommands"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = AvailableCommandsUpdate(a)
+	return nil
+}
+
 // Binary resource contents.
 type BlobResourceContents struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -765,6 +1177,46 @@ type BlobResourceContents struct {
 	Uri string `json:"uri"`
 }
 
+func (v *BlobResourceContents) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias BlobResourceContents
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "mimeType"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = BlobResourceContents(a)
+	return nil
+}
+
 // Capabilities for boolean session configuration options.
 //
 // Supplying '{}' means the client supports boolean session configuration options.
@@ -775,6 +1227,46 @@ type BooleanConfigOptionCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *BooleanConfigOptionCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias BooleanConfigOptionCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = BooleanConfigOptionCapabilities(a)
+	return nil
 }
 
 // Schema for boolean properties in an elicitation form.
@@ -801,6 +1293,46 @@ type BooleanPropertySchema struct {
 	Title *string `json:"title,omitempty"`
 }
 
+func (v *BooleanPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias BooleanPropertySchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "default", "description", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = BooleanPropertySchema(a)
+	return nil
+}
+
 // Notification to cancel ongoing operations for a session.
 //
 // See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
@@ -813,6 +1345,46 @@ type CancelNotification struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the session to cancel operations for.
 	SessionId SessionId `json:"sessionId"`
+}
+
+func (v *CancelNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CancelNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CancelNotification(a)
+	return nil
 }
 
 func (v *CancelNotification) Validate() error {
@@ -831,6 +1403,46 @@ type CancelRequestNotification struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the request to cancel.
 	RequestId RequestId `json:"requestId"`
+}
+
+func (v *CancelRequestNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CancelRequestNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CancelRequestNotification(a)
+	return nil
 }
 
 func (v *CancelRequestNotification) Validate() error {
@@ -917,7 +1529,33 @@ func (v *ClientCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias ClientCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "auth", "elicitation", "fs", "nes", "plan", "positionEncodings", "session", "terminal"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["auth"]
@@ -955,6 +1593,46 @@ type ClientNesCapabilities struct {
 	Rename *NesRenameCapabilities `json:"rename,omitempty"`
 	// Whether the client supports the 'searchAndReplace' suggestion kind.
 	SearchAndReplace *NesSearchAndReplaceCapabilities `json:"searchAndReplace,omitempty"`
+}
+
+func (v *ClientNesCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ClientNesCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "jump", "rename", "searchAndReplace"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ClientNesCapabilities(a)
+	return nil
 }
 
 // A JSON-RPC notification object.
@@ -1143,6 +1821,46 @@ type ClientSessionCapabilities struct {
 	ConfigOptions *SessionConfigOptionsCapabilities `json:"configOptions,omitempty"`
 }
 
+func (v *ClientSessionCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ClientSessionCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "compaction", "configOptions"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ClientSessionCapabilities(a)
+	return nil
+}
+
 // Request parameters for closing an active session.
 //
 // If supported, the agent **must** cancel any ongoing work related to the session
@@ -1161,6 +1879,46 @@ type CloseSessionRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *CloseSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CloseSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CloseSessionRequest(a)
+	return nil
+}
+
 func (v *CloseSessionRequest) Validate() error {
 	return nil
 }
@@ -1173,6 +1931,46 @@ type CloseSessionResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *CloseSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CloseSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CloseSessionResponse(a)
+	return nil
 }
 
 func (v *CloseSessionResponse) Validate() error {
@@ -1224,6 +2022,46 @@ type CompactionSummaryChunk struct {
 	Content ContentBlock `json:"content"`
 }
 
+func (v *CompactionSummaryChunk) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CompactionSummaryChunk
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CompactionSummaryChunk(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -1250,6 +2088,46 @@ type CompactionUpdate struct {
 	Summary []ContentBlock `json:"summary,omitempty"`
 }
 
+func (v *CompactionUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CompactionUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "error", "summary"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CompactionUpdate(a)
+	return nil
+}
+
 // Notification sent by the agent when a URL-based elicitation is complete.
 type CompleteElicitationNotification struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -1262,6 +2140,46 @@ type CompleteElicitationNotification struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the elicitation that completed.
 	ElicitationId ElicitationId `json:"elicitationId"`
+}
+
+func (v *CompleteElicitationNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CompleteElicitationNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CompleteElicitationNotification(a)
+	return nil
 }
 
 func (v *CompleteElicitationNotification) Validate() error {
@@ -1280,6 +2198,46 @@ type ConfigOptionUpdate struct {
 	ConfigOptions []SessionConfigOption `json:"configOptions"`
 }
 
+func (v *ConfigOptionUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ConfigOptionUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ConfigOptionUpdate(a)
+	return nil
+}
+
 // Standard content block (text, images, resources).
 type Content struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -1290,6 +2248,46 @@ type Content struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The actual content block.
 	Content ContentBlock `json:"content"`
+}
+
+func (v *Content) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Content
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Content(a)
+	return nil
 }
 
 // Content blocks represent displayable information in the Agent Client Protocol.
@@ -1828,6 +2826,46 @@ type ContentChunk struct {
 	MessageId *MessageId `json:"messageId,omitempty"`
 }
 
+func (v *ContentChunk) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ContentChunk
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "messageId"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ContentChunk(a)
+	return nil
+}
+
 // Cost information for a session.
 type Cost struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -1840,6 +2878,46 @@ type Cost struct {
 	Amount float64 `json:"amount"`
 	// ISO 4217 currency code (e.g., "USD", "EUR").
 	Currency string `json:"currency"`
+}
+
+func (v *Cost) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Cost
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Cost(a)
+	return nil
 }
 
 // Request from the agent to elicit structured user input.
@@ -2557,6 +3635,46 @@ type CreateTerminalRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *CreateTerminalRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CreateTerminalRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "args", "cwd", "env", "outputByteLimit"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CreateTerminalRequest(a)
+	return nil
+}
+
 func (v *CreateTerminalRequest) Validate() error {
 	if v.Command == "" {
 		return fmt.Errorf("command is required")
@@ -2574,6 +3692,46 @@ type CreateTerminalResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The unique identifier for the created terminal.
 	TerminalId TerminalId `json:"terminalId"`
+}
+
+func (v *CreateTerminalResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CreateTerminalResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CreateTerminalResponse(a)
+	return nil
 }
 
 func (v *CreateTerminalResponse) Validate() error {
@@ -2594,6 +3752,46 @@ type CurrentModeUpdate struct {
 	CurrentModeId SessionModeId `json:"currentModeId"`
 }
 
+func (v *CurrentModeUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias CurrentModeUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = CurrentModeUpdate(a)
+	return nil
+}
+
 // Request parameters for deleting an existing session from 'session/list'.
 //
 // Only available if the Agent supports the 'sessionCapabilities.delete' capability.
@@ -2608,6 +3806,46 @@ type DeleteSessionRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *DeleteSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias DeleteSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = DeleteSessionRequest(a)
+	return nil
+}
+
 func (v *DeleteSessionRequest) Validate() error {
 	return nil
 }
@@ -2620,6 +3858,46 @@ type DeleteSessionResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *DeleteSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias DeleteSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = DeleteSessionResponse(a)
+	return nil
 }
 
 func (v *DeleteSessionResponse) Validate() error {
@@ -2644,6 +3922,46 @@ type Diff struct {
 	OldText *string `json:"oldText,omitempty"`
 	// The absolute file path being modified.
 	Path string `json:"path"`
+}
+
+func (v *Diff) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Diff
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "oldText"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Diff(a)
+	return nil
 }
 
 // The user accepted the elicitation and provided content.
@@ -2672,6 +3990,46 @@ type ElicitationCapabilities struct {
 	// Optional. Omitted or 'null' both mean the client does not advertise support.
 	// Supplying '{}' means the client supports URL-based elicitation.
 	Url *ElicitationUrlCapabilities `json:"url,omitempty"`
+}
+
+func (v *ElicitationCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ElicitationCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "form", "url"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ElicitationCapabilities(a)
+	return nil
 }
 
 // Allowed wire representations for ['ElicitationContentValue'].
@@ -2841,6 +4199,46 @@ type ElicitationFormCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *ElicitationFormCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ElicitationFormCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ElicitationFormCapabilities(a)
+	return nil
 }
 
 // Form-based elicitation mode where the client renders a form from the provided schema.
@@ -3616,7 +5014,33 @@ func (v *ElicitationSchema) UnmarshalJSON(b []byte) error {
 	type Alias ElicitationSchema
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "description", "title", "type"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["properties"]
@@ -3656,6 +5080,46 @@ type ElicitationSessionScope struct {
 	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
 }
 
+func (v *ElicitationSessionScope) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ElicitationSessionScope
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"toolCallId"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ElicitationSessionScope(a)
+	return nil
+}
+
 // URL-based elicitation capabilities.
 //
 // Supplying '{}' means the client supports URL-based elicitation.
@@ -3668,6 +5132,46 @@ type ElicitationUrlCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *ElicitationUrlCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ElicitationUrlCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ElicitationUrlCapabilities(a)
+	return nil
 }
 
 // URL-based elicitation mode where the client directs the user to a URL.
@@ -3807,6 +5311,46 @@ type EmbeddedResource struct {
 	Resource EmbeddedResourceResource `json:"resource"`
 }
 
+func (v *EmbeddedResource) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias EmbeddedResource
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = EmbeddedResource(a)
+	return nil
+}
+
 // Resource content that can be embedded in a message.
 type EmbeddedResourceResource struct {
 	// Text resource contents embedded directly in the message.
@@ -3943,6 +5487,46 @@ type EnumOption struct {
 	Title string `json:"title"`
 }
 
+func (v *EnumOption) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias EnumOption
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = EnumOption(a)
+	return nil
+}
+
 // An environment variable to set when launching an MCP server.
 type EnvVariable struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -3955,6 +5539,46 @@ type EnvVariable struct {
 	Name string `json:"name"`
 	// The value to set for the environment variable.
 	Value string `json:"value"`
+}
+
+func (v *EnvVariable) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias EnvVariable
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = EnvVariable(a)
+	return nil
 }
 
 // JSON-RPC error object.
@@ -3973,6 +5597,46 @@ type Error struct {
 	// A string providing a short description of the error.
 	// The message should be limited to a concise single sentence.
 	Message string `json:"message"`
+}
+
+func (v *Error) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Error
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"data"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Error(a)
+	return nil
 }
 
 // Predefined error codes for common JSON-RPC and ACP-specific errors.
@@ -4298,7 +5962,33 @@ func (v *FileSystemCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias FileSystemCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "readTextFile", "writeTextFile"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["readTextFile"]
@@ -4330,6 +6020,46 @@ type HttpHeader struct {
 	Value string `json:"value"`
 }
 
+func (v *HttpHeader) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias HttpHeader
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = HttpHeader(a)
+	return nil
+}
+
 // An image provided to or from an LLM.
 type ImageContent struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -4346,6 +6076,46 @@ type ImageContent struct {
 	MimeType string `json:"mimeType"`
 	// URI associated with this resource or media payload.
 	Uri *string `json:"uri,omitempty"`
+}
+
+func (v *ImageContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ImageContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations", "uri"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ImageContent(a)
+	return nil
 }
 
 // Metadata about the implementation of the client or agent.
@@ -4369,6 +6139,46 @@ type Implementation struct {
 	// Version of the implementation. Can be displayed to the user or used
 	// for debugging or metrics purposes. (e.g. "1.0.0").
 	Version string `json:"version"`
+}
+
+func (v *Implementation) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Implementation
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Implementation(a)
+	return nil
 }
 
 // Request parameters for the initialize method.
@@ -4410,7 +6220,33 @@ func (v *InitializeRequest) UnmarshalJSON(b []byte) error {
 	type Alias InitializeRequest
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "clientCapabilities", "clientInfo"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["clientCapabilities"]
@@ -4475,7 +6311,33 @@ func (v *InitializeResponse) UnmarshalJSON(b []byte) error {
 	type Alias InitializeResponse
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "agentCapabilities", "agentInfo", "authMethods"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["agentCapabilities"]
@@ -4529,6 +6391,46 @@ type IntegerPropertySchema struct {
 	Title *string `json:"title,omitempty"`
 }
 
+func (v *IntegerPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias IntegerPropertySchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "default", "description", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = IntegerPropertySchema(a)
+	return nil
+}
+
 // Request to kill a terminal without releasing it.
 type KillTerminalRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -4543,6 +6445,46 @@ type KillTerminalRequest struct {
 	TerminalId TerminalId `json:"terminalId"`
 }
 
+func (v *KillTerminalRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias KillTerminalRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = KillTerminalRequest(a)
+	return nil
+}
+
 func (v *KillTerminalRequest) Validate() error {
 	return nil
 }
@@ -4555,6 +6497,46 @@ type KillTerminalResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *KillTerminalResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias KillTerminalResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = KillTerminalResponse(a)
+	return nil
 }
 
 func (v *KillTerminalResponse) Validate() error {
@@ -4577,6 +6559,46 @@ type ListSessionsRequest struct {
 	Cwd *string `json:"cwd,omitempty"`
 }
 
+func (v *ListSessionsRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ListSessionsRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ListSessionsRequest(a)
+	return nil
+}
+
 func (v *ListSessionsRequest) Validate() error {
 	return nil
 }
@@ -4594,6 +6616,46 @@ type ListSessionsResponse struct {
 	NextCursor *string `json:"nextCursor,omitempty"`
 	// Array of session information objects
 	Sessions []SessionInfo `json:"sessions"`
+}
+
+func (v *ListSessionsResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ListSessionsResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "nextCursor", "sessions"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ListSessionsResponse(a)
+	return nil
 }
 
 func (v *ListSessionsResponse) Validate() error {
@@ -4630,6 +6692,46 @@ type LoadSessionRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *LoadSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias LoadSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "mcpServers"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = LoadSessionRequest(a)
+	return nil
+}
+
 func (v *LoadSessionRequest) Validate() error {
 	if v.Cwd == "" {
 		return fmt.Errorf("cwd is required")
@@ -4656,6 +6758,46 @@ type LoadSessionResponse struct {
 	Modes *SessionModeState `json:"modes,omitempty"`
 }
 
+func (v *LoadSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias LoadSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions", "modes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = LoadSessionResponse(a)
+	return nil
+}
+
 func (v *LoadSessionResponse) Validate() error {
 	return nil
 }
@@ -4672,6 +6814,46 @@ type LogoutCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *LogoutCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias LogoutCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = LogoutCapabilities(a)
+	return nil
+}
+
 // Request parameters for the logout method.
 //
 // Terminates the current authenticated session.
@@ -4682,6 +6864,46 @@ type LogoutRequest struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *LogoutRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias LogoutRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = LogoutRequest(a)
+	return nil
 }
 
 func (v *LogoutRequest) Validate() error {
@@ -4696,6 +6918,46 @@ type LogoutResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *LogoutResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias LogoutResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = LogoutResponse(a)
+	return nil
 }
 
 func (v *LogoutResponse) Validate() error {
@@ -4743,7 +7005,33 @@ func (v *McpCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias McpCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "acp", "http", "sse"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["acp"]
@@ -5184,6 +7472,46 @@ type McpServerAcp struct {
 	ServerId McpServerAcpId `json:"serverId"`
 }
 
+func (v *McpServerAcp) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias McpServerAcp
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = McpServerAcp(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -5211,6 +7539,46 @@ type McpServerHttp struct {
 	Url string `json:"url"`
 }
 
+func (v *McpServerHttp) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias McpServerHttp
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = McpServerHttp(a)
+	return nil
+}
+
 // SSE transport configuration for MCP.
 type McpServerSse struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5225,6 +7593,46 @@ type McpServerSse struct {
 	Name string `json:"name"`
 	// URL to the MCP server.
 	Url string `json:"url"`
+}
+
+func (v *McpServerSse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias McpServerSse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = McpServerSse(a)
+	return nil
 }
 
 // Stdio transport configuration for MCP.
@@ -5243,6 +7651,46 @@ type McpServerStdio struct {
 	Env []EnvVariable `json:"env"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
+}
+
+func (v *McpServerStdio) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias McpServerStdio
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = McpServerStdio(a)
+	return nil
 }
 
 // Unique identifier for a message within a session.
@@ -5519,6 +7967,46 @@ type MultiSelectPropertySchema struct {
 	Title *string `json:"title,omitempty"`
 }
 
+func (v *MultiSelectPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias MultiSelectPropertySchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "default", "description", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = MultiSelectPropertySchema(a)
+	return nil
+}
+
 // NES capabilities advertised by the agent during initialization.
 type NesCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5531,6 +8019,46 @@ type NesCapabilities struct {
 	Context *NesContextCapabilities `json:"context,omitempty"`
 	// Events the agent wants to receive.
 	Events *NesEventCapabilities `json:"events,omitempty"`
+}
+
+func (v *NesCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "context", "events"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesCapabilities(a)
+	return nil
 }
 
 // Context capabilities the agent wants attached to each suggestion request.
@@ -5555,6 +8083,46 @@ type NesContextCapabilities struct {
 	UserActions *NesUserActionsCapabilities `json:"userActions,omitempty"`
 }
 
+func (v *NesContextCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesContextCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "diagnostics", "editHistory", "openFiles", "recentFiles", "relatedSnippets", "userActions"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesContextCapabilities(a)
+	return nil
+}
+
 // Capabilities for diagnostics context.
 type NesDiagnosticsCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5563,6 +8131,46 @@ type NesDiagnosticsCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesDiagnosticsCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDiagnosticsCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDiagnosticsCapabilities(a)
+	return nil
 }
 
 // Capabilities for 'document/didChange' events.
@@ -5577,6 +8185,46 @@ type NesDocumentDidChangeCapabilities struct {
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
 
+func (v *NesDocumentDidChangeCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentDidChangeCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentDidChangeCapabilities(a)
+	return nil
+}
+
 // Marker for 'document/didClose' capability support.
 type NesDocumentDidCloseCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5585,6 +8233,46 @@ type NesDocumentDidCloseCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesDocumentDidCloseCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentDidCloseCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentDidCloseCapabilities(a)
+	return nil
 }
 
 // Marker for 'document/didFocus' capability support.
@@ -5597,6 +8285,46 @@ type NesDocumentDidFocusCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *NesDocumentDidFocusCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentDidFocusCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentDidFocusCapabilities(a)
+	return nil
+}
+
 // Marker for 'document/didOpen' capability support.
 type NesDocumentDidOpenCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5607,6 +8335,46 @@ type NesDocumentDidOpenCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *NesDocumentDidOpenCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentDidOpenCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentDidOpenCapabilities(a)
+	return nil
+}
+
 // Marker for 'document/didSave' capability support.
 type NesDocumentDidSaveCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5615,6 +8383,46 @@ type NesDocumentDidSaveCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesDocumentDidSaveCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentDidSaveCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentDidSaveCapabilities(a)
+	return nil
 }
 
 // Document event capabilities the agent wants to receive.
@@ -5637,6 +8445,46 @@ type NesDocumentEventCapabilities struct {
 	DidSave *NesDocumentDidSaveCapabilities `json:"didSave,omitempty"`
 }
 
+func (v *NesDocumentEventCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesDocumentEventCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "didChange", "didClose", "didFocus", "didOpen", "didSave"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesDocumentEventCapabilities(a)
+	return nil
+}
+
 // Capabilities for edit history context.
 type NesEditHistoryCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5647,6 +8495,46 @@ type NesEditHistoryCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Maximum number of edit history entries the agent can use.
 	MaxCount *int `json:"maxCount,omitempty"`
+}
+
+func (v *NesEditHistoryCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesEditHistoryCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "maxCount"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesEditHistoryCapabilities(a)
+	return nil
 }
 
 // Event capabilities the agent can consume.
@@ -5661,6 +8549,46 @@ type NesEventCapabilities struct {
 	Document *NesDocumentEventCapabilities `json:"document,omitempty"`
 }
 
+func (v *NesEventCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesEventCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "document"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesEventCapabilities(a)
+	return nil
+}
+
 // Marker for jump suggestion support.
 type NesJumpCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5671,6 +8599,46 @@ type NesJumpCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *NesJumpCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesJumpCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesJumpCapabilities(a)
+	return nil
+}
+
 // Capabilities for open files context.
 type NesOpenFilesCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5679,6 +8647,46 @@ type NesOpenFilesCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesOpenFilesCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesOpenFilesCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesOpenFilesCapabilities(a)
+	return nil
 }
 
 // Capabilities for recent files context.
@@ -5693,6 +8701,46 @@ type NesRecentFilesCapabilities struct {
 	MaxCount *int `json:"maxCount,omitempty"`
 }
 
+func (v *NesRecentFilesCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesRecentFilesCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "maxCount"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesRecentFilesCapabilities(a)
+	return nil
+}
+
 // Capabilities for related snippets context.
 type NesRelatedSnippetsCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5701,6 +8749,46 @@ type NesRelatedSnippetsCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesRelatedSnippetsCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesRelatedSnippetsCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesRelatedSnippetsCapabilities(a)
+	return nil
 }
 
 // Marker for rename suggestion support.
@@ -5713,6 +8801,46 @@ type NesRenameCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *NesRenameCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesRenameCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesRenameCapabilities(a)
+	return nil
+}
+
 // Marker for search and replace suggestion support.
 type NesSearchAndReplaceCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5721,6 +8849,46 @@ type NesSearchAndReplaceCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *NesSearchAndReplaceCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesSearchAndReplaceCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesSearchAndReplaceCapabilities(a)
+	return nil
 }
 
 // Capabilities for user actions context.
@@ -5733,6 +8901,46 @@ type NesUserActionsCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Maximum number of user actions the agent can use.
 	MaxCount *int `json:"maxCount,omitempty"`
+}
+
+func (v *NesUserActionsCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NesUserActionsCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "maxCount"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NesUserActionsCapabilities(a)
+	return nil
 }
 
 // Request parameters for creating a new session.
@@ -5755,6 +8963,46 @@ type NewSessionRequest struct {
 	Cwd string `json:"cwd"`
 	// List of MCP (Model Context Protocol) servers the agent should connect to.
 	McpServers []McpServer `json:"mcpServers"`
+}
+
+func (v *NewSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NewSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "mcpServers"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NewSessionRequest(a)
+	return nil
 }
 
 func (v *NewSessionRequest) Validate() error {
@@ -5787,6 +9035,46 @@ type NewSessionResponse struct {
 	//
 	// Used in all subsequent requests for this conversation.
 	SessionId SessionId `json:"sessionId"`
+}
+
+func (v *NewSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NewSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions", "modes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NewSessionResponse(a)
+	return nil
 }
 
 func (v *NewSessionResponse) Validate() error {
@@ -5825,6 +9113,46 @@ type NumberPropertySchema struct {
 	Title *string `json:"title,omitempty"`
 }
 
+func (v *NumberPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias NumberPropertySchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "default", "description", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = NumberPropertySchema(a)
+	return nil
+}
+
 // An option presented to the user when requesting permission.
 type PermissionOption struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -5839,6 +9167,46 @@ type PermissionOption struct {
 	Name string `json:"name"`
 	// Unique identifier for this permission option.
 	OptionId PermissionOptionId `json:"optionId"`
+}
+
+func (v *PermissionOption) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PermissionOption
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PermissionOption(a)
+	return nil
 }
 
 // Unique identifier for a permission option.
@@ -5877,6 +9245,46 @@ type Plan struct {
 	Entries []PlanEntry `json:"entries"`
 }
 
+func (v *Plan) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Plan
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "entries"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Plan(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -5889,6 +9297,46 @@ type PlanCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *PlanCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanCapabilities(a)
+	return nil
 }
 
 // A single entry in the execution plan.
@@ -5910,6 +9358,46 @@ type PlanEntry struct {
 	Priority PlanEntryPriority `json:"priority"`
 	// Current execution status of this task.
 	Status PlanEntryStatus `json:"status"`
+}
+
+func (v *PlanEntry) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanEntry
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanEntry(a)
+	return nil
 }
 
 // Priority levels for plan entries.
@@ -5955,6 +9443,46 @@ type PlanFile struct {
 	Uri string `json:"uri"`
 }
 
+func (v *PlanFile) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanFile
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanFile(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -5983,6 +9511,46 @@ type PlanItems struct {
 	PlanId PlanId `json:"planId"`
 }
 
+func (v *PlanItems) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanItems
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "entries"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanItems(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -6001,6 +9569,46 @@ type PlanMarkdown struct {
 	PlanId PlanId `json:"planId"`
 }
 
+func (v *PlanMarkdown) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanMarkdown
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanMarkdown(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -6017,6 +9625,46 @@ type PlanRemoved struct {
 	PlanId PlanId `json:"planId"`
 }
 
+func (v *PlanRemoved) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanRemoved
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanRemoved(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -6031,6 +9679,46 @@ type PlanUpdate struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The updated plan content.
 	Plan PlanUpdateContent `json:"plan"`
+}
+
+func (v *PlanUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PlanUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PlanUpdate(a)
+	return nil
 }
 
 // **UNSTABLE**
@@ -6374,7 +10062,33 @@ func (v *PromptCapabilities) UnmarshalJSON(b []byte) error {
 	type Alias PromptCapabilities
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
-		return err
+		dropped := false
+		for _, k := range []string{"_meta", "audio", "embeddedContext", "image"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
 	}
 	{
 		_rm, _ok := m["audio"]
@@ -6428,6 +10142,46 @@ type PromptRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *PromptRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PromptRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PromptRequest(a)
+	return nil
+}
+
 func (v *PromptRequest) Validate() error {
 	if v.Prompt == nil {
 		return fmt.Errorf("prompt is required")
@@ -6453,6 +10207,46 @@ type PromptResponse struct {
 	//
 	// Token usage for this turn (optional).
 	Usage *Usage `json:"usage,omitempty"`
+}
+
+func (v *PromptResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias PromptResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "usage"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = PromptResponse(a)
+	return nil
 }
 
 func (v *PromptResponse) Validate() error {
@@ -6481,6 +10275,46 @@ type ProvidersCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *ProvidersCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ProvidersCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ProvidersCapabilities(a)
+	return nil
+}
+
 // Request to read content from a text file.
 //
 // Only available if the client supports the 'fs.readTextFile' capability.
@@ -6501,6 +10335,46 @@ type ReadTextFileRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *ReadTextFileRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ReadTextFileRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "limit", "line"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ReadTextFileRequest(a)
+	return nil
+}
+
 func (v *ReadTextFileRequest) Validate() error {
 	if v.Path == "" {
 		return fmt.Errorf("path is required")
@@ -6518,6 +10392,46 @@ type ReadTextFileResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Content payload returned by this response.
 	Content string `json:"content"`
+}
+
+func (v *ReadTextFileResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ReadTextFileResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ReadTextFileResponse(a)
+	return nil
 }
 
 func (v *ReadTextFileResponse) Validate() error {
@@ -6541,6 +10455,46 @@ type ReleaseTerminalRequest struct {
 	TerminalId TerminalId `json:"terminalId"`
 }
 
+func (v *ReleaseTerminalRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ReleaseTerminalRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ReleaseTerminalRequest(a)
+	return nil
+}
+
 func (v *ReleaseTerminalRequest) Validate() error {
 	return nil
 }
@@ -6553,6 +10507,46 @@ type ReleaseTerminalResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *ReleaseTerminalResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ReleaseTerminalResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ReleaseTerminalResponse(a)
+	return nil
 }
 
 func (v *ReleaseTerminalResponse) Validate() error {
@@ -6868,6 +10862,46 @@ type RequestPermissionRequest struct {
 	ToolCall ToolCallUpdate `json:"toolCall"`
 }
 
+func (v *RequestPermissionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias RequestPermissionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = RequestPermissionRequest(a)
+	return nil
+}
+
 func (v *RequestPermissionRequest) Validate() error {
 	if v.Options == nil {
 		return fmt.Errorf("options is required")
@@ -6885,6 +10919,46 @@ type RequestPermissionResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The user's decision on the permission request.
 	Outcome RequestPermissionOutcome `json:"outcome"`
+}
+
+func (v *RequestPermissionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias RequestPermissionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = RequestPermissionResponse(a)
+	return nil
 }
 
 func (v *RequestPermissionResponse) Validate() error {
@@ -6915,6 +10989,46 @@ type ResourceLink struct {
 	Uri string `json:"uri"`
 }
 
+func (v *ResourceLink) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ResourceLink
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations", "description", "mimeType", "size", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ResourceLink(a)
+	return nil
+}
+
 // Request parameters for resuming an existing session.
 //
 // Resumes an existing session without returning previous messages (unlike 'session/load').
@@ -6943,6 +11057,46 @@ type ResumeSessionRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *ResumeSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ResumeSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "mcpServers"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ResumeSessionRequest(a)
+	return nil
+}
+
 func (v *ResumeSessionRequest) Validate() error {
 	if v.Cwd == "" {
 		return fmt.Errorf("cwd is required")
@@ -6964,6 +11118,46 @@ type ResumeSessionResponse struct {
 	//
 	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
 	Modes *SessionModeState `json:"modes,omitempty"`
+}
+
+func (v *ResumeSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ResumeSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions", "modes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ResumeSessionResponse(a)
+	return nil
 }
 
 func (v *ResumeSessionResponse) Validate() error {
@@ -6990,6 +11184,46 @@ type SelectedPermissionOutcome struct {
 	OptionId PermissionOptionId `json:"optionId"`
 }
 
+func (v *SelectedPermissionOutcome) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SelectedPermissionOutcome
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SelectedPermissionOutcome(a)
+	return nil
+}
+
 // Capabilities for additional session directories support.
 //
 // Supplying '{}' means the agent supports the 'additionalDirectories' field on
@@ -7003,6 +11237,46 @@ type SessionAdditionalDirectoriesCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SessionAdditionalDirectoriesCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionAdditionalDirectoriesCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionAdditionalDirectoriesCapabilities(a)
+	return nil
 }
 
 // Session capabilities supported by the agent.
@@ -7062,6 +11336,46 @@ type SessionCapabilities struct {
 	Resume *SessionResumeCapabilities `json:"resume,omitempty"`
 }
 
+func (v *SessionCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "close", "delete", "fork", "list", "resume"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionCapabilities(a)
+	return nil
+}
+
 // Capabilities for the 'session/close' method.
 //
 // Supplying '{}' means the agent supports closing sessions.
@@ -7072,6 +11386,46 @@ type SessionCloseCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SessionCloseCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionCloseCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionCloseCapabilities(a)
+	return nil
 }
 
 // A boolean on/off toggle session configuration option payload.
@@ -7347,6 +11701,46 @@ type SessionConfigOptionsCapabilities struct {
 	Boolean *BooleanConfigOptionCapabilities `json:"boolean,omitempty"`
 }
 
+func (v *SessionConfigOptionsCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionConfigOptionsCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "boolean"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionConfigOptionsCapabilities(a)
+	return nil
+}
+
 // A single-value selector (dropdown) session configuration option payload.
 type SessionConfigSelect struct {
 	// The currently selected value.
@@ -7371,6 +11765,46 @@ type SessionConfigSelectGroup struct {
 	Options []SessionConfigSelectOption `json:"options"`
 }
 
+func (v *SessionConfigSelectGroup) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionConfigSelectGroup
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "options"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionConfigSelectGroup(a)
+	return nil
+}
+
 // A possible value for a session configuration option.
 type SessionConfigSelectOption struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -7385,6 +11819,46 @@ type SessionConfigSelectOption struct {
 	Name string `json:"name"`
 	// Unique identifier for this option value.
 	Value SessionConfigValueId `json:"value"`
+}
+
+func (v *SessionConfigSelectOption) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionConfigSelectOption
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionConfigSelectOption(a)
+	return nil
 }
 
 // Possible values for a session configuration option.
@@ -7526,6 +12000,46 @@ type SessionDeleteCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+func (v *SessionDeleteCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionDeleteCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionDeleteCapabilities(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -7540,6 +12054,46 @@ type SessionForkCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SessionForkCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionForkCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionForkCapabilities(a)
+	return nil
 }
 
 // A unique identifier for a conversation session between a client and agent.
@@ -7574,6 +12128,46 @@ type SessionInfo struct {
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
+func (v *SessionInfo) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionInfo
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "title", "updatedAt"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionInfo(a)
+	return nil
+}
+
 // Update to session metadata. All fields are optional to support partial updates.
 //
 // Agents send this notification to update session information like title or custom metadata.
@@ -7591,6 +12185,46 @@ type SessionInfoUpdate struct {
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
+func (v *SessionInfoUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionInfoUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "title", "updatedAt"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionInfoUpdate(a)
+	return nil
+}
+
 // Capabilities for the 'session/list' method.
 //
 // Supplying '{}' means the agent supports listing sessions.
@@ -7601,6 +12235,46 @@ type SessionListCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SessionListCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionListCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionListCapabilities(a)
+	return nil
 }
 
 // A mode the agent can operate in.
@@ -7621,6 +12295,46 @@ type SessionMode struct {
 	Name string `json:"name"`
 }
 
+func (v *SessionMode) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionMode
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionMode(a)
+	return nil
+}
+
 // Unique identifier for a Session Mode.
 type SessionModeId string
 
@@ -7636,6 +12350,46 @@ type SessionModeState struct {
 	AvailableModes []SessionMode `json:"availableModes"`
 	// The current mode the Agent is in.
 	CurrentModeId SessionModeId `json:"currentModeId"`
+}
+
+func (v *SessionModeState) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionModeState
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "availableModes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionModeState(a)
+	return nil
 }
 
 // Notification containing a session update from the agent.
@@ -7656,6 +12410,46 @@ type SessionNotification struct {
 	Update SessionUpdate `json:"update"`
 }
 
+func (v *SessionNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionNotification(a)
+	return nil
+}
+
 func (v *SessionNotification) Validate() error {
 	return nil
 }
@@ -7670,6 +12464,46 @@ type SessionResumeCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SessionResumeCapabilities) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SessionResumeCapabilities
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SessionResumeCapabilities(a)
+	return nil
 }
 
 // Different types of updates that can be sent during session processing.
@@ -9131,6 +13965,46 @@ type SetSessionConfigOptionResponse struct {
 	ConfigOptions []SessionConfigOption `json:"configOptions"`
 }
 
+func (v *SetSessionConfigOptionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SetSessionConfigOptionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SetSessionConfigOptionResponse(a)
+	return nil
+}
+
 func (v *SetSessionConfigOptionResponse) Validate() error {
 	if v.ConfigOptions == nil {
 		return fmt.Errorf("configOptions is required")
@@ -9152,6 +14026,46 @@ type SetSessionModeRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *SetSessionModeRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SetSessionModeRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SetSessionModeRequest(a)
+	return nil
+}
+
 func (v *SetSessionModeRequest) Validate() error {
 	return nil
 }
@@ -9164,6 +14078,46 @@ type SetSessionModeResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *SetSessionModeResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias SetSessionModeResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = SetSessionModeResponse(a)
+	return nil
 }
 
 func (v *SetSessionModeResponse) Validate() error {
@@ -9205,6 +14159,46 @@ type StringMultiSelectItems struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Allowed enum values.
 	Enum []string `json:"enum"`
+}
+
+func (v *StringMultiSelectItems) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias StringMultiSelectItems
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = StringMultiSelectItems(a)
+	return nil
 }
 
 // Schema for string properties in an elicitation form.
@@ -9258,6 +14252,46 @@ type StringPropertySchema struct {
 	Title *string `json:"title,omitempty"`
 }
 
+func (v *StringPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias StringPropertySchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "default", "description", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = StringPropertySchema(a)
+	return nil
+}
+
 // Embed a terminal created with 'terminal/create' by its id.
 //
 // The terminal must be added before calling 'terminal/release'.
@@ -9274,6 +14308,46 @@ type Terminal struct {
 	TerminalId TerminalId `json:"terminalId"`
 }
 
+func (v *Terminal) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Terminal
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Terminal(a)
+	return nil
+}
+
 // Exit status of a terminal command.
 type TerminalExitStatus struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -9286,6 +14360,46 @@ type TerminalExitStatus struct {
 	ExitCode *int `json:"exitCode,omitempty"`
 	// The signal that terminated the process (may be null if exited normally).
 	Signal *string `json:"signal,omitempty"`
+}
+
+func (v *TerminalExitStatus) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TerminalExitStatus
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "exitCode", "signal"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TerminalExitStatus(a)
+	return nil
 }
 
 // Typed identifier used for terminal values on the wire.
@@ -9303,6 +14417,46 @@ type TerminalOutputRequest struct {
 	SessionId SessionId `json:"sessionId"`
 	// The ID of the terminal to get output from.
 	TerminalId TerminalId `json:"terminalId"`
+}
+
+func (v *TerminalOutputRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TerminalOutputRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TerminalOutputRequest(a)
+	return nil
 }
 
 func (v *TerminalOutputRequest) Validate() error {
@@ -9325,6 +14479,46 @@ type TerminalOutputResponse struct {
 	Truncated bool `json:"truncated"`
 }
 
+func (v *TerminalOutputResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TerminalOutputResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "exitStatus"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TerminalOutputResponse(a)
+	return nil
+}
+
 func (v *TerminalOutputResponse) Validate() error {
 	if v.Output == "" {
 		return fmt.Errorf("output is required")
@@ -9344,6 +14538,46 @@ type TextContent struct {
 	Annotations *Annotations `json:"annotations,omitempty"`
 	// Text payload carried by this content block.
 	Text string `json:"text"`
+}
+
+func (v *TextContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TextContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TextContent(a)
+	return nil
 }
 
 // How the agent wants document changes delivered.
@@ -9370,6 +14604,46 @@ type TextResourceContents struct {
 	Uri string `json:"uri"`
 }
 
+func (v *TextResourceContents) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TextResourceContents
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "mimeType"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TextResourceContents(a)
+	return nil
+}
+
 // Items definition for titled multi-select enum properties.
 type TitledMultiSelectItems struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -9382,6 +14656,46 @@ type TitledMultiSelectItems struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Titled enum options.
 	AnyOf []EnumOption `json:"anyOf"`
+}
+
+func (v *TitledMultiSelectItems) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias TitledMultiSelectItems
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = TitledMultiSelectItems(a)
+	return nil
 }
 
 // Represents a tool call that the language model has requested.
@@ -9424,6 +14738,46 @@ type ToolCall struct {
 	Title string `json:"title"`
 	// Unique identifier for this tool call within the session.
 	ToolCallId ToolCallId `json:"toolCallId"`
+}
+
+func (v *ToolCall) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ToolCall
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "content", "kind", "locations", "name", "rawInput", "rawOutput", "status"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ToolCall(a)
+	return nil
 }
 
 // Content produced by a tool call.
@@ -9719,6 +15073,46 @@ type ToolCallLocation struct {
 	Path string `json:"path"`
 }
 
+func (v *ToolCallLocation) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ToolCallLocation
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "line"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ToolCallLocation(a)
+	return nil
+}
+
 // Execution status of a tool call.
 //
 // Tool calls progress through different statuses during their lifecycle.
@@ -9773,6 +15167,46 @@ type ToolCallUpdate struct {
 	ToolCallId ToolCallId `json:"toolCallId"`
 }
 
+func (v *ToolCallUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ToolCallUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "content", "kind", "locations", "name", "rawInput", "rawOutput", "status", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = ToolCallUpdate(a)
+	return nil
+}
+
 func (t *ToolCallUpdate) Validate() error {
 	if t.ToolCallId == "" {
 		return fmt.Errorf("toolCallId is required")
@@ -9815,6 +15249,46 @@ type UnstableAcceptNesNotification struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *UnstableAcceptNesNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableAcceptNesNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableAcceptNesNotification(a)
+	return nil
+}
+
 func (v *UnstableAcceptNesNotification) Validate() error {
 	return nil
 }
@@ -9834,6 +15308,46 @@ type UnstableCloseNesRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *UnstableCloseNesRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableCloseNesRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableCloseNesRequest(a)
+	return nil
+}
+
 func (v *UnstableCloseNesRequest) Validate() error {
 	return nil
 }
@@ -9846,6 +15360,46 @@ type UnstableCloseNesResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *UnstableCloseNesResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableCloseNesResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableCloseNesResponse(a)
+	return nil
 }
 
 func (v *UnstableCloseNesResponse) Validate() error {
@@ -9868,6 +15422,46 @@ type UnstableConnectMcpRequest struct {
 	ServerId UnstableMcpServerAcpId `json:"serverId"`
 }
 
+func (v *UnstableConnectMcpRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableConnectMcpRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableConnectMcpRequest(a)
+	return nil
+}
+
 func (v *UnstableConnectMcpRequest) Validate() error {
 	return nil
 }
@@ -9886,6 +15480,46 @@ type UnstableConnectMcpResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The unique identifier for this MCP-over-ACP connection.
 	ConnectionId UnstableMcpConnectionId `json:"connectionId"`
+}
+
+func (v *UnstableConnectMcpResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableConnectMcpResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableConnectMcpResponse(a)
+	return nil
 }
 
 func (v *UnstableConnectMcpResponse) Validate() error {
@@ -9910,6 +15544,46 @@ type UnstableDidChangeDocumentNotification struct {
 	Version int `json:"version"`
 }
 
+func (v *UnstableDidChangeDocumentNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDidChangeDocumentNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "contentChanges"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDidChangeDocumentNotification(a)
+	return nil
+}
+
 func (v *UnstableDidChangeDocumentNotification) Validate() error {
 	if v.ContentChanges == nil {
 		return fmt.Errorf("contentChanges is required")
@@ -9932,6 +15606,46 @@ type UnstableDidCloseDocumentNotification struct {
 	SessionId SessionId `json:"sessionId"`
 	// The URI of the closed document.
 	Uri string `json:"uri"`
+}
+
+func (v *UnstableDidCloseDocumentNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDidCloseDocumentNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDidCloseDocumentNotification(a)
+	return nil
 }
 
 func (v *UnstableDidCloseDocumentNotification) Validate() error {
@@ -9961,6 +15675,46 @@ type UnstableDidFocusDocumentNotification struct {
 	VisibleRange UnstableRange `json:"visibleRange"`
 }
 
+func (v *UnstableDidFocusDocumentNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDidFocusDocumentNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDidFocusDocumentNotification(a)
+	return nil
+}
+
 func (v *UnstableDidFocusDocumentNotification) Validate() error {
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
@@ -9986,6 +15740,46 @@ type UnstableDidOpenDocumentNotification struct {
 	Uri string `json:"uri"`
 	// The version number of the document.
 	Version int `json:"version"`
+}
+
+func (v *UnstableDidOpenDocumentNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDidOpenDocumentNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDidOpenDocumentNotification(a)
+	return nil
 }
 
 func (v *UnstableDidOpenDocumentNotification) Validate() error {
@@ -10015,6 +15809,46 @@ type UnstableDidSaveDocumentNotification struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableDidSaveDocumentNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDidSaveDocumentNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDidSaveDocumentNotification(a)
+	return nil
+}
+
 func (v *UnstableDidSaveDocumentNotification) Validate() error {
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
@@ -10038,6 +15872,46 @@ type UnstableDisableProviderRequest struct {
 	ProviderId UnstableProviderId `json:"providerId"`
 }
 
+func (v *UnstableDisableProviderRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDisableProviderRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDisableProviderRequest(a)
+	return nil
+}
+
 func (v *UnstableDisableProviderRequest) Validate() error {
 	return nil
 }
@@ -10054,6 +15928,46 @@ type UnstableDisableProviderResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *UnstableDisableProviderResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDisableProviderResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDisableProviderResponse(a)
+	return nil
 }
 
 func (v *UnstableDisableProviderResponse) Validate() error {
@@ -10076,6 +15990,46 @@ type UnstableDisconnectMcpRequest struct {
 	ConnectionId UnstableMcpConnectionId `json:"connectionId"`
 }
 
+func (v *UnstableDisconnectMcpRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDisconnectMcpRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDisconnectMcpRequest(a)
+	return nil
+}
+
 func (v *UnstableDisconnectMcpRequest) Validate() error {
 	return nil
 }
@@ -10092,6 +16046,46 @@ type UnstableDisconnectMcpResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *UnstableDisconnectMcpResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableDisconnectMcpResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableDisconnectMcpResponse(a)
+	return nil
 }
 
 func (v *UnstableDisconnectMcpResponse) Validate() error {
@@ -10129,6 +16123,46 @@ type UnstableForkSessionRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *UnstableForkSessionRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableForkSessionRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "additionalDirectories", "mcpServers"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableForkSessionRequest(a)
+	return nil
+}
+
 func (v *UnstableForkSessionRequest) Validate() error {
 	if v.Cwd == "" {
 		return fmt.Errorf("cwd is required")
@@ -10158,6 +16192,46 @@ type UnstableForkSessionResponse struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *UnstableForkSessionResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableForkSessionResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "configOptions", "modes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableForkSessionResponse(a)
+	return nil
+}
+
 func (v *UnstableForkSessionResponse) Validate() error {
 	return nil
 }
@@ -10174,6 +16248,46 @@ type UnstableListProvidersRequest struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *UnstableListProvidersRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableListProvidersRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableListProvidersRequest(a)
+	return nil
 }
 
 func (v *UnstableListProvidersRequest) Validate() error {
@@ -10194,6 +16308,46 @@ type UnstableListProvidersResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Configurable providers with current routing info suitable for UI display.
 	Providers []UnstableProviderInfo `json:"providers"`
+}
+
+func (v *UnstableListProvidersResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableListProvidersResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableListProvidersResponse(a)
+	return nil
 }
 
 func (v *UnstableListProvidersResponse) Validate() error {
@@ -10647,6 +16801,46 @@ type UnstableMcpServerAcp struct {
 	ServerId UnstableMcpServerAcpId `json:"serverId"`
 }
 
+func (v *UnstableMcpServerAcp) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMcpServerAcp
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMcpServerAcp(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -10683,6 +16877,46 @@ type UnstableMessageMcpNotification struct {
 	Params map[string]any `json:"params,omitempty"`
 }
 
+func (v *UnstableMessageMcpNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMessageMcpNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "params"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMessageMcpNotification(a)
+	return nil
+}
+
 func (v *UnstableMessageMcpNotification) Validate() error {
 	if v.Method == "" {
 		return fmt.Errorf("method is required")
@@ -10710,6 +16944,46 @@ type UnstableMessageMcpRequest struct {
 	//
 	// If omitted or set to 'null', the inner MCP message has no params.
 	Params map[string]any `json:"params,omitempty"`
+}
+
+func (v *UnstableMessageMcpRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMessageMcpRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMessageMcpRequest(a)
+	return nil
 }
 
 func (v *UnstableMessageMcpRequest) Validate() error {
@@ -10747,6 +17021,46 @@ type UnstableNesDiagnostic struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesDiagnostic) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesDiagnostic
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesDiagnostic(a)
+	return nil
+}
+
 // Severity of a diagnostic.
 type UnstableNesDiagnosticSeverity string
 
@@ -10771,6 +17085,46 @@ type UnstableNesEditHistoryEntry struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesEditHistoryEntry) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesEditHistoryEntry
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesEditHistoryEntry(a)
+	return nil
+}
+
 // A text edit suggestion.
 type UnstableNesEditSuggestion struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10789,6 +17143,46 @@ type UnstableNesEditSuggestion struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesEditSuggestion) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesEditSuggestion
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "cursorPosition"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesEditSuggestion(a)
+	return nil
+}
+
 // A code excerpt from a file.
 type UnstableNesExcerpt struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10805,6 +17199,46 @@ type UnstableNesExcerpt struct {
 	Text string `json:"text"`
 }
 
+func (v *UnstableNesExcerpt) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesExcerpt
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesExcerpt(a)
+	return nil
+}
+
 // A jump-to-location suggestion.
 type UnstableNesJumpSuggestion struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10819,6 +17253,46 @@ type UnstableNesJumpSuggestion struct {
 	Position UnstablePosition `json:"position"`
 	// The file to navigate to.
 	Uri string `json:"uri"`
+}
+
+func (v *UnstableNesJumpSuggestion) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesJumpSuggestion
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesJumpSuggestion(a)
+	return nil
 }
 
 // An open file in the editor.
@@ -10839,6 +17313,46 @@ type UnstableNesOpenFile struct {
 	VisibleRange *UnstableRange `json:"visibleRange,omitempty"`
 }
 
+func (v *UnstableNesOpenFile) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesOpenFile
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "lastFocusedMs", "visibleRange"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesOpenFile(a)
+	return nil
+}
+
 // A recently accessed file.
 type UnstableNesRecentFile struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10853,6 +17367,46 @@ type UnstableNesRecentFile struct {
 	Text string `json:"text"`
 	// The URI of the file.
 	Uri string `json:"uri"`
+}
+
+func (v *UnstableNesRecentFile) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesRecentFile
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesRecentFile(a)
+	return nil
 }
 
 // The reason a suggestion was rejected.
@@ -10879,6 +17433,46 @@ type UnstableNesRelatedSnippet struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesRelatedSnippet) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesRelatedSnippet
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesRelatedSnippet(a)
+	return nil
+}
+
 // A rename symbol suggestion.
 type UnstableNesRenameSuggestion struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10897,6 +17491,46 @@ type UnstableNesRenameSuggestion struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesRenameSuggestion) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesRenameSuggestion
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesRenameSuggestion(a)
+	return nil
+}
+
 // Repository metadata for an NES session.
 type UnstableNesRepository struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10911,6 +17545,46 @@ type UnstableNesRepository struct {
 	Owner string `json:"owner"`
 	// The remote URL of the repository.
 	RemoteUrl string `json:"remoteUrl"`
+}
+
+func (v *UnstableNesRepository) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesRepository
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesRepository(a)
+	return nil
 }
 
 // A search-and-replace suggestion.
@@ -10933,6 +17607,46 @@ type UnstableNesSearchAndReplaceSuggestion struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesSearchAndReplaceSuggestion) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesSearchAndReplaceSuggestion
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesSearchAndReplaceSuggestion(a)
+	return nil
+}
+
 // Context attached to a suggestion request.
 type UnstableNesSuggestContext struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -10953,6 +17667,46 @@ type UnstableNesSuggestContext struct {
 	RelatedSnippets []UnstableNesRelatedSnippet `json:"relatedSnippets,omitempty"`
 	// Recent user actions (typing, navigation, etc.).
 	UserActions []UnstableNesUserAction `json:"userActions,omitempty"`
+}
+
+func (v *UnstableNesSuggestContext) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesSuggestContext
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesSuggestContext(a)
+	return nil
 }
 
 // A suggestion returned by the agent.
@@ -11374,6 +18128,46 @@ type UnstableNesTextEdit struct {
 	Range UnstableRange `json:"range"`
 }
 
+func (v *UnstableNesTextEdit) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesTextEdit
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesTextEdit(a)
+	return nil
+}
+
 // What triggered the suggestion request.
 type UnstableNesTriggerKind string
 
@@ -11401,6 +18195,46 @@ type UnstableNesUserAction struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableNesUserAction) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableNesUserAction
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableNesUserAction(a)
+	return nil
+}
+
 // A zero-based position in a text document.
 //
 // The meaning of 'character' depends on the negotiated position encoding.
@@ -11415,6 +18249,46 @@ type UnstablePosition struct {
 	Character int `json:"character"`
 	// Zero-based line number.
 	Line int `json:"line"`
+}
+
+func (v *UnstablePosition) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstablePosition
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstablePosition(a)
+	return nil
 }
 
 // **UNSTABLE**
@@ -11433,6 +18307,46 @@ type UnstableProviderCurrentConfig struct {
 	ApiType UnstableLlmProtocol `json:"apiType"`
 	// Base URL currently used by this provider.
 	BaseUrl string `json:"baseUrl"`
+}
+
+func (v *UnstableProviderCurrentConfig) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableProviderCurrentConfig
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableProviderCurrentConfig(a)
+	return nil
 }
 
 // **UNSTABLE**
@@ -11466,6 +18380,46 @@ type UnstableProviderInfo struct {
 	Supported []UnstableLlmProtocol `json:"supported"`
 }
 
+func (v *UnstableProviderInfo) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableProviderInfo
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "supported"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableProviderInfo(a)
+	return nil
+}
+
 // A range in a text document, expressed as start and end positions.
 type UnstableRange struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -11478,6 +18432,46 @@ type UnstableRange struct {
 	End UnstablePosition `json:"end"`
 	// The start position (inclusive).
 	Start UnstablePosition `json:"start"`
+}
+
+func (v *UnstableRange) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableRange
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableRange(a)
+	return nil
 }
 
 // Notification sent when a suggestion is rejected.
@@ -11494,6 +18488,46 @@ type UnstableRejectNesNotification struct {
 	Reason *UnstableNesRejectReason `json:"reason,omitempty"`
 	// The session ID for this notification.
 	SessionId SessionId `json:"sessionId"`
+}
+
+func (v *UnstableRejectNesNotification) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableRejectNesNotification
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "reason"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableRejectNesNotification(a)
+	return nil
 }
 
 func (v *UnstableRejectNesNotification) Validate() error {
@@ -11525,6 +18559,46 @@ type UnstableSetProviderRequest struct {
 	ProviderId UnstableProviderId `json:"providerId"`
 }
 
+func (v *UnstableSetProviderRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSetProviderRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSetProviderRequest(a)
+	return nil
+}
+
 func (v *UnstableSetProviderRequest) Validate() error {
 	if v.BaseUrl == "" {
 		return fmt.Errorf("baseUrl is required")
@@ -11544,6 +18618,46 @@ type UnstableSetProviderResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *UnstableSetProviderResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSetProviderResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSetProviderResponse(a)
+	return nil
 }
 
 func (v *UnstableSetProviderResponse) Validate() error {
@@ -11566,6 +18680,46 @@ type UnstableStartNesRequest struct {
 	WorkspaceUri *string `json:"workspaceUri,omitempty"`
 }
 
+func (v *UnstableStartNesRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableStartNesRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "repository", "workspaceUri"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableStartNesRequest(a)
+	return nil
+}
+
 func (v *UnstableStartNesRequest) Validate() error {
 	return nil
 }
@@ -11580,6 +18734,46 @@ type UnstableStartNesResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The session ID for the newly started NES session.
 	SessionId SessionId `json:"sessionId"`
+}
+
+func (v *UnstableStartNesResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableStartNesResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableStartNesResponse(a)
+	return nil
 }
 
 func (v *UnstableStartNesResponse) Validate() error {
@@ -11610,6 +18804,46 @@ type UnstableSuggestNesRequest struct {
 	Version int `json:"version"`
 }
 
+func (v *UnstableSuggestNesRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSuggestNesRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSuggestNesRequest(a)
+	return nil
+}
+
 func (v *UnstableSuggestNesRequest) Validate() error {
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
@@ -11627,6 +18861,46 @@ type UnstableSuggestNesResponse struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The list of suggestions.
 	Suggestions []UnstableNesSuggestion `json:"suggestions"`
+}
+
+func (v *UnstableSuggestNesResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSuggestNesResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSuggestNesResponse(a)
+	return nil
 }
 
 func (v *UnstableSuggestNesResponse) Validate() error {
@@ -11653,6 +18927,46 @@ type UnstableTextDocumentContentChangeEvent struct {
 	Text string `json:"text"`
 }
 
+func (v *UnstableTextDocumentContentChangeEvent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableTextDocumentContentChangeEvent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableTextDocumentContentChangeEvent(a)
+	return nil
+}
+
 // A workspace folder.
 type UnstableWorkspaceFolder struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -11667,6 +18981,46 @@ type UnstableWorkspaceFolder struct {
 	Uri string `json:"uri"`
 }
 
+func (v *UnstableWorkspaceFolder) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableWorkspaceFolder
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableWorkspaceFolder(a)
+	return nil
+}
+
 // All text that was typed after the command name is provided as input.
 type UnstructuredCommandInput struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -11677,6 +19031,46 @@ type UnstructuredCommandInput struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A hint to display when the input hasn't been provided yet
 	Hint string `json:"hint"`
+}
+
+func (v *UnstructuredCommandInput) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstructuredCommandInput
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstructuredCommandInput(a)
+	return nil
 }
 
 // **UNSTABLE**
@@ -11705,6 +19099,46 @@ type Usage struct {
 	TotalTokens int `json:"totalTokens"`
 }
 
+func (v *Usage) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Usage
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "cachedReadTokens", "cachedWriteTokens", "thoughtTokens"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Usage(a)
+	return nil
+}
+
 // Context window and cost update for a session.
 type UsageUpdate struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -11721,6 +19155,46 @@ type UsageUpdate struct {
 	Used int `json:"used"`
 }
 
+func (v *UsageUpdate) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UsageUpdate
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "cost"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UsageUpdate(a)
+	return nil
+}
+
 // Request to wait for a terminal command to exit.
 type WaitForTerminalExitRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -11733,6 +19207,46 @@ type WaitForTerminalExitRequest struct {
 	SessionId SessionId `json:"sessionId"`
 	// The ID of the terminal to wait for.
 	TerminalId TerminalId `json:"terminalId"`
+}
+
+func (v *WaitForTerminalExitRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias WaitForTerminalExitRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = WaitForTerminalExitRequest(a)
+	return nil
 }
 
 func (v *WaitForTerminalExitRequest) Validate() error {
@@ -11751,6 +19265,46 @@ type WaitForTerminalExitResponse struct {
 	ExitCode *int `json:"exitCode,omitempty"`
 	// The signal that terminated the process (may be null if exited normally).
 	Signal *string `json:"signal,omitempty"`
+}
+
+func (v *WaitForTerminalExitResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias WaitForTerminalExitResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "exitCode", "signal"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = WaitForTerminalExitResponse(a)
+	return nil
 }
 
 func (v *WaitForTerminalExitResponse) Validate() error {
@@ -11775,6 +19329,46 @@ type WriteTextFileRequest struct {
 	SessionId SessionId `json:"sessionId"`
 }
 
+func (v *WriteTextFileRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias WriteTextFileRequest
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = WriteTextFileRequest(a)
+	return nil
+}
+
 func (v *WriteTextFileRequest) Validate() error {
 	if v.Content == "" {
 		return fmt.Errorf("content is required")
@@ -11793,6 +19387,46 @@ type WriteTextFileResponse struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+func (v *WriteTextFileResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias WriteTextFileResponse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = WriteTextFileResponse(a)
+	return nil
 }
 
 func (v *WriteTextFileResponse) Validate() error {

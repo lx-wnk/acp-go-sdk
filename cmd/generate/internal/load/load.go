@@ -53,6 +53,10 @@ type Definition struct {
 	// Discriminator specifies which property name distinguishes union variants.
 	// Part of JSON Schema's discriminator object support.
 	Discriminator *Discriminator `json:"discriminator,omitempty"`
+	// DeserializeDefaultOnError marks a property the peer may send in a shape this build
+	// cannot decode. The schema asks for the default to be used instead of rejecting the
+	// whole message, so a peer on a nearby protocol version stays interoperable.
+	DeserializeDefaultOnError bool `json:"x-deserialize-default-on-error"`
 	// AdditionalProperties types the values of an open-ended object. A $ref or an
 	// inline schema names a Go element type; the boolean form decodes to a zero
 	// Definition (see UnmarshalJSON) and leaves the map untyped.
