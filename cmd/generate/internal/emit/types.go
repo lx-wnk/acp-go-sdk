@@ -1267,8 +1267,11 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					gg.List(Id("_b"), Id("_e")).Op(":=").Qual("encoding/json", "Marshal").Call(Op("*").Id("u").Dot(vi.fieldName))
 					gg.If(Id("_e").Op("!=").Nil()).Block(Return(Index().Byte().Values(), Id("_e")))
 					if !vi.isObject {
-						// Non-object variants (e.g., arrays/primitives) are already in final wire shape.
+						// Non-object variants (e.g., arrays/primitives) are already in final wire
+						// shape. Return from the emitter too, or the object-shaping statements
+						// below are appended after the emitted return and become dead code.
 						gg.Return(Id("_b"), Nil())
+						return
 					}
 					// Marshal object variant to map for discriminant injection and shaping.
 					gg.Var().Id("m").Map(String()).Any()
