@@ -24,13 +24,12 @@ type replClient struct {
 
 var _ acp.Client = (*replClient)(nil)
 
-// Elicitation joined the stable Client interface in schema 1.21.0; before that
-// the generator probed for it and answered MethodNotFound when it was absent.
-// This example has no form or browser flow to render one with, so it declines —
-// accepting on the user's behalf would invent an answer they never gave.
+// No form or browser flow here to render an elicitation with. Report the method
+// as unavailable rather than declining: a decline claims the user refused, and
+// nobody was asked.
 func (c *replClient) CreateElicitation(ctx context.Context, params acp.CreateElicitationRequest) (acp.CreateElicitationResponse, error) {
-	fmt.Println("\n📝 Elicitation requested — this example cannot answer one, declining.")
-	return acp.CreateElicitationResponse{Decline: &acp.CreateElicitationDecline{}}, nil
+	fmt.Println("\n📝 Elicitation requested — this example cannot answer one.")
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
 }
 
 func (c *replClient) CompleteElicitation(ctx context.Context, params acp.CompleteElicitationNotification) error {

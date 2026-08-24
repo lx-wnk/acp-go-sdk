@@ -71,11 +71,12 @@ func (c clientFuncs) CreateElicitation(ctx context.Context, p CreateElicitationR
 	if c.CreateElicitationFunc != nil {
 		return c.CreateElicitationFunc(ctx, p)
 	}
-	// Decline rather than accept: a test double that silently accepted would let
-	// a handler under test believe a user answered. A zero-value response is not
-	// an option — with no arm set the union marshals to empty bytes and
-	// json.Marshal rejects it.
-	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+	// Report the method as unavailable, matching the shipped examples: accepting
+	// or declining would both let a handler under test believe a user answered.
+	// The zero-value response is only safe here because the error is non-nil —
+	// with no arm set the union marshals to empty bytes and json.Marshal
+	// rejects it.
+	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 
 func (c clientFuncs) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {
