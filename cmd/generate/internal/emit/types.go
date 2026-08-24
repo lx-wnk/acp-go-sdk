@@ -1365,7 +1365,10 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 				}
 			})
 		}
-		g.Return(Index().Byte().Values(), Nil())
+		// No arm set. Returning empty bytes with a nil error violates the json.Marshaler
+		// contract, and the encoder then fails with "unexpected end of JSON input", naming
+		// neither the type nor the cause. Match the wording Validate uses.
+		g.Return(Nil(), Qual("errors", "New").Call(Lit(name+" must have at least one variant set")))
 	})
 	f.Line()
 
