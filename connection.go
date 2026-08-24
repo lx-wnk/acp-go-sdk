@@ -399,7 +399,7 @@ func (c *Connection) receive() {
 			if msg.ID != nil {
 				idKey, err := canonicalJSONRPCIDKey(*msg.ID)
 				if err != nil {
-					c.loggerOrDefault().Error("failed to canonicalize inbound request id", "err", err, "id", string(*msg.ID))
+					c.loggerOrDefault().Error("failed to canonicalize inbound request id", "err", err, "id_len", len(*msg.ID))
 					idKey = string(*msg.ID)
 				}
 				reqCtx, cancel := context.WithCancelCause(c.ctx)
@@ -515,7 +515,7 @@ func (c *Connection) processNotifications() {
 func (c *Connection) handleResponse(msg *anyMessage) {
 	idStr, err := canonicalJSONRPCIDKey(*msg.ID)
 	if err != nil {
-		c.loggerOrDefault().Error("failed to canonicalize response id", "err", err, "id", string(*msg.ID))
+		c.loggerOrDefault().Error("failed to canonicalize response id", "err", err, "id_len", len(*msg.ID))
 		idStr = string(*msg.ID)
 	}
 
@@ -551,7 +551,7 @@ func (c *Connection) handleCancelRequest(msg *anyMessage) {
 
 	idKey, err := canonicalJSONRPCIDKey(p.RequestID)
 	if err != nil {
-		c.loggerOrDefault().Error("failed to canonicalize $/cancel_request requestId", "err", err, "requestId", string(p.RequestID))
+		c.loggerOrDefault().Error("failed to canonicalize $/cancel_request requestId", "err", err, "requestId_len", len(p.RequestID))
 		idKey = string(p.RequestID)
 	}
 
