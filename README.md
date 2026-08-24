@@ -17,6 +17,22 @@ Learn more about the protocol itself at <https://agentclientprotocol.com>.
 go get github.com/coder/acp-go-sdk@v1.21.0
 ```
 
+### Versioning
+
+This module's version tracks the ACP schema release it is generated from, not Go API
+compatibility: `vX.Y.Z` is generated from schema `X.Y.Z`.
+
+A minor bump can therefore remove exported types or add methods to the `Client` and
+`Agent` interfaces, which breaks compilation for code that implements them. Schema
+1.21.0, for example, graduates elicitation out of the experimental surface: 18
+`Unstable*` types are renamed and `Client` gains two required methods.
+
+Pin the exact version shown above rather than `@latest` or `@v1`, and upgrade
+deliberately, reading the release notes for the schema version you are moving to.
+
+The wire protocol is more stable than the Go API. A schema bump that breaks
+compilation usually leaves JSON-RPC interoperability with older peers intact.
+
 ## Get Started
 
 ### Understand the Protocol
