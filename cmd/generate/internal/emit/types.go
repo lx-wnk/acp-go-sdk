@@ -1222,28 +1222,39 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			If(List(Id("_"), Id("ok")).Op(":=").Id("err").Assert(Op("*").Qual("encoding/json", "UnmarshalTypeError")), Op("!").Id("ok")).Block(Return(Id("err"))),
 		)
 		// For array variants with required keys on object items, try key-based matching first.
-		g.Var().Id("arr").Index().Map(String()).Qual("encoding/json", "RawMessage")
-		g.If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("arr")).Op("==").Nil()).BlockFunc(func(arr *Group) {
-			for _, vi := range variants {
-				if !vi.isArray || len(vi.arrayItemRequired) == 0 {
-					continue
-				}
-				arr.BlockFunc(func(h *Group) {
-					h.Var().Id("v").Id(vi.typeName)
-					h.Var().Id("match").Bool().Op("=").Lit(true)
-					h.For(List(Id("_"), Id("elem")).Op(":=").Range().Id("arr")).BlockFunc(func(loop *Group) {
-						for _, rk := range vi.arrayItemRequired {
-							loop.If(List(Id("_"), Id("ok")).Op(":=").Id("elem").Index(Lit(rk)), Op("!").Id("ok")).Block(Id("match").Op("=").Lit(false))
-						}
-					})
-					h.If(Id("match")).Block(
-						If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
-						Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v"),
-						Return(Nil()),
-					)
-				})
+		// Emitted only when some variant actually needs it; otherwise the block decodes the
+		// whole payload into a slice and discards it.
+		hasArrayItemMatch := false
+		for _, vi := range variants {
+			if vi.isArray && len(vi.arrayItemRequired) > 0 {
+				hasArrayItemMatch = true
+				break
 			}
-		})
+		}
+		if hasArrayItemMatch {
+			g.Var().Id("arr").Index().Map(String()).Qual("encoding/json", "RawMessage")
+			g.If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("arr")).Op("==").Nil()).BlockFunc(func(arr *Group) {
+				for _, vi := range variants {
+					if !vi.isArray || len(vi.arrayItemRequired) == 0 {
+						continue
+					}
+					arr.BlockFunc(func(h *Group) {
+						h.Var().Id("v").Id(vi.typeName)
+						h.Var().Id("match").Bool().Op("=").Lit(true)
+						h.For(List(Id("_"), Id("elem")).Op(":=").Range().Id("arr")).BlockFunc(func(loop *Group) {
+							for _, rk := range vi.arrayItemRequired {
+								loop.If(List(Id("_"), Id("ok")).Op(":=").Id("elem").Index(Lit(rk)), Op("!").Id("ok")).Block(Id("match").Op("=").Lit(false))
+							}
+						})
+						h.If(Id("match")).Block(
+							If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
+							Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v"),
+							Return(Nil()),
+						)
+					})
+				}
+			})
+		}
 		// fallback: try decode sequentially
 		for _, vi := range variants {
 			g.Block(

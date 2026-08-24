@@ -232,9 +232,6 @@ func (u *AgentResponse) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v AgentResult
 		if json.Unmarshal(b, &v) == nil {
@@ -469,9 +466,6 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v AuthMethodTerminalInline
 		if json.Unmarshal(b, &v) == nil {
@@ -653,9 +647,6 @@ func (u *AvailableCommandInput) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v UnstructuredCommandInput
@@ -1009,9 +1000,6 @@ func (u *ClientResponse) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v ClientResult
@@ -1529,9 +1517,6 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ContentBlockText
 		if json.Unmarshal(b, &v) == nil {
@@ -1902,9 +1887,6 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v CreateElicitationForm
 		if json.Unmarshal(b, &v) == nil {
@@ -2163,9 +2145,6 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v CreateElicitationAccept
@@ -2451,9 +2430,6 @@ func (u *ElicitationContentValue) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationContentValueString
 		if json.Unmarshal(b, &v) == nil {
@@ -2611,9 +2587,6 @@ func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v ElicitationSessionScope
@@ -3033,9 +3006,6 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationPropertySchemaString
 		if json.Unmarshal(b, &v) == nil {
@@ -3340,9 +3310,6 @@ func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationSessionScope
 		if json.Unmarshal(b, &v) == nil {
@@ -3462,9 +3429,6 @@ func (u *EmbeddedResourceResource) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v TextResourceContents
@@ -3639,9 +3603,6 @@ func (u *ErrorCode) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v ErrorCodeParseError
@@ -4557,9 +4518,6 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v McpServerHttpInline
 		if json.Unmarshal(b, &v) == nil {
@@ -4851,9 +4809,6 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v MultiSelectItemsString
@@ -5640,9 +5595,6 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v PlanUpdateContentItems
 		if json.Unmarshal(b, &v) == nil {
@@ -6009,9 +5961,6 @@ func (u *RequestId) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v RequestIdNull
 		if json.Unmarshal(b, &v) == nil {
@@ -6171,9 +6120,6 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v RequestPermissionOutcomeCancelled
@@ -6589,9 +6535,6 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v SessionConfigOptionSelect
@@ -7741,9 +7684,6 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v SessionUpdateUserMessageChunk
 		if json.Unmarshal(b, &v) == nil {
@@ -8190,9 +8130,6 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v SetSessionConfigOptionBoolean
@@ -8714,9 +8651,6 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v ToolCallContentContent
@@ -9550,9 +9484,6 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v UnstableMcpServerHttp
 		if json.Unmarshal(b, &v) == nil {
@@ -10215,9 +10146,6 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v UnstableNesSuggestionEdit
