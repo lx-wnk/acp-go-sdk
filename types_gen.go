@@ -426,13 +426,13 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "terminal":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("AuthMethod terminal variant requires type")
 				}
-				if _, ok := m["id"]; !ok {
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
 					return errors.New("AuthMethod terminal variant requires id")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("AuthMethod terminal variant requires name")
 				}
 				var v AuthMethodTerminalInline
@@ -1446,10 +1446,10 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "text":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock text variant requires type")
 				}
-				if _, ok := m["text"]; !ok {
+				if rv, ok := m["text"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock text variant requires text")
 				}
 				var v ContentBlockText
@@ -1459,13 +1459,13 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 				u.Text = &v
 				return nil
 			case "image":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock image variant requires type")
 				}
-				if _, ok := m["data"]; !ok {
+				if rv, ok := m["data"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock image variant requires data")
 				}
-				if _, ok := m["mimeType"]; !ok {
+				if rv, ok := m["mimeType"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock image variant requires mimeType")
 				}
 				var v ContentBlockImage
@@ -1475,13 +1475,13 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 				u.Image = &v
 				return nil
 			case "audio":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock audio variant requires type")
 				}
-				if _, ok := m["data"]; !ok {
+				if rv, ok := m["data"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock audio variant requires data")
 				}
-				if _, ok := m["mimeType"]; !ok {
+				if rv, ok := m["mimeType"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock audio variant requires mimeType")
 				}
 				var v ContentBlockAudio
@@ -1491,13 +1491,13 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 				u.Audio = &v
 				return nil
 			case "resource_link":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock resource_link variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock resource_link variant requires name")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock resource_link variant requires uri")
 				}
 				var v ContentBlockResourceLink
@@ -1507,10 +1507,10 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 				u.ResourceLink = &v
 				return nil
 			case "resource":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock resource variant requires type")
 				}
-				if _, ok := m["resource"]; !ok {
+				if rv, ok := m["resource"]; !ok || string(rv) == "null" {
 					return errors.New("ContentBlock resource variant requires resource")
 				}
 				var v ContentBlockResource
@@ -1965,11 +1965,14 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "form":
-				if _, ok := m["mode"]; !ok {
+				if rv, ok := m["mode"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationRequest form variant requires mode")
 				}
-				if _, ok := m["requestedSchema"]; !ok {
+				if rv, ok := m["requestedSchema"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationRequest form variant requires requestedSchema")
+				}
+				if rv, ok := m["message"]; !ok || string(rv) == "null" {
+					return errors.New("CreateElicitationRequest form variant requires message")
 				}
 				var v CreateElicitationForm
 				if json.Unmarshal(b, &v) != nil {
@@ -1978,14 +1981,17 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				u.Form = &v
 				return nil
 			case "url":
-				if _, ok := m["mode"]; !ok {
+				if rv, ok := m["mode"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationRequest url variant requires mode")
 				}
-				if _, ok := m["elicitationId"]; !ok {
+				if rv, ok := m["elicitationId"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationRequest url variant requires elicitationId")
 				}
-				if _, ok := m["url"]; !ok {
+				if rv, ok := m["url"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationRequest url variant requires url")
+				}
+				if rv, ok := m["message"]; !ok || string(rv) == "null" {
+					return errors.New("CreateElicitationRequest url variant requires message")
 				}
 				var v CreateElicitationUrl
 				if json.Unmarshal(b, &v) != nil {
@@ -1996,6 +2002,9 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 			default:
 				if disc != "" {
 					match := true
+					if _, ok := m["message"]; !ok {
+						match = false
+					}
 					if match {
 						var v CreateElicitationOther
 						if json.Unmarshal(b, &v) != nil {
@@ -2014,6 +2023,9 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				match = false
 			}
 			if _, ok := m["requestedSchema"]; !ok {
+				match = false
+			}
+			if _, ok := m["message"]; !ok {
 				match = false
 			}
 			if match {
@@ -2036,6 +2048,9 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 			if _, ok := m["url"]; !ok {
 				match = false
 			}
+			if _, ok := m["message"]; !ok {
+				match = false
+			}
 			if match {
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
@@ -2048,6 +2063,9 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 			var v CreateElicitationOther
 			var match bool = true
 			if _, ok := m["mode"]; !ok {
+				match = false
+			}
+			if _, ok := m["message"]; !ok {
 				match = false
 			}
 			if match {
@@ -2289,7 +2307,7 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "accept":
-				if _, ok := m["action"]; !ok {
+				if rv, ok := m["action"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationResponse accept variant requires action")
 				}
 				var v CreateElicitationAccept
@@ -2299,7 +2317,7 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				u.Accept = &v
 				return nil
 			case "decline":
-				if _, ok := m["action"]; !ok {
+				if rv, ok := m["action"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationResponse decline variant requires action")
 				}
 				var v CreateElicitationDecline
@@ -2309,7 +2327,7 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				u.Decline = &v
 				return nil
 			case "cancel":
-				if _, ok := m["action"]; !ok {
+				if rv, ok := m["action"]; !ok || string(rv) == "null" {
 					return errors.New("CreateElicitationResponse cancel variant requires action")
 				}
 				var v CreateElicitationCancel
@@ -2843,6 +2861,9 @@ func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
 			if _, ok := m["sessionId"]; !ok {
 				match = false
 			}
+			if _, ok := m["requestedSchema"]; !ok {
+				match = false
+			}
 			if match {
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
@@ -2855,6 +2876,9 @@ func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
 			var v ElicitationRequestScope
 			var match bool = true
 			if _, ok := m["requestId"]; !ok {
+				match = false
+			}
+			if _, ok := m["requestedSchema"]; !ok {
 				match = false
 			}
 			if match {
@@ -3207,7 +3231,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "string":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema string variant requires type")
 				}
 				var v ElicitationPropertySchemaString
@@ -3217,7 +3241,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				u.String = &v
 				return nil
 			case "number":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema number variant requires type")
 				}
 				var v ElicitationPropertySchemaNumber
@@ -3227,7 +3251,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				u.Number = &v
 				return nil
 			case "integer":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema integer variant requires type")
 				}
 				var v ElicitationPropertySchemaInteger
@@ -3237,7 +3261,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				u.Integer = &v
 				return nil
 			case "boolean":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema boolean variant requires type")
 				}
 				var v ElicitationPropertySchemaBoolean
@@ -3247,10 +3271,10 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				u.Boolean = &v
 				return nil
 			case "array":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema array variant requires type")
 				}
-				if _, ok := m["items"]; !ok {
+				if rv, ok := m["items"]; !ok || string(rv) == "null" {
 					return errors.New("ElicitationPropertySchema array variant requires items")
 				}
 				var v ElicitationPropertySchemaArray
@@ -3664,6 +3688,12 @@ func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
 			if _, ok := m["sessionId"]; !ok {
 				match = false
 			}
+			if _, ok := m["elicitationId"]; !ok {
+				match = false
+			}
+			if _, ok := m["url"]; !ok {
+				match = false
+			}
 			if match {
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
@@ -3676,6 +3706,12 @@ func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
 			var v ElicitationRequestScope
 			var match bool = true
 			if _, ok := m["requestId"]; !ok {
+				match = false
+			}
+			if _, ok := m["elicitationId"]; !ok {
+				match = false
+			}
+			if _, ok := m["url"]; !ok {
 				match = false
 			}
 			if match {
@@ -4834,16 +4870,16 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "http":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer http variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer http variant requires name")
 				}
-				if _, ok := m["url"]; !ok {
+				if rv, ok := m["url"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer http variant requires url")
 				}
-				if _, ok := m["headers"]; !ok {
+				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer http variant requires headers")
 				}
 				var v McpServerHttpInline
@@ -4853,16 +4889,16 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				u.Http = &v
 				return nil
 			case "sse":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer sse variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer sse variant requires name")
 				}
-				if _, ok := m["url"]; !ok {
+				if rv, ok := m["url"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer sse variant requires url")
 				}
-				if _, ok := m["headers"]; !ok {
+				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer sse variant requires headers")
 				}
 				var v McpServerSseInline
@@ -4872,13 +4908,13 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				u.Sse = &v
 				return nil
 			case "acp":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer acp variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer acp variant requires name")
 				}
-				if _, ok := m["serverId"]; !ok {
+				if rv, ok := m["serverId"]; !ok || string(rv) == "null" {
 					return errors.New("McpServer acp variant requires serverId")
 				}
 				var v McpServerAcpInline
@@ -5294,10 +5330,10 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "string":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("MultiSelectItems string variant requires type")
 				}
-				if _, ok := m["enum"]; !ok {
+				if rv, ok := m["enum"]; !ok || string(rv) == "null" {
 					return errors.New("MultiSelectItems string variant requires enum")
 				}
 				var v MultiSelectItemsString
@@ -6069,13 +6105,13 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "items":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent items variant requires type")
 				}
-				if _, ok := m["planId"]; !ok {
+				if rv, ok := m["planId"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent items variant requires planId")
 				}
-				if _, ok := m["entries"]; !ok {
+				if rv, ok := m["entries"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent items variant requires entries")
 				}
 				var v PlanUpdateContentItems
@@ -6085,13 +6121,13 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 				u.Items = &v
 				return nil
 			case "file":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent file variant requires type")
 				}
-				if _, ok := m["planId"]; !ok {
+				if rv, ok := m["planId"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent file variant requires planId")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent file variant requires uri")
 				}
 				var v PlanUpdateContentFile
@@ -6101,13 +6137,13 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 				u.File = &v
 				return nil
 			case "markdown":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent markdown variant requires type")
 				}
-				if _, ok := m["planId"]; !ok {
+				if rv, ok := m["planId"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent markdown variant requires planId")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("PlanUpdateContent markdown variant requires content")
 				}
 				var v PlanUpdateContentMarkdown
@@ -6684,7 +6720,7 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "cancelled":
-				if _, ok := m["outcome"]; !ok {
+				if rv, ok := m["outcome"]; !ok || string(rv) == "null" {
 					return errors.New("RequestPermissionOutcome cancelled variant requires outcome")
 				}
 				var v RequestPermissionOutcomeCancelled
@@ -6694,10 +6730,10 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 				u.Cancelled = &v
 				return nil
 			case "selected":
-				if _, ok := m["outcome"]; !ok {
+				if rv, ok := m["outcome"]; !ok || string(rv) == "null" {
 					return errors.New("RequestPermissionOutcome selected variant requires outcome")
 				}
-				if _, ok := m["optionId"]; !ok {
+				if rv, ok := m["optionId"]; !ok || string(rv) == "null" {
 					return errors.New("RequestPermissionOutcome selected variant requires optionId")
 				}
 				var v RequestPermissionOutcomeSelected
@@ -7112,14 +7148,20 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "select":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("SessionConfigOption select variant requires type")
 				}
-				if _, ok := m["currentValue"]; !ok {
+				if rv, ok := m["currentValue"]; !ok || string(rv) == "null" {
 					return errors.New("SessionConfigOption select variant requires currentValue")
 				}
-				if _, ok := m["options"]; !ok {
+				if rv, ok := m["options"]; !ok || string(rv) == "null" {
 					return errors.New("SessionConfigOption select variant requires options")
+				}
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
+					return errors.New("SessionConfigOption select variant requires id")
+				}
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
+					return errors.New("SessionConfigOption select variant requires name")
 				}
 				var v SessionConfigOptionSelect
 				if json.Unmarshal(b, &v) != nil {
@@ -7128,11 +7170,17 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 				u.Select = &v
 				return nil
 			case "boolean":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("SessionConfigOption boolean variant requires type")
 				}
-				if _, ok := m["currentValue"]; !ok {
+				if rv, ok := m["currentValue"]; !ok || string(rv) == "null" {
 					return errors.New("SessionConfigOption boolean variant requires currentValue")
+				}
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
+					return errors.New("SessionConfigOption boolean variant requires id")
+				}
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
+					return errors.New("SessionConfigOption boolean variant requires name")
 				}
 				var v SessionConfigOptionBoolean
 				if json.Unmarshal(b, &v) != nil {
@@ -7154,6 +7202,12 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 			if _, ok := m["options"]; !ok {
 				match = false
 			}
+			if _, ok := m["id"]; !ok {
+				match = false
+			}
+			if _, ok := m["name"]; !ok {
+				match = false
+			}
 			if match {
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
@@ -7169,6 +7223,12 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 				match = false
 			}
 			if _, ok := m["currentValue"]; !ok {
+				match = false
+			}
+			if _, ok := m["id"]; !ok {
+				match = false
+			}
+			if _, ok := m["name"]; !ok {
 				match = false
 			}
 			if match {
@@ -7977,10 +8037,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "user_message_chunk":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate user_message_chunk variant requires sessionUpdate")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate user_message_chunk variant requires content")
 				}
 				var v SessionUpdateUserMessageChunk
@@ -7990,10 +8050,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.UserMessageChunk = &v
 				return nil
 			case "agent_message_chunk":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate agent_message_chunk variant requires sessionUpdate")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate agent_message_chunk variant requires content")
 				}
 				var v SessionUpdateAgentMessageChunk
@@ -8003,10 +8063,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.AgentMessageChunk = &v
 				return nil
 			case "agent_thought_chunk":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate agent_thought_chunk variant requires sessionUpdate")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate agent_thought_chunk variant requires content")
 				}
 				var v SessionUpdateAgentThoughtChunk
@@ -8016,13 +8076,13 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.AgentThoughtChunk = &v
 				return nil
 			case "tool_call":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate tool_call variant requires sessionUpdate")
 				}
-				if _, ok := m["toolCallId"]; !ok {
+				if rv, ok := m["toolCallId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate tool_call variant requires toolCallId")
 				}
-				if _, ok := m["title"]; !ok {
+				if rv, ok := m["title"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate tool_call variant requires title")
 				}
 				var v SessionUpdateToolCall
@@ -8032,10 +8092,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.ToolCall = &v
 				return nil
 			case "tool_call_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate tool_call_update variant requires sessionUpdate")
 				}
-				if _, ok := m["toolCallId"]; !ok {
+				if rv, ok := m["toolCallId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate tool_call_update variant requires toolCallId")
 				}
 				var v SessionToolCallUpdate
@@ -8045,10 +8105,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.ToolCallUpdate = &v
 				return nil
 			case "plan":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan variant requires sessionUpdate")
 				}
-				if _, ok := m["entries"]; !ok {
+				if rv, ok := m["entries"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan variant requires entries")
 				}
 				var v SessionUpdatePlan
@@ -8058,10 +8118,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.Plan = &v
 				return nil
 			case "plan_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan_update variant requires sessionUpdate")
 				}
-				if _, ok := m["plan"]; !ok {
+				if rv, ok := m["plan"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan_update variant requires plan")
 				}
 				var v SessionPlanUpdate
@@ -8071,10 +8131,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.PlanUpdate = &v
 				return nil
 			case "plan_removed":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan_removed variant requires sessionUpdate")
 				}
-				if _, ok := m["planId"]; !ok {
+				if rv, ok := m["planId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate plan_removed variant requires planId")
 				}
 				var v SessionUpdatePlanRemoved
@@ -8084,10 +8144,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.PlanRemoved = &v
 				return nil
 			case "available_commands_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate available_commands_update variant requires sessionUpdate")
 				}
-				if _, ok := m["availableCommands"]; !ok {
+				if rv, ok := m["availableCommands"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate available_commands_update variant requires availableCommands")
 				}
 				var v SessionAvailableCommandsUpdate
@@ -8097,10 +8157,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.AvailableCommandsUpdate = &v
 				return nil
 			case "current_mode_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate current_mode_update variant requires sessionUpdate")
 				}
-				if _, ok := m["currentModeId"]; !ok {
+				if rv, ok := m["currentModeId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate current_mode_update variant requires currentModeId")
 				}
 				var v SessionCurrentModeUpdate
@@ -8110,10 +8170,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.CurrentModeUpdate = &v
 				return nil
 			case "config_option_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate config_option_update variant requires sessionUpdate")
 				}
-				if _, ok := m["configOptions"]; !ok {
+				if rv, ok := m["configOptions"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate config_option_update variant requires configOptions")
 				}
 				var v SessionConfigOptionUpdate
@@ -8123,7 +8183,7 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.ConfigOptionUpdate = &v
 				return nil
 			case "session_info_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate session_info_update variant requires sessionUpdate")
 				}
 				var v SessionSessionInfoUpdate
@@ -8133,13 +8193,13 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.SessionInfoUpdate = &v
 				return nil
 			case "usage_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate usage_update variant requires sessionUpdate")
 				}
-				if _, ok := m["used"]; !ok {
+				if rv, ok := m["used"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate usage_update variant requires used")
 				}
-				if _, ok := m["size"]; !ok {
+				if rv, ok := m["size"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate usage_update variant requires size")
 				}
 				var v SessionUsageUpdate
@@ -8149,13 +8209,13 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.UsageUpdate = &v
 				return nil
 			case "compaction_update":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_update variant requires sessionUpdate")
 				}
-				if _, ok := m["compactionId"]; !ok {
+				if rv, ok := m["compactionId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_update variant requires compactionId")
 				}
-				if _, ok := m["status"]; !ok {
+				if rv, ok := m["status"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_update variant requires status")
 				}
 				var v SessionCompactionUpdate
@@ -8165,13 +8225,13 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				u.CompactionUpdate = &v
 				return nil
 			case "compaction_summary_chunk":
-				if _, ok := m["sessionUpdate"]; !ok {
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_summary_chunk variant requires sessionUpdate")
 				}
-				if _, ok := m["compactionId"]; !ok {
+				if rv, ok := m["compactionId"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_summary_chunk variant requires compactionId")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("SessionUpdate compaction_summary_chunk variant requires content")
 				}
 				var v SessionUpdateCompactionSummaryChunk
@@ -8903,11 +8963,17 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "boolean":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("SetSessionConfigOptionRequest boolean variant requires type")
 				}
-				if _, ok := m["value"]; !ok {
+				if rv, ok := m["value"]; !ok || string(rv) == "null" {
 					return errors.New("SetSessionConfigOptionRequest boolean variant requires value")
+				}
+				if rv, ok := m["configId"]; !ok || string(rv) == "null" {
+					return errors.New("SetSessionConfigOptionRequest boolean variant requires configId")
+				}
+				if rv, ok := m["sessionId"]; !ok || string(rv) == "null" {
+					return errors.New("SetSessionConfigOptionRequest boolean variant requires sessionId")
 				}
 				var v SetSessionConfigOptionBoolean
 				if json.Unmarshal(b, &v) != nil {
@@ -8919,6 +8985,12 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 				if disc != "" {
 					match := true
 					if _, ok := m["value"]; !ok {
+						match = false
+					}
+					if _, ok := m["configId"]; !ok {
+						match = false
+					}
+					if _, ok := m["sessionId"]; !ok {
 						match = false
 					}
 					if match {
@@ -8941,6 +9013,12 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 			if _, ok := m["value"]; !ok {
 				match = false
 			}
+			if _, ok := m["configId"]; !ok {
+				match = false
+			}
+			if _, ok := m["sessionId"]; !ok {
+				match = false
+			}
 			if match {
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
@@ -8953,6 +9031,12 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 			var v SetSessionConfigOptionValueId
 			var match bool = true
 			if _, ok := m["value"]; !ok {
+				match = false
+			}
+			if _, ok := m["configId"]; !ok {
+				match = false
+			}
+			if _, ok := m["sessionId"]; !ok {
 				match = false
 			}
 			if match {
@@ -9418,10 +9502,10 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "content":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent content variant requires type")
 				}
-				if _, ok := m["content"]; !ok {
+				if rv, ok := m["content"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent content variant requires content")
 				}
 				var v ToolCallContentContent
@@ -9431,13 +9515,13 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 				u.Content = &v
 				return nil
 			case "diff":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent diff variant requires type")
 				}
-				if _, ok := m["path"]; !ok {
+				if rv, ok := m["path"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent diff variant requires path")
 				}
-				if _, ok := m["newText"]; !ok {
+				if rv, ok := m["newText"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent diff variant requires newText")
 				}
 				var v ToolCallContentDiff
@@ -9447,10 +9531,10 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 				u.Diff = &v
 				return nil
 			case "terminal":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent terminal variant requires type")
 				}
-				if _, ok := m["terminalId"]; !ok {
+				if rv, ok := m["terminalId"]; !ok || string(rv) == "null" {
 					return errors.New("ToolCallContent terminal variant requires terminalId")
 				}
 				var v ToolCallContentTerminal
@@ -10249,16 +10333,16 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "http":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer http variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer http variant requires name")
 				}
-				if _, ok := m["url"]; !ok {
+				if rv, ok := m["url"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer http variant requires url")
 				}
-				if _, ok := m["headers"]; !ok {
+				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer http variant requires headers")
 				}
 				var v UnstableMcpServerHttp
@@ -10268,16 +10352,16 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				u.Http = &v
 				return nil
 			case "sse":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer sse variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer sse variant requires name")
 				}
-				if _, ok := m["url"]; !ok {
+				if rv, ok := m["url"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer sse variant requires url")
 				}
-				if _, ok := m["headers"]; !ok {
+				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer sse variant requires headers")
 				}
 				var v UnstableMcpServerSse
@@ -10287,13 +10371,13 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				u.Sse = &v
 				return nil
 			case "acp":
-				if _, ok := m["type"]; !ok {
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer acp variant requires type")
 				}
-				if _, ok := m["name"]; !ok {
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer acp variant requires name")
 				}
-				if _, ok := m["serverId"]; !ok {
+				if rv, ok := m["serverId"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer acp variant requires serverId")
 				}
 				var v UnstableMcpServerAcpInline
@@ -10969,16 +11053,16 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 			}
 			switch disc {
 			case "edit":
-				if _, ok := m["kind"]; !ok {
+				if rv, ok := m["kind"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion edit variant requires kind")
 				}
-				if _, ok := m["id"]; !ok {
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion edit variant requires id")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion edit variant requires uri")
 				}
-				if _, ok := m["edits"]; !ok {
+				if rv, ok := m["edits"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion edit variant requires edits")
 				}
 				var v UnstableNesSuggestionEdit
@@ -10988,16 +11072,16 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 				u.Edit = &v
 				return nil
 			case "jump":
-				if _, ok := m["kind"]; !ok {
+				if rv, ok := m["kind"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion jump variant requires kind")
 				}
-				if _, ok := m["id"]; !ok {
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion jump variant requires id")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion jump variant requires uri")
 				}
-				if _, ok := m["position"]; !ok {
+				if rv, ok := m["position"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion jump variant requires position")
 				}
 				var v UnstableNesSuggestionJump
@@ -11007,19 +11091,19 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 				u.Jump = &v
 				return nil
 			case "rename":
-				if _, ok := m["kind"]; !ok {
+				if rv, ok := m["kind"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion rename variant requires kind")
 				}
-				if _, ok := m["id"]; !ok {
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion rename variant requires id")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion rename variant requires uri")
 				}
-				if _, ok := m["position"]; !ok {
+				if rv, ok := m["position"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion rename variant requires position")
 				}
-				if _, ok := m["newName"]; !ok {
+				if rv, ok := m["newName"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion rename variant requires newName")
 				}
 				var v UnstableNesSuggestionRename
@@ -11029,19 +11113,19 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 				u.Rename = &v
 				return nil
 			case "searchAndReplace":
-				if _, ok := m["kind"]; !ok {
+				if rv, ok := m["kind"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion searchAndReplace variant requires kind")
 				}
-				if _, ok := m["id"]; !ok {
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion searchAndReplace variant requires id")
 				}
-				if _, ok := m["uri"]; !ok {
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion searchAndReplace variant requires uri")
 				}
-				if _, ok := m["search"]; !ok {
+				if rv, ok := m["search"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion searchAndReplace variant requires search")
 				}
-				if _, ok := m["replace"]; !ok {
+				if rv, ok := m["replace"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableNesSuggestion searchAndReplace variant requires replace")
 				}
 				var v UnstableNesSuggestionSearchAndReplace
