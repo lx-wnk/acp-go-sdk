@@ -1328,12 +1328,21 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					h.Switch(Id("disc")).BlockFunc(func(sw *Group) {
 						for _, vi := range variants {
 							if vi.discValue != "" {
-								sw.Case(Lit(vi.discValue)).Block(
-									Var().Id("v").Id(vi.typeName),
-									If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
-									Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v"),
-									Return(Nil()),
-								)
+								sw.Case(Lit(vi.discValue)).BlockFunc(func(c *Group) {
+									// The discriminator names this arm, so a missing required key is a
+									// malformed payload rather than a reason to try another arm. Check
+									// against the raw key set: once decoded into the struct, an absent
+									// required field and a zero value are indistinguishable.
+									for _, rk := range vi.required {
+										c.If(List(Id("_"), Id("ok")).Op(":=").Id("m").Index(Lit(rk)), Op("!").Id("ok")).Block(
+											Return(Qual("errors", "New").Call(Lit(name + " " + vi.discValue + " variant requires " + rk))),
+										)
+									}
+									c.Var().Id("v").Id(vi.typeName)
+									c.If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload"))))
+									c.Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v")
+									c.Return(Nil())
+								})
 							}
 						}
 						// A discriminator that is present but unrecognised means a variant this
