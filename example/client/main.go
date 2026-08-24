@@ -19,9 +19,8 @@ type exampleClient struct{}
 
 var _ acp.Client = (*exampleClient)(nil)
 
-// No form or browser flow here to render an elicitation with. Report the method
-// as unavailable rather than declining: a decline claims the user refused, and
-// nobody was asked.
+// No elicitation UI here — a decline would claim the user refused when nobody
+// was asked.
 func (e *exampleClient) CreateElicitation(ctx context.Context, params acp.CreateElicitationRequest) (acp.CreateElicitationResponse, error) {
 	fmt.Println("\n📝 Elicitation requested — this example cannot answer one.")
 	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)

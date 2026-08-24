@@ -12,8 +12,7 @@ type geminiClient struct{}
 
 var _ Client = (*geminiClient)(nil)
 
-// CreateElicitation reports the method as unavailable, for the same reason as
-// clientExample: no elicitation UI, so there is no user answer to report.
+// No elicitation UI in this example, so there is no user answer to report.
 func (geminiClient) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
 	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }

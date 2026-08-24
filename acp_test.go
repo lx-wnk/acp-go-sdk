@@ -71,11 +71,10 @@ func (c clientFuncs) CreateElicitation(ctx context.Context, p CreateElicitationR
 	if c.CreateElicitationFunc != nil {
 		return c.CreateElicitationFunc(ctx, p)
 	}
-	// Report the method as unavailable, matching the shipped examples: accepting
-	// or declining would both let a handler under test believe a user answered.
-	// The zero-value response is only safe here because the error is non-nil —
-	// with no arm set the union marshals to empty bytes and json.Marshal
-	// rejects it.
+	// Accepting or declining would let a handler under test believe a user
+	// answered. The zero-value response is safe only because the error is
+	// non-nil: with no arm set the union marshals to empty bytes, which
+	// json.Marshal rejects.
 	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 

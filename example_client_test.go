@@ -16,9 +16,7 @@ type clientExample struct{}
 
 var _ Client = (*clientExample)(nil)
 
-// CreateElicitation reports the method as unavailable: this example has no
-// elicitation UI, and a decline would claim the user refused when nobody was
-// asked.
+// No elicitation UI in this example, so there is no user answer to report.
 func (clientExample) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
 	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
