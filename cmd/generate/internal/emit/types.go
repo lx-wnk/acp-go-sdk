@@ -1438,6 +1438,17 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 	})
 	// Marshal
 	f.Func().Params(Id("u").Id(name)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).BlockFunc(func(g *Group) {
+		// The Go type can hold several arms at once; JSON can express only one. Validate
+		// permits it for anyOf, which is faithful to the schema, so refusing here is the
+		// only place the ambiguity can be reported. Silently encoding the first arm ships
+		// a truncated message that the caller has already checked and believes is valid.
+		g.Var().Id("_set").Int()
+		for _, vi := range variants {
+			g.If(Id("u").Dot(vi.fieldName).Op("!=").Nil()).Block(Id("_set").Op("++"))
+		}
+		g.If(Id("_set").Op(">").Lit(1)).Block(
+			Return(Nil(), Qual("errors", "New").Call(Lit(name+" has multiple variants set"))),
+		)
 		for _, vi := range variants {
 			g.If(Id("u").Dot(vi.fieldName).Op("!=").Nil()).BlockFunc(func(gg *Group) {
 				// Null-only variant encodes to JSON null

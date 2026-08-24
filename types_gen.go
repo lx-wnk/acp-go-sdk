@@ -249,6 +249,16 @@ func (u *AgentResponse) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u AgentResponse) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Result != nil {
+		_set++
+	}
+	if u.Error != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("AgentResponse has multiple variants set")
+	}
 	if u.Result != nil {
 		_b, _e := json.Marshal(*u.Result)
 		if _e != nil {
@@ -501,6 +511,16 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u AuthMethod) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Terminal != nil {
+		_set++
+	}
+	if u.Agent != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("AuthMethod has multiple variants set")
+	}
 	if u.Terminal != nil {
 		_b, _e := json.Marshal(*u.Terminal)
 		if _e != nil {
@@ -676,6 +696,13 @@ func (u *AvailableCommandInput) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u AvailableCommandInput) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Unstructured != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("AvailableCommandInput has multiple variants set")
+	}
 	if u.Unstructured != nil {
 		_b, _e := json.Marshal(*u.Unstructured)
 		if _e != nil {
@@ -1036,6 +1063,16 @@ func (u *ClientResponse) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ClientResponse) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Result != nil {
+		_set++
+	}
+	if u.Error != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ClientResponse has multiple variants set")
+	}
 	if u.Result != nil {
 		_b, _e := json.Marshal(*u.Result)
 		if _e != nil {
@@ -1573,6 +1610,25 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ContentBlock) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Text != nil {
+		_set++
+	}
+	if u.Image != nil {
+		_set++
+	}
+	if u.Audio != nil {
+		_set++
+	}
+	if u.ResourceLink != nil {
+		_set++
+	}
+	if u.Resource != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ContentBlock has multiple variants set")
+	}
 	if u.Text != nil {
 		_b, _e := json.Marshal(*u.Text)
 		if _e != nil {
@@ -1968,6 +2024,19 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u CreateElicitationRequest) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Form != nil {
+		_set++
+	}
+	if u.Url != nil {
+		_set++
+	}
+	if u.Other != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("CreateElicitationRequest has multiple variants set")
+	}
 	if u.Form != nil {
 		_b, _e := json.Marshal(*u.Form)
 		if _e != nil {
@@ -2283,6 +2352,22 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u CreateElicitationResponse) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Accept != nil {
+		_set++
+	}
+	if u.Decline != nil {
+		_set++
+	}
+	if u.Cancel != nil {
+		_set++
+	}
+	if u.Other != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("CreateElicitationResponse has multiple variants set")
+	}
 	if u.Accept != nil {
 		_b, _e := json.Marshal(*u.Accept)
 		if _e != nil {
@@ -2574,6 +2659,25 @@ func (u *ElicitationContentValue) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.String != nil {
+		_set++
+	}
+	if u.Integer != nil {
+		_set++
+	}
+	if u.Number != nil {
+		_set++
+	}
+	if u.Boolean != nil {
+		_set++
+	}
+	if u.StringArray != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ElicitationContentValue has multiple variants set")
+	}
 	if u.String != nil {
 		_b, _e := json.Marshal(*u.String)
 		if _e != nil {
@@ -2711,6 +2815,16 @@ func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ElicitationFormMode) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Session != nil {
+		_set++
+	}
+	if u.Request != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ElicitationFormMode has multiple variants set")
+	}
 	if u.Session != nil {
 		_b, _e := json.Marshal(*u.Session)
 		if _e != nil {
@@ -3206,6 +3320,28 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ElicitationPropertySchema) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.String != nil {
+		_set++
+	}
+	if u.Number != nil {
+		_set++
+	}
+	if u.Integer != nil {
+		_set++
+	}
+	if u.Boolean != nil {
+		_set++
+	}
+	if u.Array != nil {
+		_set++
+	}
+	if u.Other != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ElicitationPropertySchema has multiple variants set")
+	}
 	if u.String != nil {
 		_b, _e := json.Marshal(*u.String)
 		if _e != nil {
@@ -3482,6 +3618,16 @@ func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ElicitationUrlMode) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Session != nil {
+		_set++
+	}
+	if u.Request != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ElicitationUrlMode has multiple variants set")
+	}
 	if u.Session != nil {
 		_b, _e := json.Marshal(*u.Session)
 		if _e != nil {
@@ -3602,6 +3748,16 @@ func (u *EmbeddedResourceResource) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u EmbeddedResourceResource) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.TextResourceContents != nil {
+		_set++
+	}
+	if u.BlobResourceContents != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("EmbeddedResourceResource has multiple variants set")
+	}
 	if u.TextResourceContents != nil {
 		_b, _e := json.Marshal(*u.TextResourceContents)
 		if _e != nil {
@@ -3825,6 +3981,37 @@ func (u *ErrorCode) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ErrorCode) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.ParseError != nil {
+		_set++
+	}
+	if u.InvalidRequest != nil {
+		_set++
+	}
+	if u.MethodNotFound != nil {
+		_set++
+	}
+	if u.InvalidParams != nil {
+		_set++
+	}
+	if u.InternalError != nil {
+		_set++
+	}
+	if u.RequestCancelled != nil {
+		_set++
+	}
+	if u.AuthenticationRequired != nil {
+		_set++
+	}
+	if u.ResourceNotFound != nil {
+		_set++
+	}
+	if u.Other != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ErrorCode has multiple variants set")
+	}
 	if u.ParseError != nil {
 		_b, _e := json.Marshal(*u.ParseError)
 		if _e != nil {
@@ -4728,6 +4915,22 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u McpServer) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Http != nil {
+		_set++
+	}
+	if u.Sse != nil {
+		_set++
+	}
+	if u.Acp != nil {
+		_set++
+	}
+	if u.Stdio != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("McpServer has multiple variants set")
+	}
 	if u.Http != nil {
 		_b, _e := json.Marshal(*u.Http)
 		if _e != nil {
@@ -5050,6 +5253,19 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u MultiSelectItems) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.String != nil {
+		_set++
+	}
+	if u.Other != nil {
+		_set++
+	}
+	if u.Titled != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("MultiSelectItems has multiple variants set")
+	}
 	if u.String != nil {
 		_b, _e := json.Marshal(*u.String)
 		if _e != nil {
@@ -5835,6 +6051,19 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u PlanUpdateContent) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Items != nil {
+		_set++
+	}
+	if u.File != nil {
+		_set++
+	}
+	if u.Markdown != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("PlanUpdateContent has multiple variants set")
+	}
 	if u.Items != nil {
 		_b, _e := json.Marshal(*u.Items)
 		if _e != nil {
@@ -6201,6 +6430,19 @@ func (u *RequestId) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u RequestId) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Null != nil {
+		_set++
+	}
+	if u.Number != nil {
+		_set++
+	}
+	if u.Str != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("RequestId has multiple variants set")
+	}
 	if u.Null != nil {
 		return json.Marshal(nil)
 	}
@@ -6354,6 +6596,16 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u RequestPermissionOutcome) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Cancelled != nil {
+		_set++
+	}
+	if u.Selected != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("RequestPermissionOutcome has multiple variants set")
+	}
 	if u.Cancelled != nil {
 		_b, _e := json.Marshal(*u.Cancelled)
 		if _e != nil {
@@ -6769,6 +7021,16 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u SessionConfigOption) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Select != nil {
+		_set++
+	}
+	if u.Boolean != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("SessionConfigOption has multiple variants set")
+	}
 	if u.Select != nil {
 		_b, _e := json.Marshal(*u.Select)
 		if _e != nil {
@@ -6968,6 +7230,16 @@ func (u *SessionConfigSelectOptions) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u SessionConfigSelectOptions) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Ungrouped != nil {
+		_set++
+	}
+	if u.Grouped != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("SessionConfigSelectOptions has multiple variants set")
+	}
 	if u.Ungrouped != nil {
 		_b, _e := json.Marshal(*u.Ungrouped)
 		if _e != nil {
@@ -8008,6 +8280,55 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u SessionUpdate) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.UserMessageChunk != nil {
+		_set++
+	}
+	if u.AgentMessageChunk != nil {
+		_set++
+	}
+	if u.AgentThoughtChunk != nil {
+		_set++
+	}
+	if u.ToolCall != nil {
+		_set++
+	}
+	if u.ToolCallUpdate != nil {
+		_set++
+	}
+	if u.Plan != nil {
+		_set++
+	}
+	if u.PlanUpdate != nil {
+		_set++
+	}
+	if u.PlanRemoved != nil {
+		_set++
+	}
+	if u.AvailableCommandsUpdate != nil {
+		_set++
+	}
+	if u.CurrentModeUpdate != nil {
+		_set++
+	}
+	if u.ConfigOptionUpdate != nil {
+		_set++
+	}
+	if u.SessionInfoUpdate != nil {
+		_set++
+	}
+	if u.UsageUpdate != nil {
+		_set++
+	}
+	if u.CompactionUpdate != nil {
+		_set++
+	}
+	if u.CompactionSummaryChunk != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("SessionUpdate has multiple variants set")
+	}
 	if u.UserMessageChunk != nil {
 		_b, _e := json.Marshal(*u.UserMessageChunk)
 		if _e != nil {
@@ -8379,6 +8700,16 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u SetSessionConfigOptionRequest) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Boolean != nil {
+		_set++
+	}
+	if u.ValueId != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("SetSessionConfigOptionRequest has multiple variants set")
+	}
 	if u.Boolean != nil {
 		_b, _e := json.Marshal(*u.Boolean)
 		if _e != nil {
@@ -8907,6 +9238,19 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u ToolCallContent) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Content != nil {
+		_set++
+	}
+	if u.Diff != nil {
+		_set++
+	}
+	if u.Terminal != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("ToolCallContent has multiple variants set")
+	}
 	if u.Content != nil {
 		_b, _e := json.Marshal(*u.Content)
 		if _e != nil {
@@ -9770,6 +10114,22 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u UnstableMcpServer) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Http != nil {
+		_set++
+	}
+	if u.Sse != nil {
+		_set++
+	}
+	if u.Acp != nil {
+		_set++
+	}
+	if u.Stdio != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableMcpServer has multiple variants set")
+	}
 	if u.Http != nil {
 		_b, _e := json.Marshal(*u.Http)
 		if _e != nil {
@@ -10433,6 +10793,22 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u UnstableNesSuggestion) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Edit != nil {
+		_set++
+	}
+	if u.Jump != nil {
+		_set++
+	}
+	if u.Rename != nil {
+		_set++
+	}
+	if u.SearchAndReplace != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableNesSuggestion has multiple variants set")
+	}
 	if u.Edit != nil {
 		_b, _e := json.Marshal(*u.Edit)
 		if _e != nil {
