@@ -94,3 +94,41 @@ func TestUnionMarshal_NoVariantSetNamesTheType(t *testing.T) {
 		t.Fatalf("error does not name the type: %v", err)
 	}
 }
+
+// The catch-all arm is a variant with its own required keys, not a bucket. McpServer's
+// catch-all is the stdio arm, whose Command and Args a host may hand to exec, so an
+// unrecognised transport must not claim it on the strength of the discriminator alone.
+//
+// This check bounds the payload, it does not reject it: a caller that supplies every
+// stdio required key still reaches the stdio arm under a foreign type. Closing that
+// needs a dedicated extension arm, which the schema does not define for McpServer.
+func TestMcpServer_UnknownTransportNeedsTheCatchAllRequiredKeys(t *testing.T) {
+	var partial McpServer
+	if err := json.Unmarshal([]byte(`{"type":"docker","name":"x","command":"/bin/sh"}`), &partial); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if partial.Stdio != nil {
+		t.Fatalf("payload missing stdio required keys reached the stdio arm: %+v", partial.Stdio)
+	}
+
+	var complete McpServer
+	if err := json.Unmarshal([]byte(`{"type":"docker","name":"x","command":"/bin/sh","args":[],"env":[]}`), &complete); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if complete.Stdio == nil {
+		t.Fatal("a payload satisfying every stdio required key still reaches the stdio arm")
+	}
+}
+
+// AuthMethod's catch-all is the agent arm, documented as the default when no type is
+// present. An unrecognised type that carries neither of its required keys must not be
+// reinterpreted as agent-handled authentication.
+func TestAuthMethod_UnknownTypeNeedsTheCatchAllRequiredKeys(t *testing.T) {
+	var m AuthMethod
+	if err := json.Unmarshal([]byte(`{"type":"webauthn_future"}`), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.Agent != nil {
+		t.Fatalf("an unrecognised auth method decoded as agent-handled: %+v", m.Agent)
+	}
+}

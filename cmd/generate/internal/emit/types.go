@@ -1223,12 +1223,25 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 						// so key matching is the right place to resolve it.
 						if catchAll != nil {
 							sw.Default().Block(
-								If(Id("disc").Op("!=").Lit("")).Block(
-									Var().Id("v").Id(catchAll.typeName),
-									If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
-									Id("u").Dot(catchAll.fieldName).Op("=").Op("&").Id("v"),
-									Return(Nil()),
-								),
+								If(Id("disc").Op("!=").Lit("")).BlockFunc(func(c *Group) {
+									// The catch-all arm is a real variant with its own required keys, not a
+									// bucket. Routing an unrecognised discriminator there without checking
+									// them lets a payload that satisfies nothing claim an arm whose fields
+									// a caller may act on.
+									c.Id("match").Op(":=").Lit(true)
+									for _, rk := range catchAll.required {
+										if rk == discKey {
+											continue
+										}
+										c.If(List(Id("_"), Id("ok")).Op(":=").Id("m").Index(Lit(rk)), Op("!").Id("ok")).Block(Id("match").Op("=").Lit(false))
+									}
+									c.If(Id("match")).Block(
+										Var().Id("v").Id(catchAll.typeName),
+										If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
+										Id("u").Dot(catchAll.fieldName).Op("=").Op("&").Id("v"),
+										Return(Nil()),
+									)
+								}),
 							)
 						}
 					})

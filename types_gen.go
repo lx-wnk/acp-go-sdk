@@ -424,12 +424,21 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v AuthMethodAgent
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if _, ok := m["id"]; !ok {
+						match = false
 					}
-					u.Agent = &v
-					return nil
+					if _, ok := m["name"]; !ok {
+						match = false
+					}
+					if match {
+						var v AuthMethodAgent
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Agent = &v
+						return nil
+					}
 				}
 			}
 		}
@@ -1840,12 +1849,15 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v CreateElicitationOther
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if match {
+						var v CreateElicitationOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
 					}
-					u.Other = &v
-					return nil
 				}
 			}
 		}
@@ -2103,12 +2115,15 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v CreateElicitationResponseOther
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if match {
+						var v CreateElicitationResponseOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
 					}
-					u.Other = &v
-					return nil
 				}
 			}
 		}
@@ -2941,12 +2956,15 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v ElicitationPropertySchemaOther
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if match {
+						var v ElicitationPropertySchemaOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
 					}
-					u.Other = &v
-					return nil
 				}
 			}
 		}
@@ -4460,12 +4478,27 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v McpServerStdio
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if _, ok := m["name"]; !ok {
+						match = false
 					}
-					u.Stdio = &v
-					return nil
+					if _, ok := m["command"]; !ok {
+						match = false
+					}
+					if _, ok := m["args"]; !ok {
+						match = false
+					}
+					if _, ok := m["env"]; !ok {
+						match = false
+					}
+					if match {
+						var v McpServerStdio
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Stdio = &v
+						return nil
+					}
 				}
 			}
 		}
@@ -8140,12 +8173,18 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v SetSessionConfigOptionValueId
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if _, ok := m["value"]; !ok {
+						match = false
 					}
-					u.ValueId = &v
-					return nil
+					if match {
+						var v SetSessionConfigOptionValueId
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.ValueId = &v
+						return nil
+					}
 				}
 			}
 		}
@@ -9444,12 +9483,27 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				return nil
 			default:
 				if disc != "" {
-					var v McpServerStdio
-					if json.Unmarshal(b, &v) != nil {
-						return errors.New("invalid variant payload")
+					match := true
+					if _, ok := m["name"]; !ok {
+						match = false
 					}
-					u.Stdio = &v
-					return nil
+					if _, ok := m["command"]; !ok {
+						match = false
+					}
+					if _, ok := m["args"]; !ok {
+						match = false
+					}
+					if _, ok := m["env"]; !ok {
+						match = false
+					}
+					if match {
+						var v McpServerStdio
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Stdio = &v
+						return nil
+					}
 				}
 			}
 		}
