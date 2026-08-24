@@ -73,8 +73,7 @@ func (c clientFuncs) CreateElicitation(ctx context.Context, p CreateElicitationR
 	}
 	// Accepting or declining would let a handler under test believe a user
 	// answered. The zero-value response is safe only because the error is
-	// non-nil: with no arm set the union marshals to empty bytes, which
-	// json.Marshal rejects.
+	// non-nil: handleInbound never marshals a result when the handler errors.
 	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 
