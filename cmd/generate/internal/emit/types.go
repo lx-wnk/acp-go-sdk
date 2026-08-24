@@ -814,8 +814,11 @@ func jenTypeFor(d *load.Definition) Code {
 	case "array":
 		return Index().Add(jenTypeFor(d.Items))
 	case "object":
-		if len(d.Properties) == 0 {
-			return Map(String()).Any()
+		// additionalProperties names the value type of an open-ended object. The
+		// boolean form (used by every _meta field) decodes to a zero Definition and
+		// leaves the map untyped.
+		if ap := d.AdditionalProperties; ap != nil && namesAType(ap) {
+			return Map(String()).Add(jenTypeFor(ap))
 		}
 		return Map(String()).Any()
 	default:
@@ -824,6 +827,16 @@ func jenTypeFor(d *load.Definition) Code {
 		}
 		return Any()
 	}
+}
+
+// namesAType reports whether a schema carries enough structure for jenTypeFor to
+// produce something better than any. `additionalProperties: true` does not.
+func namesAType(d *load.Definition) bool {
+	if d == nil {
+		return false
+	}
+	return d.Ref != "" || d.Type != nil || len(d.Enum) > 0 ||
+		len(d.AnyOf) > 0 || len(d.OneOf) > 0 || len(d.AllOf) > 0 || len(d.Properties) > 0
 }
 
 // jenTypeForOptional maps unions that include null to pointer types where applicable.

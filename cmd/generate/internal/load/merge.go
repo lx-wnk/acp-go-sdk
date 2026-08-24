@@ -374,6 +374,9 @@ func visitDefinition(root *Definition, fn func(*Definition)) {
 		if d.Items != nil {
 			walk(d.Items)
 		}
+		if d.AdditionalProperties != nil {
+			walk(d.AdditionalProperties)
+		}
 		for _, v := range d.Properties {
 			walk(v)
 		}
@@ -416,6 +419,7 @@ func deepCopyDefinition(d *Definition) *Definition {
 		}
 	}
 	copyDef.Items = deepCopyDefinition(d.Items)
+	copyDef.AdditionalProperties = deepCopyDefinition(d.AdditionalProperties)
 	if d.AnyOf != nil {
 		copyDef.AnyOf = make([]*Definition, len(d.AnyOf))
 		for i, v := range d.AnyOf {

@@ -53,6 +53,10 @@ type Definition struct {
 	// Discriminator specifies which property name distinguishes union variants.
 	// Part of JSON Schema's discriminator object support.
 	Discriminator *Discriminator `json:"discriminator,omitempty"`
+	// AdditionalProperties types the values of an open-ended object. A $ref or an
+	// inline schema names a Go element type; the boolean form decodes to a zero
+	// Definition (see UnmarshalJSON) and leaves the map untyped.
+	AdditionalProperties *Definition `json:"additionalProperties"`
 
 	// boolSchema records whether this definition was a boolean schema (true/false).
 	// JSON Schema allows boolean schemas, where true matches anything and false matches nothing.
