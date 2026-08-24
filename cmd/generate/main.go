@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/coder/acp-go-sdk/cmd/generate/internal/apidiff"
 	"github.com/coder/acp-go-sdk/cmd/generate/internal/emit"
 	"github.com/coder/acp-go-sdk/cmd/generate/internal/load"
 )
@@ -61,6 +63,14 @@ func main() {
 		schema = mergedSchema
 	}
 
+	// The generated files still on disk are the previous release's public API. Read them
+	// before they are overwritten so the bump can report what it removed.
+	generated := []string{"types_gen.go", "agent_gen.go", "client_gen.go", "constants_gen.go", "helpers_gen.go"}
+	before, err := apidiff.Snapshot(outDir, generated)
+	if err != nil {
+		panic(err)
+	}
+
 	if err := emit.WriteConstantsJen(outDir, meta); err != nil {
 		panic(err)
 	}
@@ -76,6 +86,24 @@ func main() {
 	if err := emit.WriteHelpersJen(outDir, schema, meta); err != nil {
 		panic(err)
 	}
+
+	after, err := apidiff.Snapshot(outDir, generated)
+	if err != nil {
+		panic(err)
+	}
+	if err := apidiff.Write(outDir, readSchemaVersion(schemaDir), apidiff.Compare(before, after)); err != nil {
+		panic(err)
+	}
+}
+
+// readSchemaVersion returns the upstream schema tag this run generated from. An absent
+// file only costs the run its changelog entry.
+func readSchemaVersion(schemaDir string) string {
+	b, err := os.ReadFile(filepath.Join(schemaDir, "version"))
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(b))
 }
 
 func findRepoRoot() string {
