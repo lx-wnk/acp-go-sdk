@@ -112,6 +112,10 @@ if err != nil {
 // Show target.Host to the user before navigating.
 ```
 
+`SafeURL` also returns a host with non-ASCII labels in its ASCII (Punycode) form, so
+what you display cannot be confused with a different name: a URL whose host reads as
+`apple.com` but begins with a Cyrillic `а` comes back as `xn--pple-43d.com`.
+
 A successful parse is not permission to open the URL. Show the origin to the user
 first, and do not prefetch the URL to build a preview.
 
