@@ -102,6 +102,9 @@ The URL arm is chosen by the agent, so treat it as untrusted input. `SafeURL` pa
 it and rejects every scheme except `https` and `http`:
 
 ```go
+if params.Url == nil {
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
+}
 target, err := params.Url.SafeURL()
 if err != nil {
 	return acp.CreateElicitationResponse{}, err
