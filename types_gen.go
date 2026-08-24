@@ -422,6 +422,15 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 				}
 				u.Terminal = &v
 				return nil
+			default:
+				if disc != "" {
+					var v AuthMethodAgent
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Agent = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -1829,6 +1838,15 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				}
 				u.Url = &v
 				return nil
+			default:
+				if disc != "" {
+					var v CreateElicitationOther
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Other = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -2083,6 +2101,15 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				}
 				u.Cancel = &v
 				return nil
+			default:
+				if disc != "" {
+					var v CreateElicitationResponseOther
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Other = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -2912,6 +2939,15 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				}
 				u.Array = &v
 				return nil
+			default:
+				if disc != "" {
+					var v ElicitationPropertySchemaOther
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Other = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -4422,6 +4458,15 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				}
 				u.Acp = &v
 				return nil
+			default:
+				if disc != "" {
+					var v McpServerStdio
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Stdio = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -8093,6 +8138,15 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 				}
 				u.Boolean = &v
 				return nil
+			default:
+				if disc != "" {
+					var v SetSessionConfigOptionValueId
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.ValueId = &v
+					return nil
+				}
 			}
 		}
 		{
@@ -9388,6 +9442,15 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				}
 				u.Acp = &v
 				return nil
+			default:
+				if disc != "" {
+					var v McpServerStdio
+					if json.Unmarshal(b, &v) != nil {
+						return errors.New("invalid variant payload")
+					}
+					u.Stdio = &v
+					return nil
+				}
 			}
 		}
 		{

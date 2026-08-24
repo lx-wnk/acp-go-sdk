@@ -1158,6 +1158,23 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 	}
 	f.Type().Id(name).Struct(st...)
 	f.Line()
+	// A discriminated union may declare one catch-all variant: an object arm with no
+	// const discriminator, meaning "none of the above". Identify it so the switch can
+	// route unrecognised discriminator values there. More than one is ambiguous, so
+	// leave dispatch alone in that case.
+	var catchAll *variantInfo
+	if discKey != "" {
+		for i := range variants {
+			if variants[i].discValue != "" || !variants[i].isObject {
+				continue
+			}
+			if catchAll != nil {
+				catchAll = nil
+				break
+			}
+			catchAll = &variants[i]
+		}
+	}
 	// Unmarshal
 	f.Func().Params(Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(Id("b").Index().Byte()).Error().BlockFunc(func(g *Group) {
 		// Handle literal null if a null-only variant exists
@@ -1196,6 +1213,23 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 									Return(Nil()),
 								)
 							}
+						}
+						// A discriminator that is present but unrecognised means a variant this
+						// build does not know: a future protocol version or a vendor extension.
+						// Route it to the catch-all arm. Without this the key-match fallback
+						// below claims it for whichever arm is declared first and whose required
+						// keys happen to be satisfied, silently reinterpreting the payload.
+						// An absent discriminator falls through instead: it identifies nothing,
+						// so key matching is the right place to resolve it.
+						if catchAll != nil {
+							sw.Default().Block(
+								If(Id("disc").Op("!=").Lit("")).Block(
+									Var().Id("v").Id(catchAll.typeName),
+									If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
+									Id("u").Dot(catchAll.fieldName).Op("=").Op("&").Id("v"),
+									Return(Nil()),
+								),
+							)
 						}
 					})
 				})
