@@ -735,6 +735,9 @@ func expandAllOf(schema *load.Schema, d *load.Definition) *load.Definition {
 		if merged.Items == nil && resolved.Items != nil {
 			merged.Items = resolved.Items
 		}
+		if merged.AdditionalProperties == nil && resolved.AdditionalProperties != nil {
+			merged.AdditionalProperties = resolved.AdditionalProperties
+		}
 		if merged.Ref == "" && resolved.Ref != "" {
 			merged.Ref = resolved.Ref
 		}
