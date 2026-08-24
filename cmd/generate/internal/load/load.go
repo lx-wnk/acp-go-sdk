@@ -64,6 +64,16 @@ type Definition struct {
 	boolSchema *bool `json:"-"`
 }
 
+// BoolValue reports the boolean schema this definition decoded from, if it was one.
+// `additionalProperties: true` leaves an object open, which a generator must be able to
+// distinguish from an absent keyword.
+func (d *Definition) BoolValue() (bool, bool) {
+	if d == nil || d.boolSchema == nil {
+		return false, false
+	}
+	return *d.boolSchema, true
+}
+
 // UnmarshalJSON allows Definition to decode both object and boolean JSON Schema forms.
 func (d *Definition) UnmarshalJSON(b []byte) error {
 	// Trim whitespace for simple equality checks

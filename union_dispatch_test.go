@@ -132,3 +132,57 @@ func TestAuthMethod_UnknownTypeNeedsTheCatchAllRequiredKeys(t *testing.T) {
 		t.Fatalf("an unrecognised auth method decoded as agent-handled: %+v", m.Agent)
 	}
 }
+
+// The catch-all arm's schema sets additionalProperties: true, and the type's own doc
+// comment tells clients to preserve the raw payload when storing, replaying, proxying or
+// forwarding. Building the wire form from the named fields alone dropped every key this
+// build does not know, so the type could not honour that.
+func TestCreateElicitationResponse_CatchAllPreservesUnknownKeys(t *testing.T) {
+	const in = `{"action":"_custom","foo":"bar","nested":{"a":1}}`
+	var resp CreateElicitationResponse
+	if err := json.Unmarshal([]byte(in), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	out, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	for _, key := range []string{`"foo"`, `"bar"`, `"nested"`} {
+		if !strings.Contains(string(out), key) {
+			t.Fatalf("re-marshal dropped %s: %s", key, out)
+		}
+	}
+}
+
+// A named field still wins over the captured copy, so a caller can edit what it does
+// understand without the original shadowing the change.
+func TestCreateElicitationResponse_CatchAllFieldEditWins(t *testing.T) {
+	var resp CreateElicitationResponse
+	if err := json.Unmarshal([]byte(`{"action":"_custom","foo":"bar"}`), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	resp.Other.Action = "_edited"
+	out, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if !strings.Contains(string(out), `"_edited"`) {
+		t.Fatalf("the captured copy shadowed the edited field: %s", out)
+	}
+	if !strings.Contains(string(out), `"foo"`) {
+		t.Fatalf("editing a field dropped the unknown keys: %s", out)
+	}
+}
+
+// A value built in Go rather than decoded carries no captured copy, and must still
+// marshal from its named fields.
+func TestCreateElicitationResponse_CatchAllWithoutRawMarshals(t *testing.T) {
+	resp := CreateElicitationResponse{Other: &CreateElicitationResponseOther{Action: "_built"}}
+	out, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if !strings.Contains(string(out), `"_built"`) {
+		t.Fatalf("unexpected wire form: %s", out)
+	}
+}

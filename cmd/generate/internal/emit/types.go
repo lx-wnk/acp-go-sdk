@@ -942,6 +942,36 @@ func jenTypeForOptional(d *load.Definition) Code {
 // emitAvailableCommandInputJen generates a concrete variant type for anyOf and a thin union wrapper
 // that supports JSON unmarshal by probing object shape. Currently the schema defines one variant
 // (title: UnstructuredCommandInput) with a required 'hint' field.
+// emitRawPassthrough gives a variant the schema leaves open — additionalProperties: true
+// alongside named properties — a copy of the object it decoded from, and marshals from
+// that copy. Without it the struct is rebuilt from its named fields alone and every key
+// this build does not recognise is dropped, which is the opposite of what such an arm is
+// for.
+func emitRawPassthrough(f *File, tname string) {
+	f.Func().Params(Id("u").Op("*").Id(tname)).Id("UnmarshalJSON").Params(Id("b").Index().Byte()).Error().Block(
+		Type().Id("alias").Id(tname),
+		Var().Id("a").Id("alias"),
+		If(List(Id("err")).Op(":=").Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("a")), Id("err").Op("!=").Nil()).Block(Return(Id("err"))),
+		Op("*").Id("u").Op("=").Id(tname).Call(Id("a")),
+		Id("u").Dot("Raw").Op("=").Id("append").Call(Qual("encoding/json", "RawMessage").Call(Nil()), Id("b").Op("...")),
+		Return(Nil()),
+	)
+	f.Line()
+	f.Func().Params(Id("u").Id(tname)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).Block(
+		Type().Id("alias").Id(tname),
+		List(Id("named"), Id("err")).Op(":=").Qual("encoding/json", "Marshal").Call(Id("alias").Call(Id("u"))),
+		If(Id("err").Op("!=").Nil()).Block(Return(Nil(), Id("err"))),
+		If(Id("len").Call(Id("u").Dot("Raw")).Op("==").Lit(0)).Block(Return(Id("named"), Nil())),
+		Var().Id("merged").Map(String()).Qual("encoding/json", "RawMessage"),
+		If(Qual("encoding/json", "Unmarshal").Call(Id("u").Dot("Raw"), Op("&").Id("merged")).Op("!=").Nil()).Block(Return(Id("named"), Nil())),
+		Var().Id("overlay").Map(String()).Qual("encoding/json", "RawMessage"),
+		If(Qual("encoding/json", "Unmarshal").Call(Id("named"), Op("&").Id("overlay")).Op("!=").Nil()).Block(Return(Id("named"), Nil())),
+		For(List(Id("k"), Id("v")).Op(":=").Range().Id("overlay")).Block(Id("merged").Index(Id("k")).Op("=").Id("v")),
+		Return(Qual("encoding/json", "Marshal").Call(Id("merged"))),
+	)
+	f.Line()
+}
+
 func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Definition, defs []*load.Definition, exactlyOne bool, usedTypeNames map[string]bool) {
 	type variantInfo struct {
 		fieldName         string
@@ -1116,6 +1146,7 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			}
 
 			st := []Code{}
+			openRaw := false
 			if !isNull && isObj {
 				req := map[string]struct{}{}
 				for _, r := range v.Required {
@@ -1188,6 +1219,11 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					}
 					st = append(st, Id(field).Add(fieldType).Tag(map[string]string{"json": tag}))
 				}
+				if open, ok := v.AdditionalProperties.BoolValue(); ok && open && len(pkeys) > 0 {
+					openRaw = true
+					st = appendDocComments(st, "Raw holds the object as it decoded, so keys this build does not recognise\nsurvive a round trip. The named fields above win on re-marshal.")
+					st = append(st, Id("Raw").Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": "-"}))
+				}
 			} else if !isNull && !isObj && v.Title != "" {
 				// Title-only variants: check if they're extension types
 				// Extension types should preserve the raw payload, not drop it
@@ -1216,6 +1252,9 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			}
 			f.Type().Id(tname).Struct(st...)
 			f.Line()
+			if openRaw {
+				emitRawPassthrough(f, tname)
+			}
 		skipStructEmit:
 		}
 		variants = append(variants, variantInfo{

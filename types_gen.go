@@ -2089,6 +2089,43 @@ type CreateElicitationResponseOther struct {
 	// extensions. Unknown values that do not begin with '_' are reserved for
 	// future ACP variants.
 	Action string `json:"action"`
+	// Raw holds the object as it decoded, so keys this build does not recognise
+	// survive a round trip. The named fields above win on re-marshal.
+	Raw json.RawMessage `json:"-"`
+}
+
+func (u *CreateElicitationResponseOther) UnmarshalJSON(b []byte) error {
+	type alias CreateElicitationResponseOther
+	var a alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	*u = CreateElicitationResponseOther(a)
+	u.Raw = append(json.RawMessage(nil), b...)
+	return nil
+}
+
+func (u CreateElicitationResponseOther) MarshalJSON() ([]byte, error) {
+	type alias CreateElicitationResponseOther
+	named, err := json.Marshal(alias(u))
+	if err != nil {
+		return nil, err
+	}
+	if len(u.Raw) == 0 {
+		return named, nil
+	}
+	var merged map[string]json.RawMessage
+	if json.Unmarshal(u.Raw, &merged) != nil {
+		return named, nil
+	}
+	var overlay map[string]json.RawMessage
+	if json.Unmarshal(named, &overlay) != nil {
+		return named, nil
+	}
+	for k, v := range overlay {
+		merged[k] = v
+	}
+	return json.Marshal(merged)
 }
 
 type CreateElicitationResponse struct {
@@ -2912,6 +2949,43 @@ type ElicitationPropertySchemaOther struct {
 	// extensions. Unknown values that do not begin with '_' are reserved for
 	// future ACP variants.
 	Type string `json:"type"`
+	// Raw holds the object as it decoded, so keys this build does not recognise
+	// survive a round trip. The named fields above win on re-marshal.
+	Raw json.RawMessage `json:"-"`
+}
+
+func (u *ElicitationPropertySchemaOther) UnmarshalJSON(b []byte) error {
+	type alias ElicitationPropertySchemaOther
+	var a alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	*u = ElicitationPropertySchemaOther(a)
+	u.Raw = append(json.RawMessage(nil), b...)
+	return nil
+}
+
+func (u ElicitationPropertySchemaOther) MarshalJSON() ([]byte, error) {
+	type alias ElicitationPropertySchemaOther
+	named, err := json.Marshal(alias(u))
+	if err != nil {
+		return nil, err
+	}
+	if len(u.Raw) == 0 {
+		return named, nil
+	}
+	var merged map[string]json.RawMessage
+	if json.Unmarshal(u.Raw, &merged) != nil {
+		return named, nil
+	}
+	var overlay map[string]json.RawMessage
+	if json.Unmarshal(named, &overlay) != nil {
+		return named, nil
+	}
+	for k, v := range overlay {
+		merged[k] = v
+	}
+	return json.Marshal(merged)
 }
 
 type ElicitationPropertySchema struct {
@@ -4836,6 +4910,43 @@ type MultiSelectItemsOther struct {
 	// extensions. Unknown values that do not begin with '_' are reserved for
 	// future ACP variants.
 	Type string `json:"type"`
+	// Raw holds the object as it decoded, so keys this build does not recognise
+	// survive a round trip. The named fields above win on re-marshal.
+	Raw json.RawMessage `json:"-"`
+}
+
+func (u *MultiSelectItemsOther) UnmarshalJSON(b []byte) error {
+	type alias MultiSelectItemsOther
+	var a alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	*u = MultiSelectItemsOther(a)
+	u.Raw = append(json.RawMessage(nil), b...)
+	return nil
+}
+
+func (u MultiSelectItemsOther) MarshalJSON() ([]byte, error) {
+	type alias MultiSelectItemsOther
+	named, err := json.Marshal(alias(u))
+	if err != nil {
+		return nil, err
+	}
+	if len(u.Raw) == 0 {
+		return named, nil
+	}
+	var merged map[string]json.RawMessage
+	if json.Unmarshal(u.Raw, &merged) != nil {
+		return named, nil
+	}
+	var overlay map[string]json.RawMessage
+	if json.Unmarshal(named, &overlay) != nil {
+		return named, nil
+	}
+	for k, v := range overlay {
+		merged[k] = v
+	}
+	return json.Marshal(merged)
 }
 
 type MultiSelectItems struct {
