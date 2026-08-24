@@ -64,6 +64,38 @@ Helper constructors are provided to reduce boilerplate when working with union t
 - Tool content: `acp.ToolContent`, `acp.ToolDiffContent`, `acp.ToolTerminalRef`.
 - Utility: `acp.Ptr[T]` for pointer fields in request/update structs.
 
+### Elicitation
+
+Since schema 1.21.0, `Client` requires `CreateElicitation` and `CompleteElicitation`.
+An agent uses them to ask the user for structured input, either by having the client
+render a form or by directing the user to a URL.
+
+A client that cannot present either should report the method as unavailable rather
+than answering on the user's behalf:
+
+```go
+func (c *myClient) CreateElicitation(ctx context.Context, params acp.CreateElicitationRequest) (acp.CreateElicitationResponse, error) {
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
+}
+```
+
+`Decline` means the user declined. Returning it when nobody was asked tells the agent
+a decision was made that never was.
+
+The URL arm is chosen by the agent, so treat it as untrusted input. `SafeURL` parses
+it and rejects every scheme except `https` and `http`:
+
+```go
+target, err := params.Url.SafeURL()
+if err != nil {
+	return acp.CreateElicitationResponse{}, err
+}
+// Show target.Host to the user before navigating.
+```
+
+A successful parse is not permission to open the URL. Show the origin to the user
+first, and do not prefetch the URL to build a preview.
+
 ### Extension methods
 
 ACP supports **extension methods** for custom JSON-RPC methods whose names start with `_`.
