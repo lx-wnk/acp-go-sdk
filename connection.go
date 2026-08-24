@@ -381,7 +381,7 @@ func (c *Connection) receive() {
 
 		var msg anyMessage
 		if err := json.Unmarshal(line, &msg); err != nil {
-			c.loggerOrDefault().Error("failed to parse incoming message", "err", err, "raw", string(line))
+			c.loggerOrDefault().Error("failed to parse incoming message", "err", err, "len", len(line))
 			continue
 		}
 
@@ -448,7 +448,7 @@ func (c *Connection) receive() {
 				return
 			}
 		default:
-			c.loggerOrDefault().Error("received message with neither id nor method", "raw", string(line))
+			c.loggerOrDefault().Error("received message with neither id nor method", "len", len(line))
 		}
 	}
 
