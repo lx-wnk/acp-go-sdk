@@ -1389,7 +1389,13 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			if discKey != "" {
 				obj.BlockFunc(func(h *Group) {
 					h.Var().Id("disc").String()
+					// "absent" and "present but empty" are different statements from the peer,
+					// and both produce the zero value. Tracking presence separately keeps an
+					// explicit "" on the unrecognised-value path instead of the absent path,
+					// where it used to reach the first arm whose required keys happened to fit.
+					h.Id("discPresent").Op(":=").Lit(false)
 					h.If(List(Id("v"), Id("ok")).Op(":=").Id("m").Index(Lit(discKey)), Id("ok")).Block(
+						Id("discPresent").Op("=").Lit(true),
 						Qual("encoding/json", "Unmarshal").Call(Id("v"), Op("&").Id("disc")),
 					)
 					h.Switch(Id("disc")).BlockFunc(func(sw *Group) {
@@ -1425,9 +1431,24 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 						// keys happen to be satisfied, silently reinterpreting the payload.
 						// An absent discriminator falls through instead: it identifies nothing,
 						// so key matching is the right place to resolve it.
+						if catchAll == nil {
+							// No arm means "none of the above", so an unrecognised value cannot be
+							// represented. Falling through let the key-match below claim the payload
+							// for whichever arm was declared first and whose required keys happened
+							// to be present, which rewrote the discriminator on the way out: a
+							// ContentBlock of an unknown type re-marshalled as "image". Refusing is
+							// visible; silently changing what the peer said is not.
+							//
+							// The value is peer-controlled and is deliberately not echoed.
+							sw.Default().Block(
+								If(Id("discPresent")).Block(
+									Return(Qual("errors", "New").Call(Lit(name + ": unrecognized " + discKey + " value"))),
+								),
+							)
+						}
 						if catchAll != nil {
 							sw.Default().Block(
-								If(Id("disc").Op("!=").Lit("")).BlockFunc(func(c *Group) {
+								If(Id("discPresent")).BlockFunc(func(c *Group) {
 									// The catch-all arm is a real variant with its own required keys, not a
 									// bucket. Routing an unrecognised discriminator there without checking
 									// them lets a payload that satisfies nothing claim an arm whose fields

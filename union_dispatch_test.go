@@ -204,3 +204,63 @@ func TestUnionMarshal_MultipleVariantsSet(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+
+// Eight of the fifteen discriminated unions declare no catch-all arm. An unrecognised
+// discriminator used to fall through to the key-match below, which handed the payload to
+// whichever arm was declared first and whose required keys happened to be present — and
+// then rewrote the discriminator on the way out. A video content block re-marshalled as
+// "image". Refusing is visible; silently changing what the peer said is not.
+func TestContentBlock_UnknownTypeIsRefused(t *testing.T) {
+	var cb ContentBlock
+	err := json.Unmarshal([]byte(`{"type":"video","data":"xyz","mimeType":"video/mp4"}`), &cb)
+	if err == nil {
+		t.Fatalf("an unrecognised content type decoded silently: %+v", cb)
+	}
+	if !strings.Contains(err.Error(), "ContentBlock") {
+		t.Fatalf("error does not name the union: %v", err)
+	}
+	// The peer controls the value, so it must not appear in the message.
+	if strings.Contains(err.Error(), "video") {
+		t.Fatalf("error echoes the peer-supplied value: %v", err)
+	}
+}
+
+// The refusal must not touch values this build does know.
+func TestContentBlock_KnownTypesStillDecode(t *testing.T) {
+	var cb ContentBlock
+	if err := json.Unmarshal([]byte(`{"type":"image","data":"xyz","mimeType":"image/png"}`), &cb); err != nil {
+		t.Fatalf("a valid content block was rejected: %v", err)
+	}
+	if cb.Image == nil {
+		t.Fatalf("expected the image arm, got %+v", cb)
+	}
+}
+
+// "Absent" and "present but empty" are different statements from the peer, and both
+// produced the zero value. An explicit empty action therefore reached Accept — implied
+// user consent from a message that expressed none. It belongs on the unrecognised-value
+// path, because that is what it is.
+func TestCreateElicitationResponse_EmptyActionIsNotConsent(t *testing.T) {
+	var resp CreateElicitationResponse
+	if err := json.Unmarshal([]byte(`{"action":""}`), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Accept != nil {
+		t.Fatal("an empty action decoded as user consent")
+	}
+	if resp.Other == nil {
+		t.Fatalf("expected the catch-all arm, got %+v", resp)
+	}
+}
+
+// An absent discriminator identifies nothing, so it still resolves through key matching.
+// This pins the boundary: the change is about presence, not about absence.
+func TestCreateElicitationResponse_AbsentActionStillFallsThrough(t *testing.T) {
+	var resp CreateElicitationResponse
+	if err := json.Unmarshal([]byte(`{}`), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Accept == nil {
+		t.Fatalf("absent-discriminator handling changed: %+v", resp)
+	}
+}
