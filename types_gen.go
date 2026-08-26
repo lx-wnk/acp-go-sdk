@@ -323,10 +323,6 @@ type AudioContent struct {
 	MimeType string `json:"mimeType"`
 }
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
 // Authentication capabilities supported by the client.
 //
 // Advertised during initialization to inform the agent which authentication
@@ -341,7 +337,9 @@ type AuthCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the client supports 'terminal' authentication methods.
 	//
-	// When 'true', the agent may include 'terminal' entries in its authentication methods.
+	// The client should set this to 'true' only when it can reproduce the
+	// configured agent invocation in an interactive terminal. When 'true', the
+	// agent may include 'terminal' entries in its authentication methods.
 	//
 	// Defaults to false if unset.
 	Terminal bool `json:"terminal,omitempty"`
@@ -374,104 +372,12 @@ func (v *AuthCapabilities) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Describes a single environment variable for an ['AuthMethodEnvVar'] authentication method.
-type AuthEnvVar struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// Human-readable label for this variable, displayed in client UI.
-	Label *string `json:"label,omitempty"`
-	// The environment variable name (e.g. '"OPENAI_API_KEY"').
-	Name string `json:"name"`
-	// Whether this variable is optional.
-	//
-	// Defaults to 'false'.
-	//
-	// Defaults to false if unset.
-	Optional bool `json:"optional,omitempty"`
-	// Whether this value is a secret (e.g. API key, token).
-	// Clients should use a password-style input for secret vars.
-	//
-	// Defaults to 'true'.
-	//
-	// Defaults to true if unset.
-	Secret bool `json:"secret,omitempty"`
-}
-
-func (v AuthEnvVar) MarshalJSON() ([]byte, error) {
-	type Alias AuthEnvVar
-	var a Alias
-	a = Alias(v)
-	return json.Marshal(a)
-}
-
-func (v *AuthEnvVar) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err != nil {
-		return err
-	}
-	type Alias AuthEnvVar
-	var a Alias
-	if err := json.Unmarshal(b, &a); err != nil {
-		return err
-	}
-	{
-		_rm, _ok := m["optional"]
-		if !_ok || (string(_rm) == "null") {
-			json.Unmarshal([]byte("false"), &a.Optional)
-		}
-	}
-	{
-		_rm, _ok := m["secret"]
-		if !_ok || (string(_rm) == "null") {
-			json.Unmarshal([]byte("true"), &a.Secret)
-		}
-	}
-	*v = AuthEnvVar(a)
-	return nil
-}
-
 // Describes an available authentication method.
 //
 // The 'type' field acts as the discriminator in the serialized JSON form.
 // When no 'type' is present, the method is treated as 'agent'.
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// User provides a key that the client passes to the agent as an environment variable.
-type AuthMethodEnvVarInline struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// Optional description providing more details about this authentication method.
-	Description *string `json:"description,omitempty"`
-	// Unique identifier for this authentication method.
-	Id AuthMethodId `json:"id"`
-	// Optional link to a page where the user can obtain their credentials.
-	Link *string `json:"link,omitempty"`
-	// Human-readable name of the authentication method.
-	Name string `json:"name"`
-	Type string `json:"type"`
-	// The environment variables the client should set.
-	Vars []AuthEnvVar `json:"vars"`
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Client runs an interactive terminal for the user to authenticate via a TUI.
+// Client runs the configured agent program as a separate interactive
+// process, without passing this method to 'authenticate'.
 type AuthMethodTerminalInline struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
@@ -479,11 +385,12 @@ type AuthMethodTerminalInline struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
-	// Additional arguments to pass when running the agent binary for terminal auth.
+	// Additional arguments to append to the configured agent invocation for terminal auth.
 	Args []string `json:"args,omitempty"`
 	// Optional description providing more details about this authentication method.
 	Description *string `json:"description,omitempty"`
-	// Additional environment variables to set when running the agent binary for terminal auth.
+	// Additional environment variables to set on the configured agent invocation for terminal auth.
+	// These values override same-named variables in the base launch configuration.
 	Env map[string]any `json:"env,omitempty"`
 	// Unique identifier for this authentication method.
 	Id AuthMethodId `json:"id"`
@@ -493,19 +400,10 @@ type AuthMethodTerminalInline struct {
 }
 
 type AuthMethod struct {
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
-	// User provides a key that the client passes to the agent as an environment variable.
-	EnvVar *AuthMethodEnvVarInline `json:"-"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
-	// Client runs an interactive terminal for the user to authenticate via a TUI.
+	// Client runs the configured agent program as a separate interactive
+	// process, without passing this method to 'authenticate'.
 	Terminal *AuthMethodTerminalInline `json:"-"`
-	// Agent handles authentication itself.
+	// Agent handles authentication itself through 'authenticate'.
 	//
 	// This is the default when no 'type' is specified.
 	Agent *AuthMethodAgent `json:"-"`
@@ -520,42 +418,12 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
-			case "env_var":
-				var v AuthMethodEnvVarInline
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.EnvVar = &v
-				return nil
 			case "terminal":
 				var v AuthMethodTerminalInline
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
 				}
 				u.Terminal = &v
-				return nil
-			}
-		}
-		{
-			var v AuthMethodEnvVarInline
-			var match bool = true
-			if _, ok := m["type"]; !ok {
-				match = false
-			}
-			if _, ok := m["id"]; !ok {
-				match = false
-			}
-			if _, ok := m["name"]; !ok {
-				match = false
-			}
-			if _, ok := m["vars"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.EnvVar = &v
 				return nil
 			}
 		}
@@ -605,13 +473,6 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
-		var v AuthMethodEnvVarInline
-		if json.Unmarshal(b, &v) == nil {
-			u.EnvVar = &v
-			return nil
-		}
-	}
-	{
 		var v AuthMethodTerminalInline
 		if json.Unmarshal(b, &v) == nil {
 			u.Terminal = &v
@@ -628,18 +489,6 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 	return errors.New("no matching variant for union")
 }
 func (u AuthMethod) MarshalJSON() ([]byte, error) {
-	if u.EnvVar != nil {
-		_b, _e := json.Marshal(*u.EnvVar)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["type"] = "env_var"
-		return json.Marshal(m)
-	}
 	if u.Terminal != nil {
 		_b, _e := json.Marshal(*u.Terminal)
 		if _e != nil {
@@ -668,9 +517,6 @@ func (u AuthMethod) MarshalJSON() ([]byte, error) {
 
 func (u *AuthMethod) Validate() error {
 	var count int
-	if u.EnvVar != nil {
-		count++
-	}
 	if u.Terminal != nil {
 		count++
 	}
@@ -683,7 +529,7 @@ func (u *AuthMethod) Validate() error {
 	return nil
 }
 
-// Agent handles authentication itself.
+// Agent handles authentication itself through 'authenticate'.
 //
 // This is the default authentication method type.
 type AuthMethodAgent struct {
@@ -701,42 +547,16 @@ type AuthMethodAgent struct {
 	Name string `json:"name"`
 }
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Environment variable authentication method.
-//
-// The user provides credentials that the client passes to the agent as environment variables.
-type AuthMethodEnvVar struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// Optional description providing more details about this authentication method.
-	Description *string `json:"description,omitempty"`
-	// Unique identifier for this authentication method.
-	Id AuthMethodId `json:"id"`
-	// Optional link to a page where the user can obtain their credentials.
-	Link *string `json:"link,omitempty"`
-	// Human-readable name of the authentication method.
-	Name string `json:"name"`
-	// The environment variables the client should set.
-	Vars []AuthEnvVar `json:"vars"`
-}
-
 // Typed identifier used for auth method values on the wire.
 type AuthMethodId string
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
 // Terminal-based authentication method.
 //
-// The client runs an interactive terminal for the user to authenticate via a TUI.
+// The client runs the configured agent program as a separate interactive
+// process for the user to authenticate via a TUI. Agents MUST advertise this
+// method only when the client enabled its terminal authentication capability.
+// A zero exit status signals success; any other termination signals failure.
+// The client MUST NOT pass this method to 'authenticate'.
 type AuthMethodTerminal struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
@@ -744,11 +564,12 @@ type AuthMethodTerminal struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
-	// Additional arguments to pass when running the agent binary for terminal auth.
+	// Additional arguments to append to the configured agent invocation for terminal auth.
 	Args []string `json:"args,omitempty"`
 	// Optional description providing more details about this authentication method.
 	Description *string `json:"description,omitempty"`
-	// Additional environment variables to set when running the agent binary for terminal auth.
+	// Additional environment variables to set on the configured agent invocation for terminal auth.
+	// These values override same-named variables in the base launch configuration.
 	Env map[string]any `json:"env,omitempty"`
 	// Unique identifier for this authentication method.
 	Id AuthMethodId `json:"id"`
@@ -911,6 +732,30 @@ type BooleanConfigOptionCapabilities struct {
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
+// Schema for boolean properties in an elicitation form.
+type BooleanPropertySchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *bool `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+}
+
 // Notification to cancel ongoing operations for a session.
 //
 // See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
@@ -960,20 +805,12 @@ type ClientCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Authentication capabilities supported by the client.
 	// Determines which authentication method types the agent may include
 	// in its 'InitializeResponse'.
 	//
 	// Defaults to {"terminal":false} if unset.
 	Auth AuthCapabilities `json:"auth,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Elicitation capabilities supported by the client.
 	// Determines which elicitation modes the agent may use.
 	//
@@ -1240,6 +1077,13 @@ type ClientSessionCapabilities struct {
 	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+	// **UNSTABLE**
+	//
+	// This capability is not part of the spec yet, and may be removed or changed at any point.
+	//
+	// Support for ID-addressed context compaction updates. Omitted or 'null'
+	// means unsupported; '{}' advertises the complete compaction contract.
+	Compaction *CompactionCapabilities `json:"compaction,omitempty"`
 	// Config option capabilities supported by the client.
 	//
 	// Omitted or 'null' both mean the client does not advertise support for any
@@ -1280,6 +1124,95 @@ type CloseSessionResponse struct {
 }
 
 func (v *CloseSessionResponse) Validate() error {
+	return nil
+}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Client support for ID-addressed context compaction updates.
+type CompactionCapabilities struct{}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Unique identifier for a context compaction within a session.
+type CompactionId string
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Lifecycle state of a context compaction.
+type CompactionStatus string
+
+const (
+	CompactionStatusInProgress CompactionStatus = "in_progress"
+	CompactionStatusCompleted  CompactionStatus = "completed"
+	CompactionStatusFailed     CompactionStatus = "failed"
+	CompactionStatusCancelled  CompactionStatus = "cancelled"
+)
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// A content block appended to the retained summary of an in-progress
+// compaction. Agents send chunks only after an 'in_progress' update and before
+// the terminal update for the same ID. Agents MUST only send this update when
+// the Client advertised ['ClientSessionCapabilities::compaction'].
+type CompactionSummaryChunk struct {
+	// Metadata scoped to this chunk. Omission and 'null' both mean absent.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// ID of the compaction whose summary receives this content.
+	CompactionId CompactionId `json:"compactionId"`
+	// One content block to append.
+	Content ContentBlock `json:"content"`
+}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// A context compaction upsert. The first update fixes the compaction's
+// timeline position. Later updates with the same ID patch that entity in place.
+// Agents MUST only send this update when the Client advertised
+// ['ClientSessionCapabilities::compaction'].
+//
+// 'summary', 'error', and '_meta' have patch semantics: omission leaves the
+// stored value unchanged, 'null' clears it, and a concrete value replaces it.
+// 'summary: []' also clears the retained summary. A non-empty summary is only
+// valid with 'completed'; 'error' is only valid with 'failed'.
+type CompactionUpdate struct {
+	// Extensible metadata patch for this compaction.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The Agent-owned ID of this compaction, unique within the session.
+	CompactionId CompactionId `json:"compactionId"`
+	// Human-readable description of why the compaction failed.
+	Error *string `json:"error,omitempty"`
+	// Current lifecycle status.
+	Status CompactionStatus `json:"status"`
+	// Complete replacement user-displayable summary retained by the compaction.
+	Summary []ContentBlock `json:"summary,omitempty"`
+}
+
+// Notification sent by the agent when a URL-based elicitation is complete.
+type CompleteElicitationNotification struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The ID of the elicitation that completed.
+	ElicitationId ElicitationId `json:"elicitationId"`
+}
+
+func (v *CompleteElicitationNotification) Validate() error {
 	return nil
 }
 
@@ -1802,6 +1735,539 @@ type Cost struct {
 	Currency string `json:"currency"`
 }
 
+// Request from the agent to elicit structured user input.
+//
+// The agent sends this to the client to request information from the user,
+// either via a form or by directing them to a URL.
+// Elicitations are tied to a session (optionally a tool call) or a request.
+// Form-based elicitation where the client renders a form from the provided schema.
+type CreateElicitationForm struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// A human-readable message describing what input is needed.
+	Message string `json:"message"`
+	Mode    string `json:"mode"`
+	// A JSON Schema describing the form fields to present to the user.
+	RequestedSchema ElicitationSchema `json:"requestedSchema"`
+}
+
+// URL-based elicitation where the client directs the user to a URL.
+type CreateElicitationUrl struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The unique identifier for this elicitation.
+	ElicitationId ElicitationId `json:"elicitationId"`
+	// A human-readable message describing what input is needed.
+	Message string `json:"message"`
+	Mode    string `json:"mode"`
+	// The URL to direct the user to.
+	Url string `json:"url"`
+}
+
+// Custom or future elicitation mode.
+//
+// Values beginning with '_' are reserved for implementation-specific
+// extensions. Unknown values that do not begin with '_' are reserved for
+// future ACP variants.
+//
+// Clients that do not understand this mode should preserve the raw payload
+// when storing, replaying, proxying, or forwarding elicitation requests.
+// They MUST NOT render it as a known elicitation mode.
+type CreateElicitationOther struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// A human-readable message describing what input is needed.
+	Message string `json:"message"`
+	// Custom or future elicitation mode.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	Mode string `json:"mode"`
+}
+
+type CreateElicitationRequest struct {
+	// Form-based elicitation where the client renders a form from the provided schema.
+	Form *CreateElicitationForm `json:"-"`
+	// URL-based elicitation where the client directs the user to a URL.
+	Url *CreateElicitationUrl `json:"-"`
+	// Custom or future elicitation mode.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	//
+	// Clients that do not understand this mode should preserve the raw payload
+	// when storing, replaying, proxying, or forwarding elicitation requests.
+	// They MUST NOT render it as a known elicitation mode.
+	Other *CreateElicitationOther `json:"-"`
+}
+
+func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			if v, ok := m["mode"]; ok {
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "form":
+				var v CreateElicitationForm
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Form = &v
+				return nil
+			case "url":
+				var v CreateElicitationUrl
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Url = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationForm
+			var match bool = true
+			if _, ok := m["mode"]; !ok {
+				match = false
+			}
+			if _, ok := m["requestedSchema"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Form = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationUrl
+			var match bool = true
+			if _, ok := m["mode"]; !ok {
+				match = false
+			}
+			if _, ok := m["elicitationId"]; !ok {
+				match = false
+			}
+			if _, ok := m["url"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Url = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationOther
+			var match bool = true
+			if _, ok := m["mode"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Other = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v CreateElicitationForm
+		if json.Unmarshal(b, &v) == nil {
+			u.Form = &v
+			return nil
+		}
+	}
+	{
+		var v CreateElicitationUrl
+		if json.Unmarshal(b, &v) == nil {
+			u.Url = &v
+			return nil
+		}
+	}
+	{
+		var v CreateElicitationOther
+		if json.Unmarshal(b, &v) == nil {
+			u.Other = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u CreateElicitationRequest) MarshalJSON() ([]byte, error) {
+	if u.Form != nil {
+		_b, _e := json.Marshal(*u.Form)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["mode"] = "form"
+		return json.Marshal(m)
+	}
+	if u.Url != nil {
+		_b, _e := json.Marshal(*u.Url)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["mode"] = "url"
+		return json.Marshal(m)
+	}
+	if u.Other != nil {
+		_b, _e := json.Marshal(*u.Other)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *CreateElicitationRequest) Validate() error {
+	var count int
+	if u.Form != nil {
+		count++
+	}
+	if u.Url != nil {
+		count++
+	}
+	if u.Other != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("CreateElicitationRequest must have at least one variant set")
+	}
+	return nil
+}
+
+// Response from the client to an elicitation request.
+// The user accepted and provided content.
+type CreateElicitationAccept struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta   map[string]any `json:"_meta,omitempty"`
+	Action string         `json:"action"`
+	// The user-provided content, if any, as an object matching the requested schema.
+	Content map[string]any `json:"content,omitempty"`
+}
+
+// The user declined the elicitation.
+type CreateElicitationDecline struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta   map[string]any `json:"_meta,omitempty"`
+	Action string         `json:"action"`
+}
+
+// The elicitation was cancelled.
+type CreateElicitationCancel struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta   map[string]any `json:"_meta,omitempty"`
+	Action string         `json:"action"`
+}
+
+// Custom or future elicitation action.
+//
+// Values beginning with '_' are reserved for implementation-specific
+// extensions. Unknown values that do not begin with '_' are reserved for
+// future ACP variants.
+//
+// Agents that do not understand this action should preserve the raw
+// payload when storing, replaying, proxying, or forwarding elicitation
+// responses. They MUST NOT treat it as a known elicitation action.
+type CreateElicitationResponseOther struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Custom or future elicitation action.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	Action string `json:"action"`
+}
+
+type CreateElicitationResponse struct {
+	// The user accepted and provided content.
+	Accept *CreateElicitationAccept `json:"-"`
+	// The user declined the elicitation.
+	Decline *CreateElicitationDecline `json:"-"`
+	// The elicitation was cancelled.
+	Cancel *CreateElicitationCancel `json:"-"`
+	// Custom or future elicitation action.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	//
+	// Agents that do not understand this action should preserve the raw
+	// payload when storing, replaying, proxying, or forwarding elicitation
+	// responses. They MUST NOT treat it as a known elicitation action.
+	Other *CreateElicitationResponseOther `json:"-"`
+}
+
+func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			if v, ok := m["action"]; ok {
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "accept":
+				var v CreateElicitationAccept
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Accept = &v
+				return nil
+			case "decline":
+				var v CreateElicitationDecline
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Decline = &v
+				return nil
+			case "cancel":
+				var v CreateElicitationCancel
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Cancel = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationAccept
+			var match bool = true
+			if _, ok := m["action"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Accept = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationDecline
+			var match bool = true
+			if _, ok := m["action"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Decline = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationCancel
+			var match bool = true
+			if _, ok := m["action"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Cancel = &v
+				return nil
+			}
+		}
+		{
+			var v CreateElicitationResponseOther
+			var match bool = true
+			if _, ok := m["action"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Other = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v CreateElicitationAccept
+		if json.Unmarshal(b, &v) == nil {
+			u.Accept = &v
+			return nil
+		}
+	}
+	{
+		var v CreateElicitationDecline
+		if json.Unmarshal(b, &v) == nil {
+			u.Decline = &v
+			return nil
+		}
+	}
+	{
+		var v CreateElicitationCancel
+		if json.Unmarshal(b, &v) == nil {
+			u.Cancel = &v
+			return nil
+		}
+	}
+	{
+		var v CreateElicitationResponseOther
+		if json.Unmarshal(b, &v) == nil {
+			u.Other = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u CreateElicitationResponse) MarshalJSON() ([]byte, error) {
+	if u.Accept != nil {
+		_b, _e := json.Marshal(*u.Accept)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["action"] = "accept"
+		return json.Marshal(m)
+	}
+	if u.Decline != nil {
+		_b, _e := json.Marshal(*u.Decline)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["action"] = "decline"
+		return json.Marshal(m)
+	}
+	if u.Cancel != nil {
+		_b, _e := json.Marshal(*u.Cancel)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["action"] = "cancel"
+		return json.Marshal(m)
+	}
+	if u.Other != nil {
+		_b, _e := json.Marshal(*u.Other)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *CreateElicitationResponse) Validate() error {
+	var count int
+	if u.Accept != nil {
+		count++
+	}
+	if u.Decline != nil {
+		count++
+	}
+	if u.Cancel != nil {
+		count++
+	}
+	if u.Other != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("CreateElicitationResponse must have at least one variant set")
+	}
+	return nil
+}
+
 // Request to create a new terminal and execute a command.
 type CreateTerminalRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -1920,22 +2386,26 @@ type Diff struct {
 	Path string `json:"path"`
 }
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
+// The user accepted the elicitation and provided content.
+type ElicitationAcceptAction struct {
+	// The user-provided content, if any, as an object matching the requested schema.
+	Content map[string]any `json:"content,omitempty"`
+}
+
 // Elicitation capabilities supported by the client.
 type ElicitationCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the client supports form-based elicitation.
 	//
-	// Optional. Omitted or 'null' both mean the client does not advertise support.
-	// Supplying '{}' means the client supports form-based elicitation.
+	// Optional. Omitted and 'null' are equivalent and mean form support is not advertised.
+	// Supplying '{}' explicitly advertises form support.
 	Form *ElicitationFormCapabilities `json:"form,omitempty"`
 	// Whether the client supports URL-based elicitation.
 	//
@@ -1944,10 +2414,170 @@ type ElicitationCapabilities struct {
 	Url *ElicitationUrlCapabilities `json:"url,omitempty"`
 }
 
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
+// Allowed wire representations for ['ElicitationContentValue'].
+// String value accepted in elicitation response content.
+type ElicitationContentValueString string
+
+// Integer value accepted in elicitation response content.
+type ElicitationContentValueInteger int
+
+// Number value accepted in elicitation response content.
+type ElicitationContentValueNumber float64
+
+// Boolean value accepted in elicitation response content.
+type ElicitationContentValueBoolean bool
+
+// String array value accepted in elicitation response content.
+type ElicitationContentValueStringArray []string
+
+type ElicitationContentValue struct {
+	// String value accepted in elicitation response content.
+	String *ElicitationContentValueString `json:"-"`
+	// Integer value accepted in elicitation response content.
+	Integer *ElicitationContentValueInteger `json:"-"`
+	// Number value accepted in elicitation response content.
+	Number *ElicitationContentValueNumber `json:"-"`
+	// Boolean value accepted in elicitation response content.
+	Boolean *ElicitationContentValueBoolean `json:"-"`
+	// String array value accepted in elicitation response content.
+	StringArray *ElicitationContentValueStringArray `json:"-"`
+}
+
+func (u *ElicitationContentValue) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v ElicitationContentValueString
+		if json.Unmarshal(b, &v) == nil {
+			u.String = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationContentValueInteger
+		if json.Unmarshal(b, &v) == nil {
+			u.Integer = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationContentValueNumber
+		if json.Unmarshal(b, &v) == nil {
+			u.Number = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationContentValueBoolean
+		if json.Unmarshal(b, &v) == nil {
+			u.Boolean = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationContentValueStringArray
+		if json.Unmarshal(b, &v) == nil {
+			u.StringArray = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
+	if u.String != nil {
+		_b, _e := json.Marshal(*u.String)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Integer != nil {
+		_b, _e := json.Marshal(*u.Integer)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Number != nil {
+		_b, _e := json.Marshal(*u.Number)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Boolean != nil {
+		_b, _e := json.Marshal(*u.Boolean)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.StringArray != nil {
+		_b, _e := json.Marshal(*u.StringArray)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *ElicitationContentValue) Validate() error {
+	var count int
+	if u.String != nil {
+		count++
+	}
+	if u.Integer != nil {
+		count++
+	}
+	if u.Number != nil {
+		count++
+	}
+	if u.Boolean != nil {
+		count++
+	}
+	if u.StringArray != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("ElicitationContentValue must have at least one variant set")
+	}
+	return nil
+}
+
 // Form-based elicitation capabilities.
 //
 // Supplying '{}' means the client supports form-based elicitation.
@@ -1956,14 +2586,726 @@ type ElicitationFormCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
-// **UNSTABLE**
+// Form-based elicitation mode where the client renders a form from the provided schema.
+type ElicitationFormMode struct {
+	// Tied to a session, optionally to a specific tool call within that session.
+	Session *ElicitationSessionScope `json:"-"`
+	// Tied to a specific JSON-RPC request outside of a session
+	// (e.g., during auth/configuration phases before any session is started).
+	Request *ElicitationRequestScope `json:"-"`
+}
+
+func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var v ElicitationSessionScope
+			var match bool = true
+			if _, ok := m["sessionId"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Session = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationRequestScope
+			var match bool = true
+			if _, ok := m["requestId"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Request = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v ElicitationSessionScope
+		if json.Unmarshal(b, &v) == nil {
+			u.Session = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationRequestScope
+		if json.Unmarshal(b, &v) == nil {
+			u.Request = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u ElicitationFormMode) MarshalJSON() ([]byte, error) {
+	if u.Session != nil {
+		_b, _e := json.Marshal(*u.Session)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Request != nil {
+		_b, _e := json.Marshal(*u.Request)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *ElicitationFormMode) Validate() error {
+	var count int
+	if u.Session != nil {
+		count++
+	}
+	if u.Request != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("ElicitationFormMode must have at least one variant set")
+	}
+	return nil
+}
+
+// Unique identifier for an elicitation.
+type ElicitationId string
+
+// Property schema for elicitation form fields.
 //
-// This capability is not part of the spec yet, and may be removed or changed at any point.
+// Each variant corresponds to a JSON Schema '"type"' value.
+// Single-select enums use the 'String' variant with 'enum' or 'oneOf' set.
+// Multi-select enums use the 'Array' variant.
+// String property (or single-select enum when 'enum'/'oneOf' is set).
+type ElicitationPropertySchemaString struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *string `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Enum values for untitled single-select enums.
+	// Optional. Omitted and 'null' are equivalent and mean no untitled single-select choices are
+	// declared by 'enum'.
+	Enum []string `json:"enum,omitempty"`
+	// String format.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no format constraint.
+	Format *StringFormat `json:"format,omitempty"`
+	// Maximum string length.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no maximum length constraint.
+	MaxLength *int `json:"maxLength,omitempty"`
+	// Minimum string length.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no minimum length constraint.
+	MinLength *int `json:"minLength,omitempty"`
+	// Titled enum options for titled single-select enums.
+	// Optional. Omitted and 'null' are equivalent and mean no titled single-select choices are
+	// declared by 'oneOf'.
+	OneOf []EnumOption `json:"oneOf,omitempty"`
+	// Pattern the string must match.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no pattern constraint.
+	Pattern *string `json:"pattern,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+}
+
+// Number (floating-point) property.
+type ElicitationPropertySchemaNumber struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *float64 `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Maximum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive upper bound.
+	Maximum *float64 `json:"maximum,omitempty"`
+	// Minimum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive lower bound.
+	Minimum *float64 `json:"minimum,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+}
+
+// Integer property.
+type ElicitationPropertySchemaInteger struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *int `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Maximum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive upper bound.
+	Maximum *int `json:"maximum,omitempty"`
+	// Minimum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive lower bound.
+	Minimum *int `json:"minimum,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+}
+
+// Boolean property.
+type ElicitationPropertySchemaBoolean struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *bool `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+}
+
+// Multi-select array property.
+type ElicitationPropertySchemaArray struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default selected values.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default selections are provided.
+	Default []string `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// The items definition describing allowed values.
+	Items MultiSelectItems `json:"items"`
+	// Maximum number of items to select.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no maximum selection count.
+	MaxItems *int `json:"maxItems,omitempty"`
+	// Minimum number of items to select.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no minimum selection count.
+	MinItems *int `json:"minItems,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+}
+
+// Custom or future elicitation property schema.
 //
+// Values beginning with '_' are reserved for implementation-specific
+// extensions. Unknown values that do not begin with '_' are reserved for
+// future ACP variants.
+//
+// Clients that do not understand this property schema type should preserve
+// the raw schema when storing, replaying, proxying, or forwarding
+// elicitation requests. They MUST NOT render it as a known input control.
+type ElicitationPropertySchemaOther struct {
+	// Custom or future elicitation property schema type.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	Type string `json:"type"`
+}
+
+type ElicitationPropertySchema struct {
+	// String property (or single-select enum when 'enum'/'oneOf' is set).
+	String *ElicitationPropertySchemaString `json:"-"`
+	// Number (floating-point) property.
+	Number *ElicitationPropertySchemaNumber `json:"-"`
+	// Integer property.
+	Integer *ElicitationPropertySchemaInteger `json:"-"`
+	// Boolean property.
+	Boolean *ElicitationPropertySchemaBoolean `json:"-"`
+	// Multi-select array property.
+	Array *ElicitationPropertySchemaArray `json:"-"`
+	// Custom or future elicitation property schema.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	//
+	// Clients that do not understand this property schema type should preserve
+	// the raw schema when storing, replaying, proxying, or forwarding
+	// elicitation requests. They MUST NOT render it as a known input control.
+	Other *ElicitationPropertySchemaOther `json:"-"`
+}
+
+func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			if v, ok := m["type"]; ok {
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "string":
+				var v ElicitationPropertySchemaString
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.String = &v
+				return nil
+			case "number":
+				var v ElicitationPropertySchemaNumber
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Number = &v
+				return nil
+			case "integer":
+				var v ElicitationPropertySchemaInteger
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Integer = &v
+				return nil
+			case "boolean":
+				var v ElicitationPropertySchemaBoolean
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Boolean = &v
+				return nil
+			case "array":
+				var v ElicitationPropertySchemaArray
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Array = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaString
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.String = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaNumber
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Number = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaInteger
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Integer = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaBoolean
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Boolean = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaArray
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["items"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Array = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationPropertySchemaOther
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Other = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v ElicitationPropertySchemaString
+		if json.Unmarshal(b, &v) == nil {
+			u.String = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationPropertySchemaNumber
+		if json.Unmarshal(b, &v) == nil {
+			u.Number = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationPropertySchemaInteger
+		if json.Unmarshal(b, &v) == nil {
+			u.Integer = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationPropertySchemaBoolean
+		if json.Unmarshal(b, &v) == nil {
+			u.Boolean = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationPropertySchemaArray
+		if json.Unmarshal(b, &v) == nil {
+			u.Array = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationPropertySchemaOther
+		if json.Unmarshal(b, &v) == nil {
+			u.Other = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u ElicitationPropertySchema) MarshalJSON() ([]byte, error) {
+	if u.String != nil {
+		_b, _e := json.Marshal(*u.String)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "string"
+		return json.Marshal(m)
+	}
+	if u.Number != nil {
+		_b, _e := json.Marshal(*u.Number)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "number"
+		return json.Marshal(m)
+	}
+	if u.Integer != nil {
+		_b, _e := json.Marshal(*u.Integer)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "integer"
+		return json.Marshal(m)
+	}
+	if u.Boolean != nil {
+		_b, _e := json.Marshal(*u.Boolean)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "boolean"
+		return json.Marshal(m)
+	}
+	if u.Array != nil {
+		_b, _e := json.Marshal(*u.Array)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "array"
+		return json.Marshal(m)
+	}
+	if u.Other != nil {
+		_b, _e := json.Marshal(*u.Other)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *ElicitationPropertySchema) Validate() error {
+	var count int
+	if u.String != nil {
+		count++
+	}
+	if u.Number != nil {
+		count++
+	}
+	if u.Integer != nil {
+		count++
+	}
+	if u.Boolean != nil {
+		count++
+	}
+	if u.Array != nil {
+		count++
+	}
+	if u.Other != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("ElicitationPropertySchema must have at least one variant set")
+	}
+	return nil
+}
+
+// Request-scoped elicitation, tied to a specific JSON-RPC request outside of a session
+// (e.g., during auth/configuration phases before any session is started).
+type ElicitationRequestScope struct {
+	// The request this elicitation is tied to.
+	RequestId RequestId `json:"requestId"`
+}
+
+// Type-safe elicitation schema for requesting structured user input.
+//
+// This represents a JSON Schema object with primitive-typed properties,
+// as required by the elicitation specification.
+type ElicitationSchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional description of what this schema represents.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no schema description is provided.
+	Description *string `json:"description,omitempty"`
+	// Property definitions (must be primitive types).
+	//
+	// Defaults to {} if unset.
+	Properties map[string]any `json:"properties"`
+	// List of required property names.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no property names are required.
+	Required []string `json:"required,omitempty"`
+	// Optional title for the schema.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+	// Type discriminator. Always '"object"'.
+	//
+	// Defaults to "object" if unset.
+	Type ElicitationSchemaType `json:"type,omitempty"`
+}
+
+func (v ElicitationSchema) MarshalJSON() ([]byte, error) {
+	type Alias ElicitationSchema
+	var a Alias
+	a = Alias(v)
+	if a.Properties == nil {
+		json.Unmarshal([]byte("{}"), &a.Properties)
+	}
+	return json.Marshal(a)
+}
+
+func (v *ElicitationSchema) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias ElicitationSchema
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	{
+		_rm, _ok := m["properties"]
+		if !_ok || (string(_rm) == "null") {
+			json.Unmarshal([]byte("{}"), &a.Properties)
+		}
+	}
+	{
+		_rm, _ok := m["type"]
+		if !_ok || (string(_rm) == "null") {
+			json.Unmarshal([]byte("\"object\""), &a.Type)
+		}
+	}
+	*v = ElicitationSchema(a)
+	return nil
+}
+
+// Type discriminator for elicitation schemas.
+type ElicitationSchemaType string
+
+const (
+	ElicitationSchemaTypeObject ElicitationSchemaType = "object"
+)
+
+// Session-scoped elicitation, optionally tied to a specific tool call.
+//
+// When 'tool_call_id' is set, the elicitation is tied to a specific tool call.
+// This is useful when an agent receives an elicitation from an MCP server
+// during a tool call and needs to redirect it to the user.
+type ElicitationSessionScope struct {
+	// The session this elicitation is tied to.
+	SessionId SessionId `json:"sessionId"`
+	// Optional tool call within the session.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean the elicitation is scoped to the
+	// session without a specific tool call.
+	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
+}
+
 // URL-based elicitation capabilities.
 //
 // Supplying '{}' means the client supports URL-based elicitation.
@@ -1972,8 +3314,114 @@ type ElicitationUrlCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
 	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
+}
+
+// URL-based elicitation mode where the client directs the user to a URL.
+type ElicitationUrlMode struct {
+	// Tied to a session, optionally to a specific tool call within that session.
+	Session *ElicitationSessionScope `json:"-"`
+	// Tied to a specific JSON-RPC request outside of a session
+	// (e.g., during auth/configuration phases before any session is started).
+	Request *ElicitationRequestScope `json:"-"`
+}
+
+func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var v ElicitationSessionScope
+			var match bool = true
+			if _, ok := m["sessionId"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Session = &v
+				return nil
+			}
+		}
+		{
+			var v ElicitationRequestScope
+			var match bool = true
+			if _, ok := m["requestId"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Request = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v ElicitationSessionScope
+		if json.Unmarshal(b, &v) == nil {
+			u.Session = &v
+			return nil
+		}
+	}
+	{
+		var v ElicitationRequestScope
+		if json.Unmarshal(b, &v) == nil {
+			u.Request = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u ElicitationUrlMode) MarshalJSON() ([]byte, error) {
+	if u.Session != nil {
+		_b, _e := json.Marshal(*u.Session)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Request != nil {
+		_b, _e := json.Marshal(*u.Request)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *ElicitationUrlMode) Validate() error {
+	var count int
+	if u.Session != nil {
+		count++
+	}
+	if u.Request != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("ElicitationUrlMode must have at least one variant set")
+	}
+	return nil
 }
 
 // The contents of a resource, embedded into a prompt or tool call result.
@@ -2097,6 +3545,26 @@ func (u *EmbeddedResourceResource) Validate() error {
 		return errors.New("EmbeddedResourceResource must have at least one variant set")
 	}
 	return nil
+}
+
+// A titled enum option with a const value, human-readable title, and optional description.
+type EnumOption struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The constant value for this option.
+	Const string `json:"const"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Human-readable title for this option.
+	Title string `json:"title"`
 }
 
 // An environment variable to set when launching an MCP server.
@@ -2670,6 +4138,38 @@ func (v *InitializeResponse) Validate() error {
 	return nil
 }
 
+// Schema for integer properties in an elicitation form.
+type IntegerPropertySchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *int `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Maximum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive upper bound.
+	Maximum *int `json:"maximum,omitempty"`
+	// Minimum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive lower bound.
+	Minimum *int `json:"minimum,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+}
+
 // Request to kill a terminal without releasing it.
 type KillTerminalRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -2990,7 +4490,7 @@ type McpServer struct {
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// # ACP transport configuration
+	// ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.
@@ -3319,6 +4819,224 @@ type McpServerStdio struct {
 // Unique identifier for a message within a session.
 type MessageId string
 
+// Items for a multi-select (array) property schema.
+// Multi-select string items with plain string values.
+type MultiSelectItemsString struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Allowed enum values.
+	Enum []string `json:"enum"`
+	Type string   `json:"type"`
+}
+
+// Custom or future typed multi-select items.
+type MultiSelectItemsOther struct {
+	// Custom or future multi-select item type.
+	//
+	// Values beginning with '_' are reserved for implementation-specific
+	// extensions. Unknown values that do not begin with '_' are reserved for
+	// future ACP variants.
+	Type string `json:"type"`
+}
+
+type MultiSelectItems struct {
+	// Multi-select string items with plain string values.
+	String *MultiSelectItemsString `json:"-"`
+	// Custom or future typed multi-select items.
+	Other *MultiSelectItemsOther `json:"-"`
+	// Titled multi-select items with human-readable labels.
+	Titled *TitledMultiSelectItems `json:"-"`
+}
+
+func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			if v, ok := m["type"]; ok {
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "string":
+				var v MultiSelectItemsString
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.String = &v
+				return nil
+			}
+		}
+		{
+			var v MultiSelectItemsString
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["enum"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.String = &v
+				return nil
+			}
+		}
+		{
+			var v MultiSelectItemsOther
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Other = &v
+				return nil
+			}
+		}
+		{
+			var v TitledMultiSelectItems
+			var match bool = true
+			if _, ok := m["anyOf"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Titled = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+	}
+	{
+		var v MultiSelectItemsString
+		if json.Unmarshal(b, &v) == nil {
+			u.String = &v
+			return nil
+		}
+	}
+	{
+		var v MultiSelectItemsOther
+		if json.Unmarshal(b, &v) == nil {
+			u.Other = &v
+			return nil
+		}
+	}
+	{
+		var v TitledMultiSelectItems
+		if json.Unmarshal(b, &v) == nil {
+			u.Titled = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u MultiSelectItems) MarshalJSON() ([]byte, error) {
+	if u.String != nil {
+		_b, _e := json.Marshal(*u.String)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "string"
+		return json.Marshal(m)
+	}
+	if u.Other != nil {
+		_b, _e := json.Marshal(*u.Other)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.Titled != nil {
+		_b, _e := json.Marshal(*u.Titled)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return []byte{}, nil
+}
+
+func (u *MultiSelectItems) Validate() error {
+	var count int
+	if u.String != nil {
+		count++
+	}
+	if u.Other != nil {
+		count++
+	}
+	if u.Titled != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("MultiSelectItems must have at least one variant set")
+	}
+	return nil
+}
+
+// Schema for multi-select (array) properties in an elicitation form.
+type MultiSelectPropertySchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default selected values.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default selections are provided.
+	Default []string `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// The items definition describing allowed values.
+	Items MultiSelectItems `json:"items"`
+	// Maximum number of items to select.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no maximum selection count.
+	MaxItems *int `json:"maxItems,omitempty"`
+	// Minimum number of items to select.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no minimum selection count.
+	MinItems *int `json:"minItems,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+}
+
 // NES capabilities advertised by the agent during initialization.
 type NesCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -3591,6 +5309,38 @@ type NewSessionResponse struct {
 
 func (v *NewSessionResponse) Validate() error {
 	return nil
+}
+
+// Schema for number (floating-point) properties in an elicitation form.
+type NumberPropertySchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *float64 `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Maximum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive upper bound.
+	Maximum *float64 `json:"maximum,omitempty"`
+	// Minimum value (inclusive).
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no inclusive lower bound.
+	Minimum *float64 `json:"minimum,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
 }
 
 // An option presented to the user when requesting permission.
@@ -5598,6 +7348,46 @@ type SessionUsageUpdate struct {
 	Used int `json:"used"`
 }
 
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// A context compaction has been created or updated.
+//
+// Agents MUST only send this update when the Client advertised
+// ['ClientSessionCapabilities::compaction'].
+type SessionCompactionUpdate struct {
+	// Extensible metadata patch for this compaction.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The Agent-owned ID of this compaction, unique within the session.
+	CompactionId CompactionId `json:"compactionId"`
+	// Human-readable description of why the compaction failed.
+	Error         *string `json:"error,omitempty"`
+	SessionUpdate string  `json:"sessionUpdate"`
+	// Current lifecycle status.
+	Status CompactionStatus `json:"status"`
+	// Complete replacement user-displayable summary retained by the compaction.
+	Summary []ContentBlock `json:"summary,omitempty"`
+}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// A content block appended to a context compaction's retained summary.
+//
+// Agents MUST only send this update when the Client advertised
+// ['ClientSessionCapabilities::compaction'].
+type SessionUpdateCompactionSummaryChunk struct {
+	// Metadata scoped to this chunk. Omission and 'null' both mean absent.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// ID of the compaction whose summary receives this content.
+	CompactionId CompactionId `json:"compactionId"`
+	// One content block to append.
+	Content       ContentBlock `json:"content"`
+	SessionUpdate string       `json:"sessionUpdate"`
+}
+
 type SessionUpdate struct {
 	// A chunk of the user's message being streamed.
 	UserMessageChunk *SessionUpdateUserMessageChunk `json:"-"`
@@ -5636,6 +7426,24 @@ type SessionUpdate struct {
 	SessionInfoUpdate *SessionSessionInfoUpdate `json:"-"`
 	// Context window and cost update for the session.
 	UsageUpdate *SessionUsageUpdate `json:"-"`
+	// **UNSTABLE**
+	//
+	// This capability is not part of the spec yet, and may be removed or changed at any point.
+	//
+	// A context compaction has been created or updated.
+	//
+	// Agents MUST only send this update when the Client advertised
+	// ['ClientSessionCapabilities::compaction'].
+	CompactionUpdate *SessionCompactionUpdate `json:"-"`
+	// **UNSTABLE**
+	//
+	// This capability is not part of the spec yet, and may be removed or changed at any point.
+	//
+	// A content block appended to a context compaction's retained summary.
+	//
+	// Agents MUST only send this update when the Client advertised
+	// ['ClientSessionCapabilities::compaction'].
+	CompactionSummaryChunk *SessionUpdateCompactionSummaryChunk `json:"-"`
 }
 
 func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
@@ -5737,6 +7545,20 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 					return errors.New("invalid variant payload")
 				}
 				u.UsageUpdate = &v
+				return nil
+			case "compaction_update":
+				var v SessionCompactionUpdate
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.CompactionUpdate = &v
+				return nil
+			case "compaction_summary_chunk":
+				var v SessionUpdateCompactionSummaryChunk
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.CompactionSummaryChunk = &v
 				return nil
 			}
 		}
@@ -5964,6 +7786,46 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				return nil
 			}
 		}
+		{
+			var v SessionCompactionUpdate
+			var match bool = true
+			if _, ok := m["sessionUpdate"]; !ok {
+				match = false
+			}
+			if _, ok := m["compactionId"]; !ok {
+				match = false
+			}
+			if _, ok := m["status"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.CompactionUpdate = &v
+				return nil
+			}
+		}
+		{
+			var v SessionUpdateCompactionSummaryChunk
+			var match bool = true
+			if _, ok := m["sessionUpdate"]; !ok {
+				match = false
+			}
+			if _, ok := m["compactionId"]; !ok {
+				match = false
+			}
+			if _, ok := m["content"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.CompactionSummaryChunk = &v
+				return nil
+			}
+		}
 	} else {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
@@ -6060,6 +7922,20 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 		var v SessionUsageUpdate
 		if json.Unmarshal(b, &v) == nil {
 			u.UsageUpdate = &v
+			return nil
+		}
+	}
+	{
+		var v SessionCompactionUpdate
+		if json.Unmarshal(b, &v) == nil {
+			u.CompactionUpdate = &v
+			return nil
+		}
+	}
+	{
+		var v SessionUpdateCompactionSummaryChunk
+		if json.Unmarshal(b, &v) == nil {
+			u.CompactionSummaryChunk = &v
 			return nil
 		}
 	}
@@ -6222,6 +8098,30 @@ func (u SessionUpdate) MarshalJSON() ([]byte, error) {
 		m["sessionUpdate"] = "usage_update"
 		return json.Marshal(m)
 	}
+	if u.CompactionUpdate != nil {
+		_b, _e := json.Marshal(*u.CompactionUpdate)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["sessionUpdate"] = "compaction_update"
+		return json.Marshal(m)
+	}
+	if u.CompactionSummaryChunk != nil {
+		_b, _e := json.Marshal(*u.CompactionSummaryChunk)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["sessionUpdate"] = "compaction_summary_chunk"
+		return json.Marshal(m)
+	}
 	return []byte{}, nil
 }
 
@@ -6264,6 +8164,12 @@ func (u *SessionUpdate) Validate() error {
 		count++
 	}
 	if u.UsageUpdate != nil {
+		count++
+	}
+	if u.CompactionUpdate != nil {
+		count++
+	}
+	if u.CompactionSummaryChunk != nil {
 		count++
 	}
 	if count != 1 {
@@ -6499,6 +8405,81 @@ const (
 	StopReasonCancelled       StopReason = "cancelled"
 )
 
+// String format types for string properties in elicitation schemas.
+type StringFormat string
+
+const (
+	StringFormatEmail    StringFormat = "email"
+	StringFormatUri      StringFormat = "uri"
+	StringFormatDate     StringFormat = "date"
+	StringFormatDateTime StringFormat = "date-time"
+)
+
+// String item schema for multi-select enum properties.
+type StringMultiSelectItems struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Allowed enum values.
+	Enum []string `json:"enum"`
+}
+
+// Schema for string properties in an elicitation form.
+//
+// When 'enum' or 'oneOf' is set, this represents a single-select enum
+// with '"type": "string"'.
+type StringPropertySchema struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Default value.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no default value is provided.
+	Default *string `json:"default,omitempty"`
+	// Human-readable description.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no description is provided.
+	Description *string `json:"description,omitempty"`
+	// Enum values for untitled single-select enums.
+	// Optional. Omitted and 'null' are equivalent and mean no untitled single-select choices are
+	// declared by 'enum'.
+	Enum []string `json:"enum,omitempty"`
+	// String format.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no format constraint.
+	Format *StringFormat `json:"format,omitempty"`
+	// Maximum string length.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no maximum length constraint.
+	MaxLength *int `json:"maxLength,omitempty"`
+	// Minimum string length.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no minimum length constraint.
+	MinLength *int `json:"minLength,omitempty"`
+	// Titled enum options for titled single-select enums.
+	// Optional. Omitted and 'null' are equivalent and mean no titled single-select choices are
+	// declared by 'oneOf'.
+	OneOf []EnumOption `json:"oneOf,omitempty"`
+	// Pattern the string must match.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean there is no pattern constraint.
+	Pattern *string `json:"pattern,omitempty"`
+	// Optional title for the property.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no title is provided.
+	Title *string `json:"title,omitempty"`
+}
+
 // Embed a terminal created with 'terminal/create' by its id.
 //
 // The terminal must be added before calling 'terminal/release'.
@@ -6609,6 +8590,20 @@ type TextResourceContents struct {
 	Text string `json:"text"`
 	// URI associated with this resource or media payload.
 	Uri string `json:"uri"`
+}
+
+// Items definition for titled multi-select enum properties.
+type TitledMultiSelectItems struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// Optional. Omitted and 'null' are equivalent and mean no metadata.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Titled enum options.
+	AnyOf []EnumOption `json:"anyOf"`
 }
 
 // Represents a tool call that the language model has requested.
@@ -7052,26 +9047,6 @@ func (v *UnstableCloseNesResponse) Validate() error {
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
 //
-// Notification sent by the agent when a URL-based elicitation is complete.
-type UnstableCompleteElicitationNotification struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// The ID of the elicitation that completed.
-	ElicitationId UnstableElicitationId `json:"elicitationId"`
-}
-
-func (v *UnstableCompleteElicitationNotification) Validate() error {
-	return nil
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
 // Request parameters for 'mcp/connect'.
 type UnstableConnectMcpRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -7105,533 +9080,6 @@ type UnstableConnectMcpResponse struct {
 }
 
 func (v *UnstableConnectMcpResponse) Validate() error {
-	return nil
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Request from the agent to elicit structured user input.
-//
-// The agent sends this to the client to request information from the user,
-// either via a form or by directing them to a URL.
-// Elicitations are tied to a session (optionally a tool call) or a request.
-// Form-based elicitation where the client renders a form from the provided schema.
-type UnstableCreateElicitationForm struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// A human-readable message describing what input is needed.
-	Message string `json:"message"`
-	Mode    string `json:"mode"`
-	// A JSON Schema describing the form fields to present to the user.
-	RequestedSchema UnstableElicitationSchema `json:"requestedSchema"`
-}
-
-// URL-based elicitation where the client directs the user to a URL.
-type UnstableCreateElicitationUrl struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// The unique identifier for this elicitation.
-	ElicitationId UnstableElicitationId `json:"elicitationId"`
-	// A human-readable message describing what input is needed.
-	Message string `json:"message"`
-	Mode    string `json:"mode"`
-	// The URL to direct the user to.
-	Url string `json:"url"`
-}
-
-// Custom or future elicitation mode.
-//
-// Values beginning with '_' are reserved for implementation-specific
-// extensions. Unknown values that do not begin with '_' are reserved for
-// future ACP variants.
-//
-// Clients that do not understand this mode should preserve the raw payload
-// when storing, replaying, proxying, or forwarding elicitation requests.
-// They MUST NOT render it as a known elicitation mode.
-type UnstableCreateElicitationOther struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// A human-readable message describing what input is needed.
-	Message string `json:"message"`
-	// Custom or future elicitation mode.
-	//
-	// Values beginning with '_' are reserved for implementation-specific
-	// extensions. Unknown values that do not begin with '_' are reserved for
-	// future ACP variants.
-	Mode string `json:"mode"`
-}
-
-type UnstableCreateElicitationRequest struct {
-	// Form-based elicitation where the client renders a form from the provided schema.
-	Form *UnstableCreateElicitationForm `json:"-"`
-	// URL-based elicitation where the client directs the user to a URL.
-	Url *UnstableCreateElicitationUrl `json:"-"`
-	// Custom or future elicitation mode.
-	//
-	// Values beginning with '_' are reserved for implementation-specific
-	// extensions. Unknown values that do not begin with '_' are reserved for
-	// future ACP variants.
-	//
-	// Clients that do not understand this mode should preserve the raw payload
-	// when storing, replaying, proxying, or forwarding elicitation requests.
-	// They MUST NOT render it as a known elicitation mode.
-	Other *UnstableCreateElicitationOther `json:"-"`
-}
-
-func (u *UnstableCreateElicitationRequest) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err == nil {
-		{
-			var disc string
-			if v, ok := m["mode"]; ok {
-				json.Unmarshal(v, &disc)
-			}
-			switch disc {
-			case "form":
-				var v UnstableCreateElicitationForm
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Form = &v
-				return nil
-			case "url":
-				var v UnstableCreateElicitationUrl
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Url = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationForm
-			var match bool = true
-			if _, ok := m["mode"]; !ok {
-				match = false
-			}
-			if _, ok := m["requestedSchema"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Form = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationUrl
-			var match bool = true
-			if _, ok := m["mode"]; !ok {
-				match = false
-			}
-			if _, ok := m["elicitationId"]; !ok {
-				match = false
-			}
-			if _, ok := m["url"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Url = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationOther
-			var match bool = true
-			if _, ok := m["mode"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Other = &v
-				return nil
-			}
-		}
-	} else {
-		if _, ok := err.(*json.UnmarshalTypeError); !ok {
-			return err
-		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
-	{
-		var v UnstableCreateElicitationForm
-		if json.Unmarshal(b, &v) == nil {
-			u.Form = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableCreateElicitationUrl
-		if json.Unmarshal(b, &v) == nil {
-			u.Url = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableCreateElicitationOther
-		if json.Unmarshal(b, &v) == nil {
-			u.Other = &v
-			return nil
-		}
-	}
-	return errors.New("no matching variant for union")
-}
-func (u UnstableCreateElicitationRequest) MarshalJSON() ([]byte, error) {
-	if u.Form != nil {
-		_b, _e := json.Marshal(*u.Form)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["mode"] = "form"
-		return json.Marshal(m)
-	}
-	if u.Url != nil {
-		_b, _e := json.Marshal(*u.Url)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["mode"] = "url"
-		return json.Marshal(m)
-	}
-	if u.Other != nil {
-		_b, _e := json.Marshal(*u.Other)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	return []byte{}, nil
-}
-
-func (u *UnstableCreateElicitationRequest) Validate() error {
-	var count int
-	if u.Form != nil {
-		count++
-	}
-	if u.Url != nil {
-		count++
-	}
-	if u.Other != nil {
-		count++
-	}
-	if count < 1 {
-		return errors.New("UnstableCreateElicitationRequest must have at least one variant set")
-	}
-	return nil
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Response from the client to an elicitation request.
-// The user accepted and provided content.
-type UnstableCreateElicitationAccept struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta   map[string]any `json:"_meta,omitempty"`
-	Action string         `json:"action"`
-	// The user-provided content, if any, as an object matching the requested schema.
-	Content map[string]any `json:"content,omitempty"`
-}
-
-// The user declined the elicitation.
-type UnstableCreateElicitationDecline struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta   map[string]any `json:"_meta,omitempty"`
-	Action string         `json:"action"`
-}
-
-// The elicitation was cancelled.
-type UnstableCreateElicitationCancel struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta   map[string]any `json:"_meta,omitempty"`
-	Action string         `json:"action"`
-}
-
-// Custom or future elicitation action.
-//
-// Values beginning with '_' are reserved for implementation-specific
-// extensions. Unknown values that do not begin with '_' are reserved for
-// future ACP variants.
-//
-// Agents that do not understand this action should preserve the raw
-// payload when storing, replaying, proxying, or forwarding elicitation
-// responses. They MUST NOT treat it as a known elicitation action.
-type UnstableCreateElicitationResponseOther struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// Custom or future elicitation action.
-	//
-	// Values beginning with '_' are reserved for implementation-specific
-	// extensions. Unknown values that do not begin with '_' are reserved for
-	// future ACP variants.
-	Action string `json:"action"`
-}
-
-type UnstableCreateElicitationResponse struct {
-	// The user accepted and provided content.
-	Accept *UnstableCreateElicitationAccept `json:"-"`
-	// The user declined the elicitation.
-	Decline *UnstableCreateElicitationDecline `json:"-"`
-	// The elicitation was cancelled.
-	Cancel *UnstableCreateElicitationCancel `json:"-"`
-	// Custom or future elicitation action.
-	//
-	// Values beginning with '_' are reserved for implementation-specific
-	// extensions. Unknown values that do not begin with '_' are reserved for
-	// future ACP variants.
-	//
-	// Agents that do not understand this action should preserve the raw
-	// payload when storing, replaying, proxying, or forwarding elicitation
-	// responses. They MUST NOT treat it as a known elicitation action.
-	Other *UnstableCreateElicitationResponseOther `json:"-"`
-}
-
-func (u *UnstableCreateElicitationResponse) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err == nil {
-		{
-			var disc string
-			if v, ok := m["action"]; ok {
-				json.Unmarshal(v, &disc)
-			}
-			switch disc {
-			case "accept":
-				var v UnstableCreateElicitationAccept
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Accept = &v
-				return nil
-			case "decline":
-				var v UnstableCreateElicitationDecline
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Decline = &v
-				return nil
-			case "cancel":
-				var v UnstableCreateElicitationCancel
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Cancel = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationAccept
-			var match bool = true
-			if _, ok := m["action"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Accept = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationDecline
-			var match bool = true
-			if _, ok := m["action"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Decline = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationCancel
-			var match bool = true
-			if _, ok := m["action"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Cancel = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableCreateElicitationResponseOther
-			var match bool = true
-			if _, ok := m["action"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Other = &v
-				return nil
-			}
-		}
-	} else {
-		if _, ok := err.(*json.UnmarshalTypeError); !ok {
-			return err
-		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
-	{
-		var v UnstableCreateElicitationAccept
-		if json.Unmarshal(b, &v) == nil {
-			u.Accept = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableCreateElicitationDecline
-		if json.Unmarshal(b, &v) == nil {
-			u.Decline = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableCreateElicitationCancel
-		if json.Unmarshal(b, &v) == nil {
-			u.Cancel = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableCreateElicitationResponseOther
-		if json.Unmarshal(b, &v) == nil {
-			u.Other = &v
-			return nil
-		}
-	}
-	return errors.New("no matching variant for union")
-}
-func (u UnstableCreateElicitationResponse) MarshalJSON() ([]byte, error) {
-	if u.Accept != nil {
-		_b, _e := json.Marshal(*u.Accept)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["action"] = "accept"
-		return json.Marshal(m)
-	}
-	if u.Decline != nil {
-		_b, _e := json.Marshal(*u.Decline)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["action"] = "decline"
-		return json.Marshal(m)
-	}
-	if u.Cancel != nil {
-		_b, _e := json.Marshal(*u.Cancel)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		m["action"] = "cancel"
-		return json.Marshal(m)
-	}
-	if u.Other != nil {
-		_b, _e := json.Marshal(*u.Other)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	return []byte{}, nil
-}
-
-func (u *UnstableCreateElicitationResponse) Validate() error {
-	var count int
-	if u.Accept != nil {
-		count++
-	}
-	if u.Decline != nil {
-		count++
-	}
-	if u.Cancel != nil {
-		count++
-	}
-	if u.Other != nil {
-		count++
-	}
-	if count < 1 {
-		return errors.New("UnstableCreateElicitationResponse must have at least one variant set")
-	}
 	return nil
 }
 
@@ -7838,336 +9286,6 @@ type UnstableDisconnectMcpResponse struct {
 }
 
 func (v *UnstableDisconnectMcpResponse) Validate() error {
-	return nil
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// The user accepted the elicitation and provided content.
-type UnstableElicitationAcceptAction struct {
-	// The user-provided content, if any, as an object matching the requested schema.
-	Content map[string]any `json:"content,omitempty"`
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Form-based elicitation mode where the client renders a form from the provided schema.
-type UnstableElicitationFormMode struct {
-	// Tied to a session, optionally to a specific tool call within that session.
-	Session *UnstableElicitationSessionScope `json:"-"`
-	// Tied to a specific JSON-RPC request outside of a session
-	// (e.g., during auth/configuration phases before any session is started).
-	Request *UnstableElicitationRequestScope `json:"-"`
-}
-
-func (u *UnstableElicitationFormMode) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err == nil {
-		{
-			var v UnstableElicitationSessionScope
-			var match bool = true
-			if _, ok := m["sessionId"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Session = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableElicitationRequestScope
-			var match bool = true
-			if _, ok := m["requestId"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Request = &v
-				return nil
-			}
-		}
-	} else {
-		if _, ok := err.(*json.UnmarshalTypeError); !ok {
-			return err
-		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
-	{
-		var v UnstableElicitationSessionScope
-		if json.Unmarshal(b, &v) == nil {
-			u.Session = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableElicitationRequestScope
-		if json.Unmarshal(b, &v) == nil {
-			u.Request = &v
-			return nil
-		}
-	}
-	return errors.New("no matching variant for union")
-}
-func (u UnstableElicitationFormMode) MarshalJSON() ([]byte, error) {
-	if u.Session != nil {
-		_b, _e := json.Marshal(*u.Session)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	if u.Request != nil {
-		_b, _e := json.Marshal(*u.Request)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	return []byte{}, nil
-}
-
-func (u *UnstableElicitationFormMode) Validate() error {
-	var count int
-	if u.Session != nil {
-		count++
-	}
-	if u.Request != nil {
-		count++
-	}
-	if count < 1 {
-		return errors.New("UnstableElicitationFormMode must have at least one variant set")
-	}
-	return nil
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Unique identifier for an elicitation.
-type UnstableElicitationId string
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Request-scoped elicitation, tied to a specific JSON-RPC request outside of a session
-// (e.g., during auth/configuration phases before any session is started).
-type UnstableElicitationRequestScope struct {
-	// The request this elicitation is tied to.
-	RequestId RequestId `json:"requestId"`
-}
-
-// Type-safe elicitation schema for requesting structured user input.
-//
-// This represents a JSON Schema object with primitive-typed properties,
-// as required by the elicitation specification.
-type UnstableElicitationSchema struct {
-	// The _meta property is reserved by ACP to allow clients and agents to attach additional
-	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
-	// these keys.
-	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
-	Meta map[string]any `json:"_meta,omitempty"`
-	// Optional description of what this schema represents.
-	Description *string `json:"description,omitempty"`
-	// Property definitions (must be primitive types).
-	//
-	// Defaults to {} if unset.
-	Properties map[string]any `json:"properties"`
-	// List of required property names.
-	Required []string `json:"required,omitempty"`
-	// Optional title for the schema.
-	Title *string `json:"title,omitempty"`
-	// Type discriminator. Always '"object"'.
-	//
-	// Defaults to "object" if unset.
-	Type UnstableElicitationSchemaType `json:"type,omitempty"`
-}
-
-func (v UnstableElicitationSchema) MarshalJSON() ([]byte, error) {
-	type Alias UnstableElicitationSchema
-	var a Alias
-	a = Alias(v)
-	if a.Properties == nil {
-		json.Unmarshal([]byte("{}"), &a.Properties)
-	}
-	return json.Marshal(a)
-}
-
-func (v *UnstableElicitationSchema) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err != nil {
-		return err
-	}
-	type Alias UnstableElicitationSchema
-	var a Alias
-	if err := json.Unmarshal(b, &a); err != nil {
-		return err
-	}
-	{
-		_rm, _ok := m["properties"]
-		if !_ok || (string(_rm) == "null") {
-			json.Unmarshal([]byte("{}"), &a.Properties)
-		}
-	}
-	{
-		_rm, _ok := m["type"]
-		if !_ok || (string(_rm) == "null") {
-			json.Unmarshal([]byte("\"object\""), &a.Type)
-		}
-	}
-	*v = UnstableElicitationSchema(a)
-	return nil
-}
-
-// Type discriminator for elicitation schemas.
-type UnstableElicitationSchemaType string
-
-const (
-	UnstableElicitationSchemaTypeObject UnstableElicitationSchemaType = "object"
-)
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// Session-scoped elicitation, optionally tied to a specific tool call.
-//
-// When 'tool_call_id' is set, the elicitation is tied to a specific tool call.
-// This is useful when an agent receives an elicitation from an MCP server
-// during a tool call and needs to redirect it to the user.
-type UnstableElicitationSessionScope struct {
-	// The session this elicitation is tied to.
-	SessionId SessionId `json:"sessionId"`
-	// Optional tool call within the session.
-	ToolCallId *ToolCallId `json:"toolCallId,omitempty"`
-}
-
-// **UNSTABLE**
-//
-// This capability is not part of the spec yet, and may be removed or changed at any point.
-//
-// URL-based elicitation mode where the client directs the user to a URL.
-type UnstableElicitationUrlMode struct {
-	// Tied to a session, optionally to a specific tool call within that session.
-	Session *UnstableElicitationSessionScope `json:"-"`
-	// Tied to a specific JSON-RPC request outside of a session
-	// (e.g., during auth/configuration phases before any session is started).
-	Request *UnstableElicitationRequestScope `json:"-"`
-}
-
-func (u *UnstableElicitationUrlMode) UnmarshalJSON(b []byte) error {
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err == nil {
-		{
-			var v UnstableElicitationSessionScope
-			var match bool = true
-			if _, ok := m["sessionId"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Session = &v
-				return nil
-			}
-		}
-		{
-			var v UnstableElicitationRequestScope
-			var match bool = true
-			if _, ok := m["requestId"]; !ok {
-				match = false
-			}
-			if match {
-				if json.Unmarshal(b, &v) != nil {
-					return errors.New("invalid variant payload")
-				}
-				u.Request = &v
-				return nil
-			}
-		}
-	} else {
-		if _, ok := err.(*json.UnmarshalTypeError); !ok {
-			return err
-		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
-	{
-		var v UnstableElicitationSessionScope
-		if json.Unmarshal(b, &v) == nil {
-			u.Session = &v
-			return nil
-		}
-	}
-	{
-		var v UnstableElicitationRequestScope
-		if json.Unmarshal(b, &v) == nil {
-			u.Request = &v
-			return nil
-		}
-	}
-	return errors.New("no matching variant for union")
-}
-func (u UnstableElicitationUrlMode) MarshalJSON() ([]byte, error) {
-	if u.Session != nil {
-		_b, _e := json.Marshal(*u.Session)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	if u.Request != nil {
-		_b, _e := json.Marshal(*u.Request)
-		if _e != nil {
-			return []byte{}, _e
-		}
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
-	}
-	return []byte{}, nil
-}
-
-func (u *UnstableElicitationUrlMode) Validate() error {
-	var count int
-	if u.Session != nil {
-		count++
-	}
-	if u.Request != nil {
-		count++
-	}
-	if count < 1 {
-		return errors.New("UnstableElicitationUrlMode must have at least one variant set")
-	}
 	return nil
 }
 
@@ -8385,7 +9503,7 @@ type UnstableMcpServer struct {
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// # ACP transport configuration
+	// ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.
@@ -9861,6 +10979,14 @@ type AgentExperimental interface {
 	UnstableForkSession(ctx context.Context, params UnstableForkSessionRequest) (UnstableForkSessionResponse, error)
 }
 type Client interface {
+	// Notification sent by the agent when a URL-based elicitation is complete.
+	CompleteElicitation(ctx context.Context, params CompleteElicitationNotification) error
+	// Request from the agent to elicit structured user input.
+	//
+	// The agent sends this to the client to request information from the user,
+	// either via a form or by directing them to a URL.
+	// Elicitations are tied to a session (optionally a tool call) or a request.
+	CreateElicitation(ctx context.Context, params CreateElicitationRequest) (CreateElicitationResponse, error)
 	// Request to read content from a text file.
 	//
 	// Only available if the client supports the 'fs.readTextFile' capability.
@@ -9895,22 +11021,6 @@ type Client interface {
 
 // ClientExperimental defines unstable methods that are not part of the official spec. These may change or be removed without notice.
 type ClientExperimental interface {
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
-	// Notification sent by the agent when a URL-based elicitation is complete.
-	UnstableCompleteElicitation(ctx context.Context, params UnstableCompleteElicitationNotification) error
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
-	// Request from the agent to elicit structured user input.
-	//
-	// The agent sends this to the client to request information from the user,
-	// either via a form or by directing them to a URL.
-	// Elicitations are tied to a session (optionally a tool call) or a request.
-	UnstableCreateElicitation(ctx context.Context, params UnstableCreateElicitationRequest) (UnstableCreateElicitationResponse, error)
 	// **UNSTABLE**
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.

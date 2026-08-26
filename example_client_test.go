@@ -16,6 +16,17 @@ type clientExample struct{}
 
 var _ Client = (*clientExample)(nil)
 
+// These examples have no elicitation UI, so they decline rather than answer on
+// the user's behalf. Elicitation joined the stable Client interface in schema
+// 1.21.0; before that the generator treated it as optional.
+func (clientExample) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
+	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+}
+
+func (clientExample) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {
+	return nil
+}
+
 func (clientExample) RequestPermission(ctx context.Context, p RequestPermissionRequest) (RequestPermissionResponse, error) {
 	if len(p.Options) == 0 {
 		return RequestPermissionResponse{

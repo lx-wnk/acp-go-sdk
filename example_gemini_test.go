@@ -12,6 +12,15 @@ type geminiClient struct{}
 
 var _ Client = (*geminiClient)(nil)
 
+// No elicitation UI here either, so decline rather than answer for the user.
+func (geminiClient) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
+	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+}
+
+func (geminiClient) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {
+	return nil
+}
+
 func (geminiClient) RequestPermission(ctx context.Context, p RequestPermissionRequest) (RequestPermissionResponse, error) {
 	if len(p.Options) == 0 {
 		return RequestPermissionResponse{Outcome: RequestPermissionOutcome{Cancelled: &RequestPermissionOutcomeCancelled{}}}, nil
