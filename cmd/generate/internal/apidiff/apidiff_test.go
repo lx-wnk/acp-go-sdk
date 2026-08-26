@@ -95,3 +95,42 @@ func TestWriteIsIdempotentAndSkipsEmpty(t *testing.T) {
 		t.Fatalf("expected one entry for the version, got %d", n)
 	}
 }
+
+// The repository formats markdown with mdformat via treefmt, and `make check` fails on any
+// drift. A generated file that ends in a blank line is rewritten by that pass, so the
+// generator has to emit what the formatter would already accept.
+func TestWriteLeavesNoTrailingBlankLine(t *testing.T) {
+	dir := t.TempDir()
+	if err := Write(dir, "1.0.0", Delta{Removed: []string{"Gone"}}); err != nil {
+		t.Fatal(err)
+	}
+	first, err := os.ReadFile(filepath.Join(dir, "CHANGELOG.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.HasSuffix(string(first), "\n\n") {
+		t.Fatalf("first entry ends with a blank line:\n%q", tail(string(first)))
+	}
+
+	// A second entry must still be separated from the one below it.
+	if err := Write(dir, "1.1.0", Delta{Added: []string{"New"}}); err != nil {
+		t.Fatal(err)
+	}
+	second, err := os.ReadFile(filepath.Join(dir, "CHANGELOG.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.HasSuffix(string(second), "\n\n") {
+		t.Fatalf("second write reintroduced a trailing blank line:\n%q", tail(string(second)))
+	}
+	if !strings.Contains(string(second), "`New`\n\n## 1.0.0") {
+		t.Fatalf("entries are not separated by a blank line:\n%s", second)
+	}
+}
+
+func tail(s string) string {
+	if len(s) > 60 {
+		return s[len(s)-60:]
+	}
+	return s
+}

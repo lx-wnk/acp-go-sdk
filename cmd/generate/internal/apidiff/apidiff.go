@@ -179,15 +179,17 @@ func Write(outDir, version string, d Delta) error {
 	section(&b, "Removed", d.Removed)
 	section(&b, "Changed", d.Changed)
 	section(&b, "Added", d.Added)
-	b.WriteString("\n")
 
 	body := string(existing)
 	const title = "# Changelog\n"
 	if body == "" {
 		return os.WriteFile(path, []byte(title+"\n"+b.String()), 0o644)
 	}
+	// The blank line separates this entry from the one below it. At the end of the file
+	// it would be trailing whitespace, which the repository's mdformat pass strips and
+	// `make check` then reports as drift.
 	body = strings.TrimPrefix(body, title)
-	return os.WriteFile(path, []byte(title+"\n"+b.String()+strings.TrimLeft(body, "\n")), 0o644)
+	return os.WriteFile(path, []byte(title+"\n"+b.String()+"\n"+strings.TrimLeft(body, "\n")), 0o644)
 }
 
 func section(b *strings.Builder, label string, names []string) {
