@@ -856,8 +856,18 @@ func jenTypeFor(d *load.Definition) Code {
 		// additionalProperties names the value type of an open-ended object. The
 		// boolean form (used by every _meta field) decodes to a zero Definition and
 		// leaves the map untyped.
-		if ap := d.AdditionalProperties; ap != nil && namesAType(ap) {
-			return Map(String()).Add(jenTypeFor(ap))
+		if ap := d.AdditionalProperties; ap != nil {
+			// additionalProperties: false closes an object: no key beyond the named ones
+			// is allowed. Go's encoding/json ignores unknown keys by default, so honouring
+			// that needs a decision this generator has never had to make. Until the schema
+			// uses the construct there is nothing to decide, and emitting the open-ended
+			// map would answer it silently and wrongly.
+			if open, ok := ap.BoolValue(); ok && !open {
+				panic("unsupported schema: additionalProperties: false closes an object, which this generator does not model. Decide whether the emitted type should reject unknown keys, then teach jenTypeFor that rule.")
+			}
+			if namesAType(ap) {
+				return Map(String()).Add(jenTypeFor(ap))
+			}
 		}
 		return Map(String()).Any()
 	default:
