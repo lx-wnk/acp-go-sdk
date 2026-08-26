@@ -186,3 +186,21 @@ func TestCreateElicitationResponse_CatchAllWithoutRawMarshals(t *testing.T) {
 		t.Fatalf("unexpected wire form: %s", out)
 	}
 }
+
+// A union holding two arms cannot be expressed in JSON. Validate permits it for anyOf,
+// which is faithful to the schema, so marshal is the only place to report it — and
+// silently encoding the first arm ships a message the caller believes it verified.
+func TestUnionMarshal_MultipleVariantsSet(t *testing.T) {
+	s := ElicitationContentValueString("hi")
+	i := ElicitationContentValueInteger(7)
+	v := ElicitationContentValue{String: &s, Integer: &i}
+
+	if err := v.Validate(); err != nil {
+		t.Fatalf("anyOf Validate should still accept multiple arms, got %v", err)
+	}
+	if _, err := v.MarshalJSON(); err == nil {
+		t.Fatal("expected marshal to refuse a union with two arms set")
+	} else if !strings.Contains(err.Error(), "multiple variants set") {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}

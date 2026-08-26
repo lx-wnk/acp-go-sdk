@@ -947,6 +947,37 @@ func jenTypeForOptional(d *load.Definition) Code {
 // that copy. Without it the struct is rebuilt from its named fields alone and every key
 // this build does not recognise is dropped, which is the opposite of what such an arm is
 // for.
+// mergeRequired folds the parent schema's required keys into a variant's own. A key the
+// parent declares applies to every arm, so an enforcement site reading only the arm's own
+// list never checks it. Shared keys are appended in sorted order to keep codegen stable.
+func mergeRequired(own []string, shared map[string]struct{}) []string {
+	if len(shared) == 0 {
+		return own
+	}
+	seen := make(map[string]struct{}, len(own)+len(shared))
+	out := make([]string, 0, len(own)+len(shared))
+	for _, r := range own {
+		if _, dup := seen[r]; dup {
+			continue
+		}
+		seen[r] = struct{}{}
+		out = append(out, r)
+	}
+	keys := make([]string, 0, len(shared))
+	for r := range shared {
+		keys = append(keys, r)
+	}
+	sort.Strings(keys)
+	for _, r := range keys {
+		if _, dup := seen[r]; dup {
+			continue
+		}
+		seen[r] = struct{}{}
+		out = append(out, r)
+	}
+	return out
+}
+
 func emitRawPassthrough(f *File, tname string) {
 	f.Func().Params(Id("u").Op("*").Id(tname)).Id("UnmarshalJSON").Params(Id("b").Index().Byte()).Error().Block(
 		Type().Id("alias").Id(tname),
@@ -1260,7 +1291,7 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 		variants = append(variants, variantInfo{
 			fieldName:         fieldName,
 			typeName:          tname,
-			required:          v.Required,
+			required:          mergeRequired(v.Required, sharedRequired),
 			isObject:          isObj,
 			isArray:           isArray,
 			arrayItemRequired: arrayItemRequired,
@@ -1328,12 +1359,27 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					h.Switch(Id("disc")).BlockFunc(func(sw *Group) {
 						for _, vi := range variants {
 							if vi.discValue != "" {
-								sw.Case(Lit(vi.discValue)).Block(
-									Var().Id("v").Id(vi.typeName),
-									If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload")))),
-									Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v"),
-									Return(Nil()),
-								)
+								sw.Case(Lit(vi.discValue)).BlockFunc(func(c *Group) {
+									// The discriminator names this arm, so a missing required key is a
+									// malformed payload rather than a reason to try another arm. Check
+									// against the raw key set: once decoded into the struct, an absent
+									// required field and a zero value are indistinguishable.
+									for _, rk := range vi.required {
+										// An explicit null is present but carries nothing. Accepting it
+										// decodes the field to its zero value, which is indistinguishable
+										// from a value the peer actually sent.
+										c.If(
+											List(Id("rv"), Id("ok")).Op(":=").Id("m").Index(Lit(rk)),
+											Op("!").Id("ok").Op("||").Id("string").Call(Id("rv")).Op("==").Lit("null"),
+										).Block(
+											Return(Qual("errors", "New").Call(Lit(name + " " + vi.discValue + " variant requires " + rk))),
+										)
+									}
+									c.Var().Id("v").Id(vi.typeName)
+									c.If(Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("v")).Op("!=").Nil()).Block(Return(Qual("errors", "New").Call(Lit("invalid variant payload"))))
+									c.Id("u").Dot(vi.fieldName).Op("=").Op("&").Id("v")
+									c.Return(Nil())
+								})
 							}
 						}
 						// A discriminator that is present but unrecognised means a variant this
@@ -1438,6 +1484,17 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 	})
 	// Marshal
 	f.Func().Params(Id("u").Id(name)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).BlockFunc(func(g *Group) {
+		// The Go type can hold several arms at once; JSON can express only one. Validate
+		// permits it for anyOf, which is faithful to the schema, so refusing here is the
+		// only place the ambiguity can be reported. Silently encoding the first arm ships
+		// a truncated message that the caller has already checked and believes is valid.
+		g.Var().Id("_set").Int()
+		for _, vi := range variants {
+			g.If(Id("u").Dot(vi.fieldName).Op("!=").Nil()).Block(Id("_set").Op("++"))
+		}
+		g.If(Id("_set").Op(">").Lit(1)).Block(
+			Return(Nil(), Qual("errors", "New").Call(Lit(name+" has multiple variants set"))),
+		)
 		for _, vi := range variants {
 			g.If(Id("u").Dot(vi.fieldName).Op("!=").Nil()).BlockFunc(func(gg *Group) {
 				// Null-only variant encodes to JSON null
