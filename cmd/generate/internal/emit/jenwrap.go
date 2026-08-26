@@ -34,6 +34,7 @@ var (
 	Switch        = jen.Switch
 	Var           = jen.Var
 	Type          = jen.Type
+	Continue      = jen.Continue
 	If            = jen.If
 	List          = jen.List
 	Op            = jen.Op

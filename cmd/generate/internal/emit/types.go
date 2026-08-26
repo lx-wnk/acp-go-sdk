@@ -296,6 +296,7 @@ func WriteTypesJen(outDir string, schema *load.Schema, meta *load.Meta) error {
 				nilable     bool // whether zero-value is nil (slice/map)
 			}
 			defaults := []defaultProp{}
+			tolerant := []string{}
 
 			for _, pk := range pkeys {
 				prop := def.Properties[pk]
@@ -304,6 +305,9 @@ func WriteTypesJen(outDir string, schema *load.Schema, meta *load.Meta) error {
 					st = appendDocComments(st, prop.Description)
 				}
 				tag := pk
+				if prop.DeserializeDefaultOnError {
+					tolerant = append(tolerant, pk)
+				}
 				// Detect defaults generically
 				var dp *defaultProp
 				if prop.Default != nil {
@@ -355,26 +359,28 @@ func WriteTypesJen(outDir string, schema *load.Schema, meta *load.Meta) error {
 			f.Line()
 
 			// If the struct has any fields with schema defaults, synthesize MarshalJSON and UnmarshalJSON
-			if len(defaults) > 0 {
+			if len(defaults) > 0 || len(tolerant) > 0 {
 				// MarshalJSON: coerce nil slices to empty slices before encoding
-				f.Func().Params(Id("v").Id(name)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).BlockFunc(func(g *Group) {
-					g.Type().Id("Alias").Id(name)
-					g.Var().Id("a").Id("Alias")
-					g.Id("a").Op("=").Id("Alias").Call(Id("v"))
-					for _, dp := range defaults {
-						// For array/map defaults: if zero is nil, fill with default JSON when nil
-						if dp.kind == KindArray || dp.kind == KindObject {
-							if dp.nilable {
-								g.If(Id("a").Dot(dp.fieldName).Op("==").Nil()).Block(
-									Qual("encoding/json", "Unmarshal").Call(Index().Byte().Parens(Lit(dp.defaultJSON)), Op("&").Id("a").Dot(dp.fieldName)),
-								)
+				if len(defaults) > 0 {
+					f.Func().Params(Id("v").Id(name)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).BlockFunc(func(g *Group) {
+						g.Type().Id("Alias").Id(name)
+						g.Var().Id("a").Id("Alias")
+						g.Id("a").Op("=").Id("Alias").Call(Id("v"))
+						for _, dp := range defaults {
+							// For array/map defaults: if zero is nil, fill with default JSON when nil
+							if dp.kind == KindArray || dp.kind == KindObject {
+								if dp.nilable {
+									g.If(Id("a").Dot(dp.fieldName).Op("==").Nil()).Block(
+										Qual("encoding/json", "Unmarshal").Call(Index().Byte().Parens(Lit(dp.defaultJSON)), Op("&").Id("a").Dot(dp.fieldName)),
+									)
+								}
 							}
+							// For typed object defaults (non-nilable), we keep Option A: do not inject values on encode.
 						}
-						// For typed object defaults (non-nilable), we keep Option A: do not inject values on encode.
-					}
-					g.Return(Qual("encoding/json", "Marshal").Call(Id("a")))
-				})
-				f.Line()
+						g.Return(Qual("encoding/json", "Marshal").Call(Id("a")))
+					})
+					f.Line()
+				}
 
 				// UnmarshalJSON: apply defaults when field is missing or null (and schema doesn't include null)
 				f.Func().Params(Id("v").Op("*").Id(name)).Id("UnmarshalJSON").Params(Id("b").Index().Byte()).Error().BlockFunc(func(g *Group) {
@@ -382,7 +388,37 @@ func WriteTypesJen(outDir string, schema *load.Schema, meta *load.Meta) error {
 					g.If(List(Id("err")).Op(":=").Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("m")), Id("err").Op("!=").Nil()).Block(Return(Id("err")))
 					g.Type().Id("Alias").Id(name)
 					g.Var().Id("a").Id("Alias")
-					g.If(List(Id("err")).Op(":=").Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("a")), Id("err").Op("!=").Nil()).Block(Return(Id("err")))
+					g.If(List(Id("err")).Op(":=").Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("a")), Id("err").Op("!=").Nil()).BlockFunc(func(h *Group) {
+						if len(tolerant) == 0 {
+							h.Return(Id("err"))
+							return
+						}
+						// The schema marks these properties as tolerable: a peer that sends one
+						// in a shape this build cannot decode should lose that property, not have
+						// the whole message rejected. Probe each one alone, drop the ones that
+						// fail, and decode what is left.
+						h.Id("dropped").Op(":=").Lit(false)
+						h.For(List(Id("_"), Id("k")).Op(":=").Range().Index().String().ValuesFunc(func(vg *Group) {
+							for _, pk := range tolerant {
+								vg.Lit(pk)
+							}
+						})).BlockFunc(func(l *Group) {
+							l.List(Id("raw"), Id("ok")).Op(":=").Id("m").Index(Id("k"))
+							l.If(Op("!").Id("ok")).Block(Continue())
+							l.List(Id("pb"), Id("pe")).Op(":=").Qual("encoding/json", "Marshal").Call(Map(String()).Qual("encoding/json", "RawMessage").Values(Dict{Id("k"): Id("raw")}))
+							l.If(Id("pe").Op("!=").Nil()).Block(Continue())
+							l.Var().Id("probe").Id("Alias")
+							l.If(Qual("encoding/json", "Unmarshal").Call(Id("pb"), Op("&").Id("probe")).Op("!=").Nil()).Block(
+								Id("delete").Call(Id("m"), Id("k")),
+								Id("dropped").Op("=").Lit(true),
+							)
+						})
+						h.If(Op("!").Id("dropped")).Block(Return(Id("err")))
+						h.List(Id("rb"), Id("re")).Op(":=").Qual("encoding/json", "Marshal").Call(Id("m"))
+						h.If(Id("re").Op("!=").Nil()).Block(Return(Id("err")))
+						h.Id("a").Op("=").Id("Alias").Values()
+						h.If(Qual("encoding/json", "Unmarshal").Call(Id("rb"), Op("&").Id("a")).Op("!=").Nil()).Block(Return(Id("err")))
+					})
 					for _, dp := range defaults {
 						g.BlockFunc(func(h *Group) {
 							h.List(Id("_rm"), Id("_ok")).Op(":=").Id("m").Index(Lit(dp.propName))
