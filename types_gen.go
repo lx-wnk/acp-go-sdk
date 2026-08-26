@@ -593,7 +593,9 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -614,7 +616,7 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 				u.Terminal = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if _, ok := m["id"]; !ok {
 						match = false
@@ -2439,7 +2441,9 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -2517,6 +2521,10 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 				}
 				u.Resource = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("ContentBlock: unrecognized type value")
+				}
 			}
 		}
 		{
@@ -3038,7 +3046,9 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["mode"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -3078,7 +3088,7 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				u.Url = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if _, ok := m["message"]; !ok {
 						match = false
@@ -3380,7 +3390,9 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["action"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -3415,7 +3427,7 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				u.Cancel = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if match {
 						var v CreateElicitationResponseOther
@@ -4624,7 +4636,9 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -4682,7 +4696,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				u.Array = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if match {
 						var v ElicitationPropertySchemaOther
@@ -7153,7 +7167,9 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -7212,7 +7228,7 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				u.Acp = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if _, ok := m["name"]; !ok {
 						match = false
@@ -7773,7 +7789,9 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -7790,6 +7808,10 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 				}
 				u.String = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("MultiSelectItems: unrecognized type value")
+				}
 			}
 		}
 		{
@@ -9788,7 +9810,9 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -9840,6 +9864,10 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 				}
 				u.Markdown = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("PlanUpdateContent: unrecognized type value")
+				}
 			}
 		}
 		{
@@ -10709,7 +10737,9 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["outcome"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -10736,6 +10766,10 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 				}
 				u.Selected = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("RequestPermissionOutcome: unrecognized outcome value")
+				}
 			}
 		}
 		{
@@ -11497,7 +11531,9 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -11542,6 +11578,10 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 				}
 				u.Boolean = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("SessionConfigOption: unrecognized type value")
+				}
 			}
 		}
 		{
@@ -12866,7 +12906,9 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["sessionUpdate"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -13074,6 +13116,10 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 				}
 				u.CompactionSummaryChunk = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("SessionUpdate: unrecognized sessionUpdate value")
+				}
 			}
 		}
 		{
@@ -13792,7 +13838,9 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -13816,7 +13864,7 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 				u.Boolean = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if _, ok := m["value"]; !ok {
 						match = false
@@ -14851,7 +14899,9 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -14897,6 +14947,10 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 				}
 				u.Terminal = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("ToolCallContent: unrecognized type value")
+				}
 			}
 		}
 		{
@@ -16482,7 +16536,9 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["type"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -16541,7 +16597,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				u.Acp = &v
 				return nil
 			default:
-				if disc != "" {
+				if discPresent {
 					match := true
 					if _, ok := m["name"]; !ok {
 						match = false
@@ -17802,7 +17858,9 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &m); err == nil {
 		{
 			var disc string
+			discPresent := false
 			if v, ok := m["kind"]; ok {
+				discPresent = true
 				json.Unmarshal(v, &disc)
 			}
 			switch disc {
@@ -17888,6 +17946,10 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 				}
 				u.SearchAndReplace = &v
 				return nil
+			default:
+				if discPresent {
+					return errors.New("UnstableNesSuggestion: unrecognized kind value")
+				}
 			}
 		}
 		{
