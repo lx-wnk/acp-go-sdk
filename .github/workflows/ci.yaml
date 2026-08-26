@@ -6,7 +6,7 @@ on:
       - "README.md"
   push:
     branches:
-      - main
+      - trunk
     paths-ignore:
       - "README.md"
 
@@ -14,7 +14,7 @@ permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/trunk' }}
 
 jobs:
   check:
