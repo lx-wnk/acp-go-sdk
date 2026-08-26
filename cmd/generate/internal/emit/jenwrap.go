@@ -33,6 +33,7 @@ var (
 	Default       = jen.Default
 	Switch        = jen.Switch
 	Var           = jen.Var
+	Type          = jen.Type
 	If            = jen.If
 	List          = jen.List
 	Op            = jen.Op

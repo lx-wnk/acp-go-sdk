@@ -735,6 +735,9 @@ func expandAllOf(schema *load.Schema, d *load.Definition) *load.Definition {
 		if merged.Items == nil && resolved.Items != nil {
 			merged.Items = resolved.Items
 		}
+		if merged.AdditionalProperties == nil && resolved.AdditionalProperties != nil {
+			merged.AdditionalProperties = resolved.AdditionalProperties
+		}
 		if merged.Ref == "" && resolved.Ref != "" {
 			merged.Ref = resolved.Ref
 		}
@@ -814,8 +817,11 @@ func jenTypeFor(d *load.Definition) Code {
 	case "array":
 		return Index().Add(jenTypeFor(d.Items))
 	case "object":
-		if len(d.Properties) == 0 {
-			return Map(String()).Any()
+		// additionalProperties names the value type of an open-ended object. The
+		// boolean form (used by every _meta field) decodes to a zero Definition and
+		// leaves the map untyped.
+		if ap := d.AdditionalProperties; ap != nil && namesAType(ap) {
+			return Map(String()).Add(jenTypeFor(ap))
 		}
 		return Map(String()).Any()
 	default:
@@ -824,6 +830,46 @@ func jenTypeFor(d *load.Definition) Code {
 		}
 		return Any()
 	}
+}
+
+// yieldsPointer reports whether jenTypeForOptional already produces a pointer for d,
+// so a field is not wrapped twice.
+func yieldsPointer(d *load.Definition) bool {
+	if d == nil {
+		return false
+	}
+	if arr, ok := d.Type.([]any); ok && len(arr) == 2 {
+		for _, v := range arr {
+			if s, ok2 := v.(string); ok2 && s == "null" {
+				return true
+			}
+		}
+	}
+	list := d.AnyOf
+	if len(list) == 0 {
+		list = d.OneOf
+	}
+	if len(list) == 2 {
+		for _, e := range list {
+			if e == nil {
+				continue
+			}
+			if s, ok := e.Type.(string); ok && s == "null" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// namesAType reports whether a schema carries enough structure for jenTypeFor to
+// produce something better than any. `additionalProperties: true` does not.
+func namesAType(d *load.Definition) bool {
+	if d == nil {
+		return false
+	}
+	return d.Ref != "" || d.Type != nil || len(d.Enum) > 0 ||
+		len(d.AnyOf) > 0 || len(d.OneOf) > 0 || len(d.AllOf) > 0 || len(d.Properties) > 0
 }
 
 // jenTypeForOptional maps unions that include null to pointer types where applicable.
@@ -896,6 +942,36 @@ func jenTypeForOptional(d *load.Definition) Code {
 // emitAvailableCommandInputJen generates a concrete variant type for anyOf and a thin union wrapper
 // that supports JSON unmarshal by probing object shape. Currently the schema defines one variant
 // (title: UnstructuredCommandInput) with a required 'hint' field.
+// emitRawPassthrough gives a variant the schema leaves open — additionalProperties: true
+// alongside named properties — a copy of the object it decoded from, and marshals from
+// that copy. Without it the struct is rebuilt from its named fields alone and every key
+// this build does not recognise is dropped, which is the opposite of what such an arm is
+// for.
+func emitRawPassthrough(f *File, tname string) {
+	f.Func().Params(Id("u").Op("*").Id(tname)).Id("UnmarshalJSON").Params(Id("b").Index().Byte()).Error().Block(
+		Type().Id("alias").Id(tname),
+		Var().Id("a").Id("alias"),
+		If(List(Id("err")).Op(":=").Qual("encoding/json", "Unmarshal").Call(Id("b"), Op("&").Id("a")), Id("err").Op("!=").Nil()).Block(Return(Id("err"))),
+		Op("*").Id("u").Op("=").Id(tname).Call(Id("a")),
+		Id("u").Dot("Raw").Op("=").Id("append").Call(Qual("encoding/json", "RawMessage").Call(Nil()), Id("b").Op("...")),
+		Return(Nil()),
+	)
+	f.Line()
+	f.Func().Params(Id("u").Id(tname)).Id("MarshalJSON").Params().Params(Index().Byte(), Error()).Block(
+		Type().Id("alias").Id(tname),
+		List(Id("named"), Id("err")).Op(":=").Qual("encoding/json", "Marshal").Call(Id("alias").Call(Id("u"))),
+		If(Id("err").Op("!=").Nil()).Block(Return(Nil(), Id("err"))),
+		If(Id("len").Call(Id("u").Dot("Raw")).Op("==").Lit(0)).Block(Return(Id("named"), Nil())),
+		Var().Id("merged").Map(String()).Qual("encoding/json", "RawMessage"),
+		If(Qual("encoding/json", "Unmarshal").Call(Id("u").Dot("Raw"), Op("&").Id("merged")).Op("!=").Nil()).Block(Return(Id("named"), Nil())),
+		Var().Id("overlay").Map(String()).Qual("encoding/json", "RawMessage"),
+		If(Qual("encoding/json", "Unmarshal").Call(Id("named"), Op("&").Id("overlay")).Op("!=").Nil()).Block(Return(Id("named"), Nil())),
+		For(List(Id("k"), Id("v")).Op(":=").Range().Id("overlay")).Block(Id("merged").Index(Id("k")).Op("=").Id("v")),
+		Return(Qual("encoding/json", "Marshal").Call(Id("merged"))),
+	)
+	f.Line()
+}
+
 func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Definition, defs []*load.Definition, exactlyOne bool, usedTypeNames map[string]bool) {
 	type variantInfo struct {
 		fieldName         string
@@ -1070,6 +1146,7 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			}
 
 			st := []Code{}
+			openRaw := false
 			if !isNull && isObj {
 				req := map[string]struct{}{}
 				for _, r := range v.Required {
@@ -1078,8 +1155,35 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 				for r := range sharedRequired {
 					req[r] = struct{}{}
 				}
-				mergedProps := make(map[string]*load.Definition, len(sharedProps)+len(v.Properties))
+				// A variant composed through allOf can inherit a sibling anyOf that is a
+				// mixin rather than a nested union: every member contributes properties to
+				// this same object, and exactly one applies per payload. ACP uses it for
+				// elicitation scope (session vs request). expandAllOf propagates the anyOf
+				// but the struct below is built from properties alone, so without this the
+				// mixin's fields never reach the wire. Merged as optional, since only one
+				// member applies at a time.
+				mixinProps := map[string]*load.Definition{}
+				if len(v.AnyOf) > 0 {
+					for _, alt := range v.AnyOf {
+						res := expandAllOf(schema, alt)
+						if res != nil && res.Ref != "" && strings.HasPrefix(res.Ref, "#/$defs/") {
+							res = expandAllOf(schema, schema.Defs[res.Ref[len("#/$defs/"):]])
+						}
+						if res == nil || len(res.Properties) == 0 {
+							// Not a property mixin. Leave the anyOf alone.
+							mixinProps = nil
+							break
+						}
+						for pk, pDef := range res.Properties {
+							mixinProps[pk] = pDef
+						}
+					}
+				}
+				mergedProps := make(map[string]*load.Definition, len(sharedProps)+len(mixinProps)+len(v.Properties))
 				for pk, pDef := range sharedProps {
+					mergedProps[pk] = pDef
+				}
+				for pk, pDef := range mixinProps {
 					mergedProps[pk] = pDef
 				}
 				for pk, pDef := range v.Properties {
@@ -1103,7 +1207,22 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 					if _, ok := req[pk]; !ok {
 						tag = pk + ",omitempty"
 					}
-					st = append(st, Id(field).Add(jenTypeForOptional(pDef)).Tag(map[string]string{"json": tag}))
+					fieldType := jenTypeForOptional(pDef)
+					if _, fromMixin := mixinProps[pk]; fromMixin {
+						if _, own := v.Properties[pk]; !own && !yieldsPointer(pDef) {
+							// Only one mixin member applies per payload, so every field it
+							// contributes is optional. A value type cannot express absence:
+							// omitempty does nothing for a struct, so a zero RequestId would
+							// be marshalled and fail as a union with no variant set.
+							fieldType = Op("*").Add(jenTypeFor(pDef))
+						}
+					}
+					st = append(st, Id(field).Add(fieldType).Tag(map[string]string{"json": tag}))
+				}
+				if open, ok := v.AdditionalProperties.BoolValue(); ok && open && len(pkeys) > 0 {
+					openRaw = true
+					st = appendDocComments(st, "Raw holds the object as it decoded, so keys this build does not recognise\nsurvive a round trip. The named fields above win on re-marshal.")
+					st = append(st, Id("Raw").Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": "-"}))
 				}
 			} else if !isNull && !isObj && v.Title != "" {
 				// Title-only variants: check if they're extension types
@@ -1133,6 +1252,9 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 			}
 			f.Type().Id(tname).Struct(st...)
 			f.Line()
+			if openRaw {
+				emitRawPassthrough(f, tname)
+			}
 		skipStructEmit:
 		}
 		variants = append(variants, variantInfo{
