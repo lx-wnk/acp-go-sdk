@@ -232,9 +232,6 @@ func (u *AgentResponse) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v AgentResult
 		if json.Unmarshal(b, &v) == nil {
@@ -274,7 +271,7 @@ func (u AgentResponse) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("AgentResponse must have at least one variant set")
 }
 
 func (u *AgentResponse) Validate() error {
@@ -425,6 +422,24 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 				}
 				u.Terminal = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if _, ok := m["id"]; !ok {
+						match = false
+					}
+					if _, ok := m["name"]; !ok {
+						match = false
+					}
+					if match {
+						var v AuthMethodAgent
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Agent = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -469,9 +484,6 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v AuthMethodTerminalInline
 		if json.Unmarshal(b, &v) == nil {
@@ -512,7 +524,7 @@ func (u AuthMethod) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("AuthMethod must have at least one variant set")
 }
 
 func (u *AuthMethod) Validate() error {
@@ -654,9 +666,6 @@ func (u *AvailableCommandInput) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v UnstructuredCommandInput
 		if json.Unmarshal(b, &v) == nil {
@@ -678,7 +687,7 @@ func (u AvailableCommandInput) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("AvailableCommandInput must have at least one variant set")
 }
 
 func (u *AvailableCommandInput) Validate() error {
@@ -1010,9 +1019,6 @@ func (u *ClientResponse) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ClientResult
 		if json.Unmarshal(b, &v) == nil {
@@ -1052,7 +1058,7 @@ func (u ClientResponse) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ClientResponse must have at least one variant set")
 }
 
 func (u *ClientResponse) Validate() error {
@@ -1529,9 +1535,6 @@ func (u *ContentBlock) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ContentBlockText
 		if json.Unmarshal(b, &v) == nil {
@@ -1678,7 +1681,7 @@ func (u ContentBlock) MarshalJSON() ([]byte, error) {
 			return json.Marshal(nm)
 		}
 	}
-	return []byte{}, nil
+	return nil, errors.New("ContentBlock must have at least one variant set")
 }
 
 func (u *ContentBlock) Validate() error {
@@ -1844,6 +1847,18 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 				}
 				u.Url = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if match {
+						var v CreateElicitationOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -1901,9 +1916,6 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v CreateElicitationForm
@@ -1964,7 +1976,7 @@ func (u CreateElicitationRequest) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("CreateElicitationRequest must have at least one variant set")
 }
 
 func (u *CreateElicitationRequest) Validate() error {
@@ -2101,6 +2113,18 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 				}
 				u.Cancel = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if match {
+						var v CreateElicitationResponseOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -2163,9 +2187,6 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v CreateElicitationAccept
@@ -2245,7 +2266,7 @@ func (u CreateElicitationResponse) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("CreateElicitationResponse must have at least one variant set")
 }
 
 func (u *CreateElicitationResponse) Validate() error {
@@ -2451,9 +2472,6 @@ func (u *ElicitationContentValue) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationContentValueString
 		if json.Unmarshal(b, &v) == nil {
@@ -2498,11 +2516,6 @@ func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Integer != nil {
 		_b, _e := json.Marshal(*u.Integer)
@@ -2510,11 +2523,6 @@ func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Number != nil {
 		_b, _e := json.Marshal(*u.Number)
@@ -2522,11 +2530,6 @@ func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Boolean != nil {
 		_b, _e := json.Marshal(*u.Boolean)
@@ -2534,11 +2537,6 @@ func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.StringArray != nil {
 		_b, _e := json.Marshal(*u.StringArray)
@@ -2546,13 +2544,8 @@ func (u ElicitationContentValue) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ElicitationContentValue must have at least one variant set")
 }
 
 func (u *ElicitationContentValue) Validate() error {
@@ -2637,9 +2630,6 @@ func (u *ElicitationFormMode) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationSessionScope
 		if json.Unmarshal(b, &v) == nil {
@@ -2679,7 +2669,7 @@ func (u ElicitationFormMode) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ElicitationFormMode must have at least one variant set")
 }
 
 func (u *ElicitationFormMode) Validate() error {
@@ -2964,6 +2954,18 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 				}
 				u.Array = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if match {
+						var v ElicitationPropertySchemaOther
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Other = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -3057,9 +3059,6 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v ElicitationPropertySchemaString
@@ -3177,7 +3176,7 @@ func (u ElicitationPropertySchema) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ElicitationPropertySchema must have at least one variant set")
 }
 
 func (u *ElicitationPropertySchema) Validate() error {
@@ -3365,9 +3364,6 @@ func (u *ElicitationUrlMode) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ElicitationSessionScope
 		if json.Unmarshal(b, &v) == nil {
@@ -3407,7 +3403,7 @@ func (u ElicitationUrlMode) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ElicitationUrlMode must have at least one variant set")
 }
 
 func (u *ElicitationUrlMode) Validate() error {
@@ -3488,9 +3484,6 @@ func (u *EmbeddedResourceResource) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v TextResourceContents
 		if json.Unmarshal(b, &v) == nil {
@@ -3530,7 +3523,7 @@ func (u EmbeddedResourceResource) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("EmbeddedResourceResource must have at least one variant set")
 }
 
 func (u *EmbeddedResourceResource) Validate() error {
@@ -3665,9 +3658,6 @@ func (u *ErrorCode) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ErrorCodeParseError
 		if json.Unmarshal(b, &v) == nil {
@@ -3740,11 +3730,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.InvalidRequest != nil {
 		_b, _e := json.Marshal(*u.InvalidRequest)
@@ -3752,11 +3737,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.MethodNotFound != nil {
 		_b, _e := json.Marshal(*u.MethodNotFound)
@@ -3764,11 +3744,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.InvalidParams != nil {
 		_b, _e := json.Marshal(*u.InvalidParams)
@@ -3776,11 +3751,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.InternalError != nil {
 		_b, _e := json.Marshal(*u.InternalError)
@@ -3788,11 +3758,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.RequestCancelled != nil {
 		_b, _e := json.Marshal(*u.RequestCancelled)
@@ -3800,11 +3765,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.AuthenticationRequired != nil {
 		_b, _e := json.Marshal(*u.AuthenticationRequired)
@@ -3812,11 +3772,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.ResourceNotFound != nil {
 		_b, _e := json.Marshal(*u.ResourceNotFound)
@@ -3824,11 +3779,6 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Other != nil {
 		_b, _e := json.Marshal(*u.Other)
@@ -3836,13 +3786,8 @@ func (u ErrorCode) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ErrorCode must have at least one variant set")
 }
 
 func (u *ErrorCode) Validate() error {
@@ -4531,6 +4476,30 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 				}
 				u.Acp = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if _, ok := m["name"]; !ok {
+						match = false
+					}
+					if _, ok := m["command"]; !ok {
+						match = false
+					}
+					if _, ok := m["args"]; !ok {
+						match = false
+					}
+					if _, ok := m["env"]; !ok {
+						match = false
+					}
+					if match {
+						var v McpServerStdio
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Stdio = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -4627,9 +4596,6 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v McpServerHttpInline
 		if json.Unmarshal(b, &v) == nil {
@@ -4708,7 +4674,7 @@ func (u McpServer) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("McpServer must have at least one variant set")
 }
 
 func (u *McpServer) Validate() error {
@@ -4922,9 +4888,6 @@ func (u *MultiSelectItems) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v MultiSelectItemsString
 		if json.Unmarshal(b, &v) == nil {
@@ -4983,7 +4946,7 @@ func (u MultiSelectItems) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("MultiSelectItems must have at least one variant set")
 }
 
 func (u *MultiSelectItems) Validate() error {
@@ -5710,9 +5673,6 @@ func (u *PlanUpdateContent) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v PlanUpdateContentItems
 		if json.Unmarshal(b, &v) == nil {
@@ -5773,7 +5733,7 @@ func (u PlanUpdateContent) MarshalJSON() ([]byte, error) {
 		m["type"] = "markdown"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("PlanUpdateContent must have at least one variant set")
 }
 
 func (u *PlanUpdateContent) Validate() error {
@@ -6079,9 +6039,6 @@ func (u *RequestId) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v RequestIdNull
 		if json.Unmarshal(b, &v) == nil {
@@ -6115,11 +6072,6 @@ func (u RequestId) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Str != nil {
 		_b, _e := json.Marshal(*u.Str)
@@ -6127,13 +6079,8 @@ func (u RequestId) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("RequestId must have at least one variant set")
 }
 
 func (u *RequestId) Validate() error {
@@ -6252,9 +6199,6 @@ func (u *RequestPermissionOutcome) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v RequestPermissionOutcomeCancelled
 		if json.Unmarshal(b, &v) == nil {
@@ -6296,7 +6240,7 @@ func (u RequestPermissionOutcome) MarshalJSON() ([]byte, error) {
 		m["outcome"] = "selected"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("RequestPermissionOutcome must have at least one variant set")
 }
 
 func (u *RequestPermissionOutcome) Validate() error {
@@ -6670,9 +6614,6 @@ func (u *SessionConfigOption) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v SessionConfigOptionSelect
 		if json.Unmarshal(b, &v) == nil {
@@ -6714,7 +6655,7 @@ func (u SessionConfigOption) MarshalJSON() ([]byte, error) {
 		m["type"] = "boolean"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("SessionConfigOption must have at least one variant set")
 }
 
 func (u *SessionConfigOption) Validate() error {
@@ -6895,11 +6836,6 @@ func (u SessionConfigSelectOptions) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
 	if u.Grouped != nil {
 		_b, _e := json.Marshal(*u.Grouped)
@@ -6907,13 +6843,8 @@ func (u SessionConfigSelectOptions) MarshalJSON() ([]byte, error) {
 			return []byte{}, _e
 		}
 		return _b, nil
-		var m map[string]any
-		if json.Unmarshal(_b, &m) != nil {
-			return []byte{}, errors.New("invalid variant payload")
-		}
-		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("SessionConfigSelectOptions must have at least one variant set")
 }
 
 func (u *SessionConfigSelectOptions) Validate() error {
@@ -7831,9 +7762,6 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v SessionUpdateUserMessageChunk
 		if json.Unmarshal(b, &v) == nil {
@@ -8122,7 +8050,7 @@ func (u SessionUpdate) MarshalJSON() ([]byte, error) {
 		m["sessionUpdate"] = "compaction_summary_chunk"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("SessionUpdate must have at least one variant set")
 }
 
 func (u *SessionUpdate) Validate() error {
@@ -8243,6 +8171,21 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 				}
 				u.Boolean = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if _, ok := m["value"]; !ok {
+						match = false
+					}
+					if match {
+						var v SetSessionConfigOptionValueId
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.ValueId = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -8280,9 +8223,6 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 		if _, ok := err.(*json.UnmarshalTypeError); !ok {
 			return err
 		}
-	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
 	}
 	{
 		var v SetSessionConfigOptionBoolean
@@ -8324,7 +8264,7 @@ func (u SetSessionConfigOptionRequest) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("SetSessionConfigOptionRequest must have at least one variant set")
 }
 
 func (u *SetSessionConfigOptionRequest) Validate() error {
@@ -8805,9 +8745,6 @@ func (u *ToolCallContent) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v ToolCallContentContent
 		if json.Unmarshal(b, &v) == nil {
@@ -8868,7 +8805,7 @@ func (u ToolCallContent) MarshalJSON() ([]byte, error) {
 		m["type"] = "terminal"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("ToolCallContent must have at least one variant set")
 }
 
 func (u *ToolCallContent) Validate() error {
@@ -9544,6 +9481,30 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				}
 				u.Acp = &v
 				return nil
+			default:
+				if disc != "" {
+					match := true
+					if _, ok := m["name"]; !ok {
+						match = false
+					}
+					if _, ok := m["command"]; !ok {
+						match = false
+					}
+					if _, ok := m["args"]; !ok {
+						match = false
+					}
+					if _, ok := m["env"]; !ok {
+						match = false
+					}
+					if match {
+						var v McpServerStdio
+						if json.Unmarshal(b, &v) != nil {
+							return errors.New("invalid variant payload")
+						}
+						u.Stdio = &v
+						return nil
+					}
+				}
 			}
 		}
 		{
@@ -9640,9 +9601,6 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v UnstableMcpServerHttp
 		if json.Unmarshal(b, &v) == nil {
@@ -9721,7 +9679,7 @@ func (u UnstableMcpServer) MarshalJSON() ([]byte, error) {
 		}
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("UnstableMcpServer must have at least one variant set")
 }
 
 func (u *UnstableMcpServer) Validate() error {
@@ -10306,9 +10264,6 @@ func (u *UnstableNesSuggestion) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
-	var arr []map[string]json.RawMessage
-	if json.Unmarshal(b, &arr) == nil {
-	}
 	{
 		var v UnstableNesSuggestionEdit
 		if json.Unmarshal(b, &v) == nil {
@@ -10388,7 +10343,7 @@ func (u UnstableNesSuggestion) MarshalJSON() ([]byte, error) {
 		m["kind"] = "searchAndReplace"
 		return json.Marshal(m)
 	}
-	return []byte{}, nil
+	return nil, errors.New("UnstableNesSuggestion must have at least one variant set")
 }
 
 func (u *UnstableNesSuggestion) Validate() error {
