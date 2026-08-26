@@ -17,6 +17,22 @@ Learn more about the protocol itself at <https://agentclientprotocol.com>.
 go get github.com/coder/acp-go-sdk@v1.21.0
 ```
 
+### Versioning
+
+This module's version tracks the ACP schema release it is generated from, not Go API
+compatibility: `vX.Y.Z` is generated from schema `X.Y.Z`.
+
+A minor bump can therefore remove exported types or add methods to the `Client` and
+`Agent` interfaces, which breaks compilation for code that implements them. Schema
+1.21.0, for example, graduates elicitation out of the experimental surface: 18
+`Unstable*` types are renamed and `Client` gains two required methods.
+
+Pin the exact version shown above rather than `@latest` or `@v1`, and upgrade
+deliberately, reading the release notes for the schema version you are moving to.
+
+The wire protocol is more stable than the Go API. A schema bump that breaks
+compilation usually leaves JSON-RPC interoperability with older peers intact.
+
 ## Get Started
 
 ### Understand the Protocol
@@ -63,6 +79,45 @@ Helper constructors are provided to reduce boilerplate when working with union t
   `acp.ResourceLinkBlock`, `acp.ResourceBlock`.
 - Tool content: `acp.ToolContent`, `acp.ToolDiffContent`, `acp.ToolTerminalRef`.
 - Utility: `acp.Ptr[T]` for pointer fields in request/update structs.
+
+### Elicitation
+
+Since schema 1.21.0, `Client` requires `CreateElicitation` and `CompleteElicitation`.
+An agent uses them to ask the user for structured input, either by having the client
+render a form or by directing the user to a URL.
+
+A client that cannot present either should report the method as unavailable rather
+than answering on the user's behalf:
+
+```go
+func (c *myClient) CreateElicitation(ctx context.Context, params acp.CreateElicitationRequest) (acp.CreateElicitationResponse, error) {
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
+}
+```
+
+`Decline` means the user declined. Returning it when nobody was asked tells the agent
+a decision was made that never was.
+
+The URL arm is chosen by the agent, so treat it as untrusted input. `SafeURL` parses
+it and rejects every scheme except `https` and `http`:
+
+```go
+if params.Url == nil {
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
+}
+target, err := params.Url.SafeURL()
+if err != nil {
+	return acp.CreateElicitationResponse{}, err
+}
+// Show target.Host to the user before navigating.
+```
+
+`SafeURL` also returns a host with non-ASCII labels in its ASCII (Punycode) form, so
+what you display cannot be confused with a different name: a URL whose host reads as
+`apple.com` but begins with a Cyrillic `а` comes back as `xn--pple-43d.com`.
+
+A successful parse is not permission to open the URL. Show the origin to the user
+first, and do not prefetch the URL to build a preview.
 
 ### Extension methods
 

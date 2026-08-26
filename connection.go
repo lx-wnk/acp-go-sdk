@@ -381,7 +381,7 @@ func (c *Connection) receive() {
 
 		var msg anyMessage
 		if err := json.Unmarshal(line, &msg); err != nil {
-			c.loggerOrDefault().Error("failed to parse incoming message", "err", err, "raw", string(line))
+			c.loggerOrDefault().Error("failed to parse incoming message", "err", err, "len", len(line))
 			continue
 		}
 
@@ -399,7 +399,7 @@ func (c *Connection) receive() {
 			if msg.ID != nil {
 				idKey, err := canonicalJSONRPCIDKey(*msg.ID)
 				if err != nil {
-					c.loggerOrDefault().Error("failed to canonicalize inbound request id", "err", err, "id", string(*msg.ID))
+					c.loggerOrDefault().Error("failed to canonicalize inbound request id", "err", err, "id_len", len(*msg.ID))
 					idKey = string(*msg.ID)
 				}
 				reqCtx, cancel := context.WithCancelCause(c.ctx)
@@ -448,7 +448,7 @@ func (c *Connection) receive() {
 				return
 			}
 		default:
-			c.loggerOrDefault().Error("received message with neither id nor method", "raw", string(line))
+			c.loggerOrDefault().Error("received message with neither id nor method", "len", len(line))
 		}
 	}
 
@@ -515,7 +515,7 @@ func (c *Connection) processNotifications() {
 func (c *Connection) handleResponse(msg *anyMessage) {
 	idStr, err := canonicalJSONRPCIDKey(*msg.ID)
 	if err != nil {
-		c.loggerOrDefault().Error("failed to canonicalize response id", "err", err, "id", string(*msg.ID))
+		c.loggerOrDefault().Error("failed to canonicalize response id", "err", err, "id_len", len(*msg.ID))
 		idStr = string(*msg.ID)
 	}
 
@@ -551,7 +551,7 @@ func (c *Connection) handleCancelRequest(msg *anyMessage) {
 
 	idKey, err := canonicalJSONRPCIDKey(p.RequestID)
 	if err != nil {
-		c.loggerOrDefault().Error("failed to canonicalize $/cancel_request requestId", "err", err, "requestId", string(p.RequestID))
+		c.loggerOrDefault().Error("failed to canonicalize $/cancel_request requestId", "err", err, "requestId_len", len(p.RequestID))
 		idKey = string(p.RequestID)
 	}
 

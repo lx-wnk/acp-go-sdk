@@ -16,11 +16,9 @@ type clientExample struct{}
 
 var _ Client = (*clientExample)(nil)
 
-// These examples have no elicitation UI, so they decline rather than answer on
-// the user's behalf. Elicitation joined the stable Client interface in schema
-// 1.21.0; before that the generator treated it as optional.
+// No elicitation UI in this example, so there is no user answer to report.
 func (clientExample) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
-	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 
 func (clientExample) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {

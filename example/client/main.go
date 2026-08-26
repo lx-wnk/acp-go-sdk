@@ -19,13 +19,11 @@ type exampleClient struct{}
 
 var _ acp.Client = (*exampleClient)(nil)
 
-// Elicitation joined the stable Client interface in schema 1.21.0; before that
-// the generator probed for it and answered MethodNotFound when it was absent.
-// This example has no form or browser flow to render one with, so it declines —
-// accepting on the user's behalf would invent an answer they never gave.
+// No elicitation UI here — a decline would claim the user refused when nobody
+// was asked.
 func (e *exampleClient) CreateElicitation(ctx context.Context, params acp.CreateElicitationRequest) (acp.CreateElicitationResponse, error) {
-	fmt.Println("\n📝 Elicitation requested — this example cannot answer one, declining.")
-	return acp.CreateElicitationResponse{Decline: &acp.CreateElicitationDecline{}}, nil
+	fmt.Println("\n📝 Elicitation requested — this example cannot answer one.")
+	return acp.CreateElicitationResponse{}, acp.NewMethodNotFound(acp.ClientMethodElicitationCreate)
 }
 
 func (e *exampleClient) CompleteElicitation(ctx context.Context, params acp.CompleteElicitationNotification) error {

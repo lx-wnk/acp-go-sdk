@@ -12,9 +12,9 @@ type geminiClient struct{}
 
 var _ Client = (*geminiClient)(nil)
 
-// No elicitation UI here either, so decline rather than answer for the user.
+// No elicitation UI in this example, so there is no user answer to report.
 func (geminiClient) CreateElicitation(ctx context.Context, p CreateElicitationRequest) (CreateElicitationResponse, error) {
-	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 
 func (geminiClient) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {

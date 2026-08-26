@@ -8,3 +8,6 @@
 # mise
 mise.local.toml
 .mise.local.toml
+
+# Review artefacts (may contain masked secret fingerprints and internal paths)
+outputs/

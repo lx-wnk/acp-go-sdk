@@ -71,9 +71,10 @@ func (c clientFuncs) CreateElicitation(ctx context.Context, p CreateElicitationR
 	if c.CreateElicitationFunc != nil {
 		return c.CreateElicitationFunc(ctx, p)
 	}
-	// Decline rather than accept: a test double that silently accepted would let
-	// a handler under test believe a user answered.
-	return CreateElicitationResponse{Decline: &CreateElicitationDecline{}}, nil
+	// Accepting or declining would let a handler under test believe a user
+	// answered. The zero-value response is safe only because the error is
+	// non-nil: handleInbound never marshals a result when the handler errors.
+	return CreateElicitationResponse{}, NewMethodNotFound(ClientMethodElicitationCreate)
 }
 
 func (c clientFuncs) CompleteElicitation(ctx context.Context, p CompleteElicitationNotification) error {
@@ -460,11 +461,11 @@ func TestAgentDispatch_AllowsPartialUnstableMethodImplementation(t *testing.T) {
 
 // Elicitation graduated from the experimental surface in schema 1.21.0: the two
 // methods moved into Client, so the generated dispatch calls them directly
-// instead of probing for them and answering MethodNotFound. These pin that the
-// dispatch reaches an implementation and carries the payload both ways — the
-// previous graduation (session/delete, schema 1.20.0) had no such test, and the
-// regeneration that promoted this one broke every Client implementation in the
-// repo without a single test noticing.
+// instead of probing for them and answering MethodNotFound. The compiler already
+// enforces that an implementation has the methods; these pin the part it cannot
+// see — that the generated switch routes each method constant to the matching
+// handler and carries the payload both ways. The previous graduation
+// (session/delete, schema 1.20.0) has no such test.
 func TestClientDispatch_CreateElicitation(t *testing.T) {
 	var got CreateElicitationRequest
 	client := &clientFuncs{
