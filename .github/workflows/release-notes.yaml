@@ -69,7 +69,10 @@ jobs:
           release_commit="$(git rev-parse --verify "${RELEASE_TAG}^{commit}")"
           : "${release_commit:?release commit is required}"
 
-          if previous_ref="$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' --exclude '*-*' "${release_commit}^" 2>/dev/null)"; then
+          # Prereleases are not excluded. Upstream cuts stable tags and can skip them, but
+          # every tag in this fork carries a suffix, so excluding them reached past the real
+          # predecessor: for v1.21.0 that meant v0.13.5, fourteen commits back instead of ten.
+          if previous_ref="$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' "${release_commit}^" 2>/dev/null)"; then
             echo "Previous release tag: $previous_ref"
           else
             previous_ref="$(git rev-list --max-parents=0 "$release_commit" | head -n 1)"
