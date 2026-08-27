@@ -1476,6 +1476,11 @@ func emitUnion(f *File, name string, schema *load.Schema, parentDef *load.Defini
 										Id("u").Dot(catchAll.fieldName).Op("=").Op("&").Id("v"),
 										Return(Nil()),
 									)
+									// The keys do not fit the catch-all either, so the value cannot be
+									// represented by any arm. Falling through to the key-match handed it
+									// to whichever arm happened to fit, which is the same silent
+									// reinterpretation refused where no catch-all exists at all.
+									c.Return(Qual("errors", "New").Call(Lit(name + ": unrecognized " + discKey + " value")))
 								}),
 							)
 						}

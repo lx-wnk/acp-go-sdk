@@ -632,6 +632,7 @@ func (u *AuthMethod) UnmarshalJSON(b []byte) error {
 						u.Agent = &v
 						return nil
 					}
+					return errors.New("AuthMethod: unrecognized type value")
 				}
 			}
 		}
@@ -3101,6 +3102,7 @@ func (u *CreateElicitationRequest) UnmarshalJSON(b []byte) error {
 						u.Other = &v
 						return nil
 					}
+					return errors.New("CreateElicitationRequest: unrecognized mode value")
 				}
 			}
 		}
@@ -3437,6 +3439,7 @@ func (u *CreateElicitationResponse) UnmarshalJSON(b []byte) error {
 						u.Other = &v
 						return nil
 					}
+					return errors.New("CreateElicitationResponse: unrecognized action value")
 				}
 			}
 		}
@@ -4706,6 +4709,7 @@ func (u *ElicitationPropertySchema) UnmarshalJSON(b []byte) error {
 						u.Other = &v
 						return nil
 					}
+					return errors.New("ElicitationPropertySchema: unrecognized type value")
 				}
 			}
 		}
@@ -7250,6 +7254,7 @@ func (u *McpServer) UnmarshalJSON(b []byte) error {
 						u.Stdio = &v
 						return nil
 					}
+					return errors.New("McpServer: unrecognized type value")
 				}
 			}
 		}
@@ -13883,6 +13888,7 @@ func (u *SetSessionConfigOptionRequest) UnmarshalJSON(b []byte) error {
 						u.ValueId = &v
 						return nil
 					}
+					return errors.New("SetSessionConfigOptionRequest: unrecognized type value")
 				}
 			}
 		}
@@ -16619,6 +16625,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 						u.Stdio = &v
 						return nil
 					}
+					return errors.New("UnstableMcpServer: unrecognized type value")
 				}
 			}
 		}
