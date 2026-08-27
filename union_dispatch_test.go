@@ -95,41 +95,32 @@ func TestUnionMarshal_NoVariantSetNamesTheType(t *testing.T) {
 	}
 }
 
-// The catch-all arm is a variant with its own required keys, not a bucket. McpServer's
-// catch-all is the stdio arm, whose Command and Args a host may hand to exec, so an
-// unrecognised transport must not claim it on the strength of the discriminator alone.
-//
-// This check bounds the payload, it does not reject it: a caller that supplies every
-// stdio required key still reaches the stdio arm under a foreign type. Closing that
-// needs a dedicated extension arm, which the schema does not define for McpServer.
-func TestMcpServer_UnknownTransportNeedsTheCatchAllRequiredKeys(t *testing.T) {
-	var partial McpServer
-	if err := json.Unmarshal([]byte(`{"type":"docker","name":"x","command":"/bin/sh"}`), &partial); err != nil {
-		t.Fatalf("unmarshal: %v", err)
-	}
-	if partial.Stdio != nil {
-		t.Fatalf("payload missing stdio required keys reached the stdio arm: %+v", partial.Stdio)
-	}
-
-	var complete McpServer
-	if err := json.Unmarshal([]byte(`{"type":"docker","name":"x","command":"/bin/sh","args":[],"env":[]}`), &complete); err != nil {
-		t.Fatalf("unmarshal: %v", err)
-	}
-	if complete.Stdio == nil {
-		t.Fatal("a payload satisfying every stdio required key still reaches the stdio arm")
-	}
-}
-
 // AuthMethod's catch-all is the agent arm, documented as the default when no type is
-// present. An unrecognised type that carries neither of its required keys must not be
-// reinterpreted as agent-handled authentication.
-func TestAuthMethod_UnknownTypeNeedsTheCatchAllRequiredKeys(t *testing.T) {
+// present. An unrecognised type carrying neither of its required keys cannot be
+// represented by any arm, so it is refused rather than reinterpreted as agent-handled
+// authentication — the strongest claim the union can make about a method nobody asked for.
+func TestAuthMethod_UnknownTypeWithoutAgentKeysIsRefused(t *testing.T) {
 	var m AuthMethod
-	if err := json.Unmarshal([]byte(`{"type":"webauthn_future"}`), &m); err != nil {
-		t.Fatalf("unmarshal: %v", err)
+	err := json.Unmarshal([]byte(`{"type":"webauthn_future"}`), &m)
+	if err == nil {
+		t.Fatalf("an unrecognised auth method decoded silently: %+v", m)
 	}
 	if m.Agent != nil {
 		t.Fatalf("an unrecognised auth method decoded as agent-handled: %+v", m.Agent)
+	}
+	if !strings.Contains(err.Error(), "AuthMethod") {
+		t.Fatalf("error does not name the union: %v", err)
+	}
+}
+
+// The agent arm is still reachable for a payload that satisfies it.
+func TestAuthMethod_UnknownTypeWithAgentKeysStillRoutes(t *testing.T) {
+	var m AuthMethod
+	if err := json.Unmarshal([]byte(`{"type":"webauthn_future","id":"x","name":"y"}`), &m); err != nil {
+		t.Fatalf("a payload satisfying the agent arm was refused: %v", err)
+	}
+	if m.Agent == nil {
+		t.Fatalf("expected the agent arm, got %+v", m)
 	}
 }
 
@@ -262,5 +253,61 @@ func TestCreateElicitationResponse_AbsentActionStillFallsThrough(t *testing.T) {
 	}
 	if resp.Accept == nil {
 		t.Fatalf("absent-discriminator handling changed: %+v", resp)
+	}
+}
+
+// Where a union has no catch-all arm, an unrecognised discriminator is refused. Where it
+// has one whose required keys the payload does not satisfy, the value is just as
+// unrepresentable — but it used to fall through to the key-match and be claimed by
+// whichever arm happened to fit, landing on Http for an McpServer tagged "docker". The two
+// paths now answer the same way.
+func TestMcpServer_UnknownTransportWithoutStdioKeysIsRefused(t *testing.T) {
+	for _, in := range []string{
+		`{"type":"docker","name":"x","command":"/bin/sh"}`,
+		`{"type":"docker"}`,
+	} {
+		var m McpServer
+		err := json.Unmarshal([]byte(in), &m)
+		if err == nil {
+			t.Fatalf("payload %s decoded silently as %+v", in, m)
+		}
+		if !strings.Contains(err.Error(), "McpServer") {
+			t.Fatalf("error does not name the union: %v", err)
+		}
+		if m.Http != nil {
+			t.Fatalf("payload still reached the http arm: %+v", m.Http)
+		}
+	}
+}
+
+// The boundary is unchanged in both directions: a payload that does satisfy the catch-all
+// arm still reaches it, and an absent discriminator still resolves through key matching.
+func TestMcpServer_CatchAllBoundaryUnchanged(t *testing.T) {
+	var complete McpServer
+	if err := json.Unmarshal([]byte(`{"type":"docker","name":"x","command":"/bin/sh","args":[],"env":[]}`), &complete); err != nil {
+		t.Fatalf("a payload satisfying every stdio required key was refused: %v", err)
+	}
+	if complete.Stdio == nil {
+		t.Fatalf("expected the stdio arm, got %+v", complete)
+	}
+
+	var noDisc McpServer
+	if err := json.Unmarshal([]byte(`{"name":"x","command":"/bin/sh","args":[],"env":[]}`), &noDisc); err != nil {
+		t.Fatalf("absent-discriminator handling changed: %v", err)
+	}
+	if noDisc.Stdio == nil {
+		t.Fatalf("expected key matching to resolve the arm, got %+v", noDisc)
+	}
+}
+
+// A catch-all arm that requires nothing beyond the discriminator keeps accepting anything,
+// which is what makes it a catch-all.
+func TestCreateElicitationResponse_CatchAllWithoutRequiredKeysStillRoutes(t *testing.T) {
+	var resp CreateElicitationResponse
+	if err := json.Unmarshal([]byte(`{"action":"_custom","foo":"bar"}`), &resp); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if resp.Other == nil {
+		t.Fatalf("expected the catch-all arm, got %+v", resp)
 	}
 }
