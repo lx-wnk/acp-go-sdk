@@ -11,8 +11,6 @@ code, helper APIs, and library version remain in sync.
 - [mise](https://mise.jdx.dev) for the toolchain. Run `mise install` once to
   provision Go, `treefmt`, and the formatters/linters that `make fmt` and
   `make check` invoke.
-- The repository must have an Actions secret named `ANTHROPIC_API_KEY` so the
-  release-notes workflow can update GitHub Release bodies after publication.
 
 ## Bump the Schema Version
 
@@ -71,9 +69,13 @@ file agree before you publish.
 1. Create a GitHub release for the tag. Include a summary of notable changes and
    reference the upstream ACP schema version.
 
-After the GitHub release is published, CI runs `communique` and replaces the
-release body with generated notes. The workflow requires a `v*` release tag and
-the `ANTHROPIC_API_KEY` Actions secret.
+   Pass `--generate-notes` to have GitHub list the merged pull requests and a
+   full-changelog link, then edit the body to lead with what the change means
+   for consumers:
+
+   ```bash
+   gh release create v0.4.3 --generate-notes
+   ```
 
 Consumers rely on the `vX.Y.Z` semver tag for `go get`, so ensure the tag is
 pushed before announcing the release.
@@ -82,8 +84,9 @@ pushed before announcing the release.
 
 - If the new schema introduces breaking changes, update examples and docs in
   the same commit.
-- Release-note automation updates GitHub Release bodies only; it does not
-  maintain a `CHANGELOG.md`.
+- `CHANGELOG.md` is maintained by the generator: a schema bump records the
+  exported identifiers it removed, changed and added, which is the part of a
+  release consumers act on.
 - The helper uses a repository-local Go build cache (`.gocache`) to avoid
   sandbox restrictions in CI and local development. You can delete it with
   `rm -rf .gocache` if needed.
