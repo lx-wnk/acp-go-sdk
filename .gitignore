@@ -11,3 +11,11 @@ mise.local.toml
 
 # Review artefacts (may contain masked secret fingerprints and internal paths)
 outputs/
+
+# Local Go test output
+*.test
+*.out
+
+# Editors
+.idea/
+.vscode/

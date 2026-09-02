@@ -4,6 +4,16 @@
 
 # ACP Go SDK
 
+[![CI](https://github.com/lx-wnk/acp-go-sdk/actions/workflows/ci.yaml/badge.svg)](https://github.com/lx-wnk/acp-go-sdk/actions/workflows/ci.yaml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
+
+> **A maintained fork of [coder/acp-go-sdk](https://github.com/coder/acp-go-sdk).**
+> Upstream has had no release or maintainer response since June 2026, while the ACP
+> schema kept moving; this fork tracks it. The Go module path stays
+> `github.com/coder/acp-go-sdk` on purpose, so every fix here remains a patch that can
+> be offered back upstream — which also means you install it with a `replace`
+> directive rather than a plain `go get`. See [Installation](#installation).
+
 Go library for the Agent Client Protocol (ACP) - a standardized communication protocol
 between code editors and AI‑powered coding agents.
 
@@ -11,11 +21,21 @@ Learn more about the protocol itself at <https://agentclientprotocol.com>.
 
 ## Installation
 
-<!-- `$ printf 'go get github.com/coder/acp-go-sdk@v%s\n' "$(cat schema/version)"` as bash -->
+Because the module keeps upstream's path, `go get github.com/coder/acp-go-sdk@v1.21.0`
+resolves to Coder's repository, which has no such version — the module proxy answers
+404\. Point the path at this fork instead:
+
+<!-- `$ printf 'go mod edit -replace github.com/coder/acp-go-sdk=github.com/lx-wnk/acp-go-sdk@v%s\ngo get github.com/coder/acp-go-sdk\ngo mod tidy\n' "$(cat schema/version)"` as bash -->
 
 ```bash
-go get github.com/coder/acp-go-sdk@v1.21.0
+go mod edit -replace github.com/coder/acp-go-sdk=github.com/lx-wnk/acp-go-sdk@v1.21.0
+go get github.com/coder/acp-go-sdk
+go mod tidy
 ```
+
+Your `require` line will name upstream's version while `replace` supplies this fork's
+code; that is expected. Imports stay `github.com/coder/acp-go-sdk`, so switching back
+to upstream later is a one-line deletion.
 
 ### Versioning
 
@@ -42,7 +62,7 @@ to understand the core concepts and protocol specification.
 
 ### Try the Examples
 
-The [examples directory](https://github.com/coder/acp-go-sdk/tree/main/example)
+The [examples directory](./example)
 contains simple implementations of both Agents and Clients in Go.
 You can run them from your terminal or connect to external ACP agents.
 
@@ -55,9 +75,11 @@ You can watch the interaction by running `go run ./example/client` locally.
 
 ### Explore the API
 
-Browse the Go package docs on pkg.go.dev for detailed API documentation:
+pkg.go.dev indexes by module path, and this fork shares upstream's — so the page below
+shows upstream's v0.13.5 and none of the API this README documents. Until upstream
+catches up, use `go doc` against a local checkout, or read `CHANGELOG.md`.
 
-- <https://pkg.go.dev/github.com/coder/acp-go-sdk>
+- <https://pkg.go.dev/github.com/coder/acp-go-sdk> (upstream v0.13.5, not this fork)
 
 If you're building an [Agent](https://agentclientprotocol.com/protocol/overview#agent):
 
@@ -193,11 +215,18 @@ to it via stdio.
 
 ## Resources
 
-- [Go package docs](https://pkg.go.dev/github.com/coder/acp-go-sdk)
-- [Examples (Go)](https://github.com/coder/acp-go-sdk/tree/main/example)
+- [Go package docs](https://pkg.go.dev/github.com/coder/acp-go-sdk) (upstream v0.13.5, not this fork)
+- [Examples (Go)](./example)
 - [Protocol Documentation](https://agentclientprotocol.com)
 - [Agent Client Protocol GitHub Repository](https://github.com/agentclientprotocol/agent-client-protocol)
 
+## Contributing
+
+Fixes are offered upstream wherever they apply — see [CONTRIBUTING.md](./CONTRIBUTING.md)
+for that policy, the verify commands, and why `*_gen.go` is never hand-edited.
+Vulnerabilities go to [SECURITY.md](./SECURITY.md), not to a public issue.
+
 ## License
 
-Apache 2.0. See [LICENSE](./LICENSE).
+Apache 2.0. See [LICENSE](./LICENSE). This distribution is a modified fork; see
+[NOTICE](./NOTICE).

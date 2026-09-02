@@ -2,17 +2,23 @@
 
 This project follows the ACP schema version published by
 [`agentclientprotocol/agent-client-protocol`](https://github.com/agentclientprotocol/agent-client-protocol).
-Each Go release should align with a specific schema tag so that the generated
-code, helper APIs, and library version remain in sync.
+What that means for a consumer's code is described once, under
+[Versioning](README.md#versioning); this file covers the release procedure only.
 
 ## Prerequisites
 
 - `make`, `curl`, and `git` in your `PATH`.
-- [mise](https://mise.jdx.dev) for the toolchain. Run `mise install` once to
-  provision Go, `treefmt`, and the formatters/linters that `make fmt` and
-  `make check` invoke.
+- The toolchain, provisioned with `mise install` — see
+  [AGENTS.md](AGENTS.md#build-test-and-development-commands).
 
 ## Bump the Schema Version
+
+Usually you do not: `.github/workflows/schema-update.yaml` runs daily, resolves
+the newest upstream schema tag, regenerates, and opens a pull request titled
+`chore(schema): bump ACP schema to <version>` from a `schema/update-<version>`
+branch. Check for that pull request before starting a bump by hand, or the two
+will collide on the same branch name. The steps below are for an out-of-band
+bump — pinning an older tag, or rerunning after the workflow failed.
 
 1. Decide which upstream ACP schema tag to adopt (for example `v0.4.3`).
 1. Update `schema/version` and regenerate code. There are two supported ways to
@@ -77,8 +83,13 @@ file agree before you publish.
    gh release create v0.4.3 --generate-notes
    ```
 
-Consumers rely on the `vX.Y.Z` semver tag for `go get`, so ensure the tag is
-pushed before announcing the release.
+The tag is what consumers pin, but not through `go get`: the module path is
+upstream's, so `go get github.com/coder/acp-go-sdk@vX.Y.Z` resolves against
+Coder's repository and cannot see a tag pushed here. Consumers reach this fork
+through a `replace` directive naming the tag — see
+[Installation](README.md#installation). Push the tag before announcing the
+release, and make sure the version it names is the one the README's install
+recipe prints.
 
 ## Additional Notes
 

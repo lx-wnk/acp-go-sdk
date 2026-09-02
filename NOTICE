@@ -1,0 +1,24 @@
+acp-go-sdk
+Copyright 2025 Coder Technologies, Inc.
+
+This distribution is a modified fork of github.com/coder/acp-go-sdk,
+maintained independently since August 2026 by Alexander Wink
+(github.com/lx-wnk). It is not affiliated with or endorsed by Coder
+Technologies, Inc.
+
+Files in this distribution have been modified from the upstream project.
+The changes fall into three groups:
+
+  - Bug fixes in the code generator (cmd/generate): union discriminator
+    dispatch, required-key enforcement, closed-object handling, typed
+    maps from additionalProperties, and x-deserialize-default-on-error.
+  - Regression tests covering those fixes.
+  - Regeneration of the generated SDK code against ACP schema releases
+    later than the last one upstream published.
+
+CHANGELOG.md records the per-release detail. Where a fix is not specific
+to this fork, it is offered back to the upstream project; CONTRIBUTING.md
+describes that policy.
+
+Licensed under the Apache License, Version 2.0. See LICENSE for the full
+license text.
