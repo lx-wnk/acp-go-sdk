@@ -10,7 +10,7 @@ Core SDK code lives at the repo root (`agent.go`, `client.go`, `connection.go`, 
 - `go run ./example/agent` and `go run ./example/client` provide quick manual validation of agent/client behavior.
 - `make test` runs `go test` and ensures all examples still build.
 - `make fmt` runs `treefmt` so Go and Markdown stay formatted consistently.
-- `make check` runs `treefmt --fail-on-change` plus the README guard used in CI.
+- `make check` runs `treefmt` and then `git diff --exit-code`, so any formatting the tree still needs shows up as a failure.
 - `mise install` provisions the toolchain (Go, gopls, golangci-lint, treefmt, etc.); run it once after cloning.
 
 ## Coding Style & Naming Conventions
@@ -23,7 +23,7 @@ New behavior needs corresponding `*_test.go` coverage. Name tests `TestType_Acti
 
 ## Commit & Pull Request Guidelines
 
-Write commit subjects in the imperative mood (`Add request codec`, `Fix session timeout`) and keep the first line under ~72 characters. Reference issues with `Fixes #123` when applicable. Pull requests should summarize protocol impact, list any schema or generated file updates, and note the tests or commands you ran (`make test`, `go run ./example/client`). Include screenshots or terminal transcripts only when they clarify agent/client interactions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the commit and pull request conventions; this repository uses Conventional Commits (`fix(generate): …`) and squash-merges, so the pull request title becomes the commit subject. Pull requests should summarize protocol impact, list any schema or generated file updates, and note the tests or commands you ran (`make test`, `go run ./example/client`).
 
 ## Code Generation & Schema Updates
 
