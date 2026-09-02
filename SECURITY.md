@@ -10,8 +10,11 @@ before reporting where that is possible at all.
 
 ## Reporting a vulnerability
 
-Report privately, by e-mail, to **git@jinnoflife.com**. Please do not open a
-public issue or pull request for a suspected vulnerability.
+Use GitHub's [private vulnerability
+reporting](https://github.com/lx-wnk/acp-go-sdk/security/advisories/new) for this
+repository. If you would rather not use GitHub, e-mail **git@jinnoflife.com**
+instead. Please do not open a public issue or pull request for a suspected
+vulnerability.
 
 Include the schema or tag version in use, a minimal reproducing JSON-RPC
 payload or Go snippet, and the impact you observed — panic, hang, memory
