@@ -141,7 +141,8 @@ func (a *exampleAgent) CloseSession(ctx context.Context, params acp.CloseSession
 	return acp.CloseSessionResponse{}, acp.NewMethodNotFound(acp.AgentMethodSessionClose)
 }
 
-// Implement acp.AgentConnAware to receive the connection after construction.
+// SetAgentConnection belongs to this example, not to the acp package: the SDK defines
+// no interface for it. main() calls it once NewAgentSideConnection has returned.
 func (a *exampleAgent) SetAgentConnection(conn *acp.AgentSideConnection) { a.conn = conn }
 
 func (a *exampleAgent) Initialize(ctx context.Context, params acp.InitializeRequest) (acp.InitializeResponse, error) {
