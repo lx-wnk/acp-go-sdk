@@ -35,9 +35,9 @@ func isExtensionMethodName(method string) bool {
 	return strings.HasPrefix(method, "_")
 }
 
-func (a *AgentSideConnection) handleWithExtensions(ctx context.Context, method string, params json.RawMessage) (any, *RequestError) {
+func (c *AgentSideConnection) handleWithExtensions(ctx context.Context, method string, params json.RawMessage) (any, *RequestError) {
 	if isExtensionMethodName(method) {
-		h, ok := a.agent.(ExtensionMethodHandler)
+		h, ok := c.agent.(ExtensionMethodHandler)
 		if !ok {
 			return nil, NewMethodNotFound(method)
 		}
@@ -48,7 +48,7 @@ func (a *AgentSideConnection) handleWithExtensions(ctx context.Context, method s
 		return resp, nil
 	}
 
-	return a.handle(ctx, method, params)
+	return c.handle(ctx, method, params)
 }
 
 func (c *ClientSideConnection) handleWithExtensions(ctx context.Context, method string, params json.RawMessage) (any, *RequestError) {

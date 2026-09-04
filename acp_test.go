@@ -85,7 +85,7 @@ func (c clientFuncs) CompleteElicitation(ctx context.Context, p CompleteElicitat
 }
 
 // CreateTerminal implements Client.
-func (c *clientFuncs) CreateTerminal(ctx context.Context, params CreateTerminalRequest) (CreateTerminalResponse, error) {
+func (c clientFuncs) CreateTerminal(ctx context.Context, params CreateTerminalRequest) (CreateTerminalResponse, error) {
 	if c.CreateTerminalFunc != nil {
 		return c.CreateTerminalFunc(ctx, params)
 	}
@@ -109,7 +109,7 @@ func (c clientFuncs) ReleaseTerminal(ctx context.Context, params ReleaseTerminal
 }
 
 // TerminalOutput implements Client.
-func (c *clientFuncs) TerminalOutput(ctx context.Context, params TerminalOutputRequest) (TerminalOutputResponse, error) {
+func (c clientFuncs) TerminalOutput(ctx context.Context, params TerminalOutputRequest) (TerminalOutputResponse, error) {
 	if c.TerminalOutputFunc != nil {
 		return c.TerminalOutputFunc(ctx, params)
 	}
@@ -117,7 +117,7 @@ func (c *clientFuncs) TerminalOutput(ctx context.Context, params TerminalOutputR
 }
 
 // WaitForTerminalExit implements Client.
-func (c *clientFuncs) WaitForTerminalExit(ctx context.Context, params WaitForTerminalExitRequest) (WaitForTerminalExitResponse, error) {
+func (c clientFuncs) WaitForTerminalExit(ctx context.Context, params WaitForTerminalExitRequest) (WaitForTerminalExitResponse, error) {
 	if c.WaitForTerminalExitFunc != nil {
 		return c.WaitForTerminalExitFunc(ctx, params)
 	}
