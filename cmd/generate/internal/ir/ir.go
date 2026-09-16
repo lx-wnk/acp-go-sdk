@@ -4,6 +4,7 @@
 package ir
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -44,6 +45,41 @@ type Groups map[string]*MethodInfo
 func key(side, method string) string { return side + "|" + method }
 
 // PrimaryType mirrors logic from generator: find primary type string from a Definition.
+// ResolvedPrimaryType is PrimaryType that also follows $ref, including the
+// allOf:[{$ref}] wrapper ACP uses to attach a description to a referenced type. It
+// returns "" when no primitive type is reachable, as for a union, and panics on a $ref
+// naming a definition the schema does not contain.
+func ResolvedPrimaryType(schema *load.Schema, d *load.Definition) string {
+	return resolvedPrimaryType(schema, d, map[string]bool{})
+}
+
+func resolvedPrimaryType(schema *load.Schema, d *load.Definition, seen map[string]bool) string {
+	if d == nil {
+		return ""
+	}
+	if t := PrimaryType(d); t != "" {
+		return t
+	}
+	if d.Ref != "" {
+		name := strings.TrimPrefix(d.Ref, "#/$defs/")
+		if seen[name] {
+			return ""
+		}
+		seen[name] = true
+		target, ok := schema.Defs[name]
+		if !ok {
+			panic(fmt.Sprintf("unresolvable $ref %q", d.Ref))
+		}
+		return resolvedPrimaryType(schema, target, seen)
+	}
+	for _, part := range d.AllOf {
+		if t := resolvedPrimaryType(schema, part, seen); t != "" {
+			return t
+		}
+	}
+	return ""
+}
+
 func PrimaryType(d *load.Definition) string {
 	if d == nil {
 		return ""

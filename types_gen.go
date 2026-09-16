@@ -929,6 +929,9 @@ func (v *AuthenticateRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *AuthenticateRequest) Validate() error {
+	if v.MethodId == "" {
+		return fmt.Errorf("methodId is required")
+	}
 	return nil
 }
 
@@ -1391,6 +1394,9 @@ func (v *CancelNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *CancelNotification) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -1923,6 +1929,9 @@ func (v *CloseSessionRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *CloseSessionRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -2186,6 +2195,9 @@ func (v *CompleteElicitationNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *CompleteElicitationNotification) Validate() error {
+	if v.ElicitationId == "" {
+		return fmt.Errorf("elicitationId is required")
+	}
 	return nil
 }
 
@@ -3694,6 +3706,9 @@ func (v *CreateTerminalRequest) Validate() error {
 	if v.Command == "" {
 		return fmt.Errorf("command is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -3750,6 +3765,9 @@ func (v *CreateTerminalResponse) UnmarshalJSON(b []byte) error {
 }
 
 func (v *CreateTerminalResponse) Validate() error {
+	if v.TerminalId == "" {
+		return fmt.Errorf("terminalId is required")
+	}
 	return nil
 }
 
@@ -3862,6 +3880,9 @@ func (v *DeleteSessionRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *DeleteSessionRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -6504,6 +6525,12 @@ func (v *KillTerminalRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *KillTerminalRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
+	if v.TerminalId == "" {
+		return fmt.Errorf("terminalId is required")
+	}
 	return nil
 }
 
@@ -6756,6 +6783,9 @@ func (v *LoadSessionRequest) Validate() error {
 	}
 	if v.McpServers == nil {
 		return fmt.Errorf("mcpServers is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
 	}
 	return nil
 }
@@ -9105,6 +9135,9 @@ func (v *NewSessionResponse) UnmarshalJSON(b []byte) error {
 }
 
 func (v *NewSessionResponse) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -10219,6 +10252,9 @@ func (v *PromptRequest) Validate() error {
 	if v.Prompt == nil {
 		return fmt.Errorf("prompt is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -10412,6 +10448,9 @@ func (v *ReadTextFileRequest) Validate() error {
 	if v.Path == "" {
 		return fmt.Errorf("path is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -10529,6 +10568,12 @@ func (v *ReleaseTerminalRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *ReleaseTerminalRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
+	if v.TerminalId == "" {
+		return fmt.Errorf("terminalId is required")
+	}
 	return nil
 }
 
@@ -10945,6 +10990,9 @@ func (v *RequestPermissionRequest) Validate() error {
 	if v.Options == nil {
 		return fmt.Errorf("options is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -11139,6 +11187,9 @@ func (v *ResumeSessionRequest) UnmarshalJSON(b []byte) error {
 func (v *ResumeSessionRequest) Validate() error {
 	if v.Cwd == "" {
 		return fmt.Errorf("cwd is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
 	}
 	return nil
 }
@@ -12496,6 +12547,9 @@ func (v *SessionNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *SessionNotification) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -14121,6 +14175,12 @@ func (v *SetSessionModeRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *SetSessionModeRequest) Validate() error {
+	if v.ModeId == "" {
+		return fmt.Errorf("modeId is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -14514,6 +14574,12 @@ func (v *TerminalOutputRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *TerminalOutputRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
+	if v.TerminalId == "" {
+		return fmt.Errorf("terminalId is required")
+	}
 	return nil
 }
 
@@ -15350,6 +15416,12 @@ func (v *UnstableAcceptNesNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableAcceptNesNotification) Validate() error {
+	if v.Id == "" {
+		return fmt.Errorf("id is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -15409,6 +15481,9 @@ func (v *UnstableCloseNesRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableCloseNesRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -15523,6 +15598,9 @@ func (v *UnstableConnectMcpRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableConnectMcpRequest) Validate() error {
+	if v.ServerId == "" {
+		return fmt.Errorf("serverId is required")
+	}
 	return nil
 }
 
@@ -15583,6 +15661,9 @@ func (v *UnstableConnectMcpResponse) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableConnectMcpResponse) Validate() error {
+	if v.ConnectionId == "" {
+		return fmt.Errorf("connectionId is required")
+	}
 	return nil
 }
 
@@ -15648,6 +15729,9 @@ func (v *UnstableDidChangeDocumentNotification) Validate() error {
 	if v.ContentChanges == nil {
 		return fmt.Errorf("contentChanges is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
 	}
@@ -15709,6 +15793,9 @@ func (v *UnstableDidCloseDocumentNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableDidCloseDocumentNotification) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
 	}
@@ -15776,6 +15863,9 @@ func (v *UnstableDidFocusDocumentNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableDidFocusDocumentNotification) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
 	}
@@ -15846,6 +15936,9 @@ func (v *UnstableDidOpenDocumentNotification) Validate() error {
 	if v.LanguageId == "" {
 		return fmt.Errorf("languageId is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Text == "" {
 		return fmt.Errorf("text is required")
 	}
@@ -15910,6 +16003,9 @@ func (v *UnstableDidSaveDocumentNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableDidSaveDocumentNotification) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
 	}
@@ -15973,6 +16069,9 @@ func (v *UnstableDisableProviderRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableDisableProviderRequest) Validate() error {
+	if v.ProviderId == "" {
+		return fmt.Errorf("providerId is required")
+	}
 	return nil
 }
 
@@ -16091,6 +16190,9 @@ func (v *UnstableDisconnectMcpRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableDisconnectMcpRequest) Validate() error {
+	if v.ConnectionId == "" {
+		return fmt.Errorf("connectionId is required")
+	}
 	return nil
 }
 
@@ -16227,6 +16329,9 @@ func (v *UnstableForkSessionRequest) Validate() error {
 	if v.Cwd == "" {
 		return fmt.Errorf("cwd is required")
 	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -16293,6 +16398,9 @@ func (v *UnstableForkSessionResponse) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableForkSessionResponse) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -16981,6 +17089,9 @@ func (v *UnstableMessageMcpNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableMessageMcpNotification) Validate() error {
+	if v.ConnectionId == "" {
+		return fmt.Errorf("connectionId is required")
+	}
 	if v.Method == "" {
 		return fmt.Errorf("method is required")
 	}
@@ -17050,6 +17161,9 @@ func (v *UnstableMessageMcpRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableMessageMcpRequest) Validate() error {
+	if v.ConnectionId == "" {
+		return fmt.Errorf("connectionId is required")
+	}
 	if v.Method == "" {
 		return fmt.Errorf("method is required")
 	}
@@ -18600,6 +18714,12 @@ func (v *UnstableRejectNesNotification) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableRejectNesNotification) Validate() error {
+	if v.Id == "" {
+		return fmt.Errorf("id is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -18671,6 +18791,9 @@ func (v *UnstableSetProviderRequest) UnmarshalJSON(b []byte) error {
 func (v *UnstableSetProviderRequest) Validate() error {
 	if v.BaseUrl == "" {
 		return fmt.Errorf("baseUrl is required")
+	}
+	if v.ProviderId == "" {
+		return fmt.Errorf("providerId is required")
 	}
 	return nil
 }
@@ -18846,6 +18969,9 @@ func (v *UnstableStartNesResponse) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableStartNesResponse) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	return nil
 }
 
@@ -18914,6 +19040,9 @@ func (v *UnstableSuggestNesRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *UnstableSuggestNesRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
 	if v.Uri == "" {
 		return fmt.Errorf("uri is required")
 	}
@@ -19319,6 +19448,12 @@ func (v *WaitForTerminalExitRequest) UnmarshalJSON(b []byte) error {
 }
 
 func (v *WaitForTerminalExitRequest) Validate() error {
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
+	}
+	if v.TerminalId == "" {
+		return fmt.Errorf("terminalId is required")
+	}
 	return nil
 }
 
@@ -19444,6 +19579,9 @@ func (v *WriteTextFileRequest) Validate() error {
 	}
 	if v.Path == "" {
 		return fmt.Errorf("path is required")
+	}
+	if v.SessionId == "" {
+		return fmt.Errorf("sessionId is required")
 	}
 	return nil
 }
