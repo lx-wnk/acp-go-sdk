@@ -51,6 +51,23 @@ type cancelRequestParams struct {
 type MethodHandler func(ctx context.Context, method string, params json.RawMessage) (any, *RequestError)
 
 // Connection is a simple JSON-RPC 2.0 connection over line-delimited JSON.
+// Connection multiplexes JSON-RPC requests, responses and notifications over one
+// reader/writer pair.
+//
+// Notification sequencing is guarded by ten panics rather than by types, because Go
+// cannot express these invariants. Violating one corrupts the order in which a peer
+// observes messages, which is worse than stopping, so they fail loudly. Before changing
+// anything that touches the sequence counters, know what they assert:
+//
+//  1. completedNotificationSeq only ever advances, and only by one at a time.
+//  2. completedNotificationSeq <= lastEnqueuedNotificationSeq, at every point including
+//     shutdown, where the final enqueued sequence is the bound.
+//  3. A response watermark, and a drain target, never exceed lastEnqueuedNotificationSeq.
+//  4. completedNotificationSeq never passes the watermark a waiting response holds.
+//
+// The three mutexes are never held at the same time: c.mu, c.notifyMu and c.writeMu are
+// each taken, used and released before another is acquired, and sendMessage is never
+// called while one of the others is held.
 type Connection struct {
 	w       io.Writer
 	r       io.Reader

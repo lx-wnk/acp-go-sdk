@@ -113,6 +113,8 @@ func UpdatePlan(entries ...PlanEntry) SessionUpdate {
 	return SessionUpdate{Plan: &SessionUpdatePlan{Entries: entries}}
 }
 
+// ToolCallStartOpt customizes the tool_call update StartToolCall builds. Produce one with the
+// With* helpers below rather than writing it yourself.
 type ToolCallStartOpt func(tc *SessionUpdateToolCall)
 
 // StartToolCall constructs a tool_call update with required fields and applies optional modifiers.
@@ -181,6 +183,8 @@ func WithStartRawOutput(v any) ToolCallStartOpt {
 	}
 }
 
+// ToolCallUpdateOpt customizes the tool_call_update UpdateToolCall builds. Produce one with the
+// With* helpers below rather than writing it yourself.
 type ToolCallUpdateOpt func(tu *SessionToolCallUpdate)
 
 // UpdateToolCall constructs a tool_call_update with the given ID and applies optional modifiers.
