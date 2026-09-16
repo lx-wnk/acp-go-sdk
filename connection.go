@@ -6,8 +6,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -582,6 +584,30 @@ func (c *Connection) handleCancelRequest(msg *anyMessage) {
 	cancel(context.Canceled)
 }
 
+// callHandler invokes the inbound handler and turns a panic in it into an error.
+//
+// The handler is user-supplied Agent or Client code. Go terminates the whole process on
+// an unrecovered panic in any goroutine, so without this one faulty handler would end
+// every session multiplexed on this connection, and any unrelated work the host is doing.
+//
+// The panic value and stack go to the log; the peer is told only that the handler failed,
+// since a panic message can carry paths or values this side should not disclose.
+func (c *Connection) callHandler(ctx context.Context, method string, params json.RawMessage) (result any, rerr *RequestError) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		c.loggerOrDefault().Error("handler panicked",
+			"method", method,
+			"panic", fmt.Sprint(r),
+			"stack", string(debug.Stack()))
+		result = nil
+		rerr = NewInternalError(map[string]any{"error": "handler panicked"})
+	}()
+	return c.handler(ctx, method, params)
+}
+
 func (c *Connection) handleInbound(ctx context.Context, req *anyMessage) {
 	res := anyMessage{JSONRPC: "2.0"}
 
@@ -597,7 +623,7 @@ func (c *Connection) handleInbound(ctx context.Context, req *anyMessage) {
 		return
 	}
 
-	result, err := c.handler(ctx, req.Method, req.Params)
+	result, err := c.callHandler(ctx, req.Method, req.Params)
 	if req.ID == nil {
 		// Notification: no response is sent; log handler errors to surface decode failures.
 		if err != nil {
