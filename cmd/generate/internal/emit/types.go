@@ -458,7 +458,7 @@ func WriteTypesJen(outDir string, schema *load.Schema, meta *load.Meta) error {
 		// so skip emitValidateJen for types that already have a union Validate.
 		hasUnionValidate := (len(def.OneOf) > 0 || len(def.AnyOf) > 0) && !isStringConstUnion(def) && !isOpenStringEnum(def)
 		if !hasUnionValidate && (strings.HasSuffix(name, "Request") || strings.HasSuffix(name, "Response") || strings.HasSuffix(name, "Notification") || name == "ToolCallUpdate") {
-			emitValidateJen(f, name, def)
+			emitValidateJen(f, schema, name, def)
 		}
 	}
 
@@ -612,7 +612,7 @@ func isOpenStringEnum(def *load.Definition) bool {
 
 // emitValidateJen generates validators for selected types (logic unchanged).
 
-func emitValidateJen(f *File, name string, def *load.Definition) {
+func emitValidateJen(f *File, schema *load.Schema, name string, def *load.Definition) {
 	switch name {
 	case "ToolCallUpdate":
 		f.Func().Params(Id("t").Op("*").Id("ToolCallUpdate")).Id("Validate").Params().Params(Error()).Block(
@@ -636,7 +636,7 @@ func emitValidateJen(f *File, name string, def *load.Definition) {
 				required := slices.Contains(def.Required, propName)
 				field := util.ToExportedField(propName)
 				if required {
-					switch ir.PrimaryType(pDef) {
+					switch ir.ResolvedPrimaryType(schema, pDef) {
 					case "string":
 						g.If(Id("v").Dot(field).Op("==").Lit("")).Block(Return(Qual("fmt", "Errorf").Call(Lit(propName + " is required"))))
 					case "array":
