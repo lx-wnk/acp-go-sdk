@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.23.0
+
+Generated from the ACP schema. The module version tracks the schema tag, so a
+minor bump may still require code changes.
+
+### Changed (2)
+
+- `ClientSessionCapabilities`
+- `SessionUpdate`
+
+### Added (5)
+
+- `Notice`
+- `Notice.UnmarshalJSON`
+- `NoticeCapabilities`
+- `NoticeSeverity`
+- `SessionUpdateNotice`
+
 ## 1.21.0
 
 Generated from the ACP schema. The module version tracks the schema tag, so a

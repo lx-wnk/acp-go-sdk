@@ -1828,6 +1828,15 @@ type ClientSessionCapabilities struct {
 	// Omitted or 'null' both mean the client does not advertise support for any
 	// config option extensions.
 	ConfigOptions *SessionConfigOptionsCapabilities `json:"configOptions,omitempty"`
+	// **UNSTABLE**
+	//
+	// This capability is not part of the spec yet, and may be removed or changed at any point.
+	//
+	// Support for live advisory 'notice' session updates.
+	//
+	// Optional. Omitted or 'null' both mean the client does not advertise support.
+	// Supplying '{}' means the client can present notices to the user.
+	Notices *NoticeCapabilities `json:"notices,omitempty"`
 }
 
 func (v *ClientSessionCapabilities) UnmarshalJSON(b []byte) error {
@@ -1839,7 +1848,7 @@ func (v *ClientSessionCapabilities) UnmarshalJSON(b []byte) error {
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
 		dropped := false
-		for _, k := range []string{"_meta", "compaction", "configOptions"} {
+		for _, k := range []string{"_meta", "compaction", "configOptions", "notices"} {
 			raw, ok := m[k]
 			if !ok {
 				continue
@@ -7185,7 +7194,7 @@ type McpServer struct {
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// ACP transport configuration
+	// # ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.
@@ -9140,6 +9149,94 @@ func (v *NewSessionResponse) Validate() error {
 	}
 	return nil
 }
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Fire-and-forget advisory information for the user.
+//
+// Notices are live events rather than session history. Agents must not rely on
+// a notice being received, displayed, or seen by the user.
+// Agents MUST only send notices when the Client advertised
+// ['ClientSessionCapabilities::notices']. Otherwise, Agents may use an agent
+// message when the information should still be surfaced to the user.
+//
+// See RFD: [Session Notices](https://agentclientprotocol.com/rfds/session-notices)
+type Notice struct {
+	// Metadata scoped to this notice.
+	//
+	// Omitted and 'null' are equivalent and mean no metadata was supplied.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional plain-text detail or guidance.
+	//
+	// Omitted and 'null' are equivalent and mean no description was supplied.
+	Description *string `json:"description,omitempty"`
+	// Presentation severity hint.
+	Severity NoticeSeverity `json:"severity"`
+	// Required non-empty plain-text title that can stand alone.
+	Title string `json:"title"`
+}
+
+func (v *Notice) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias Notice
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = Notice(a)
+	return nil
+}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Client support for presenting live advisory notices to the user.
+type NoticeCapabilities struct{}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
+// Severity hint for a session notice.
+type NoticeSeverity string
+
+const (
+	NoticeSeverityInfo    NoticeSeverity = "info"
+	NoticeSeverityWarning NoticeSeverity = "warning"
+	NoticeSeverityError   NoticeSeverity = "error"
+)
 
 // Schema for number (floating-point) properties in an elicitation form.
 type NumberPropertySchema struct {
@@ -12680,10 +12777,6 @@ type SessionUpdateToolCall struct {
 	// File locations affected by this tool call.
 	// Enables "follow-along" features in clients.
 	Locations []ToolCallLocation `json:"locations,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Programmatic name of the tool being invoked.
 	//
 	// This field is optional. Omitting it or sending 'null' both mean that no
@@ -12716,10 +12809,6 @@ type SessionToolCallUpdate struct {
 	Kind *ToolKind `json:"kind,omitempty"`
 	// Replace the locations collection.
 	Locations []ToolCallLocation `json:"locations,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Update the programmatic name of the tool being invoked.
 	//
 	// This field is optional. Omitting it or sending 'null' both mean that
@@ -12866,6 +12955,30 @@ type SessionUsageUpdate struct {
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
 //
+// Advisory information for the user that is not part of session history.
+//
+// Agents MUST only send this update when the Client advertised
+// ['ClientSessionCapabilities::notices'].
+type SessionUpdateNotice struct {
+	// Metadata scoped to this notice.
+	//
+	// Omitted and 'null' are equivalent and mean no metadata was supplied.
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional plain-text detail or guidance.
+	//
+	// Omitted and 'null' are equivalent and mean no description was supplied.
+	Description   *string `json:"description,omitempty"`
+	SessionUpdate string  `json:"sessionUpdate"`
+	// Presentation severity hint.
+	Severity NoticeSeverity `json:"severity"`
+	// Required non-empty plain-text title that can stand alone.
+	Title string `json:"title"`
+}
+
+// **UNSTABLE**
+//
+// This capability is not part of the spec yet, and may be removed or changed at any point.
+//
 // A context compaction has been created or updated.
 //
 // Agents MUST only send this update when the Client advertised
@@ -12940,6 +13053,15 @@ type SessionUpdate struct {
 	SessionInfoUpdate *SessionSessionInfoUpdate `json:"-"`
 	// Context window and cost update for the session.
 	UsageUpdate *SessionUsageUpdate `json:"-"`
+	// **UNSTABLE**
+	//
+	// This capability is not part of the spec yet, and may be removed or changed at any point.
+	//
+	// Advisory information for the user that is not part of session history.
+	//
+	// Agents MUST only send this update when the Client advertised
+	// ['ClientSessionCapabilities::notices'].
+	Notice *SessionUpdateNotice `json:"-"`
 	// **UNSTABLE**
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -13142,6 +13264,22 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 					return errors.New("invalid variant payload")
 				}
 				u.UsageUpdate = &v
+				return nil
+			case "notice":
+				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
+					return errors.New("SessionUpdate notice variant requires sessionUpdate")
+				}
+				if rv, ok := m["severity"]; !ok || string(rv) == "null" {
+					return errors.New("SessionUpdate notice variant requires severity")
+				}
+				if rv, ok := m["title"]; !ok || string(rv) == "null" {
+					return errors.New("SessionUpdate notice variant requires title")
+				}
+				var v SessionUpdateNotice
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Notice = &v
 				return nil
 			case "compaction_update":
 				if rv, ok := m["sessionUpdate"]; !ok || string(rv) == "null" {
@@ -13406,6 +13544,26 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 			}
 		}
 		{
+			var v SessionUpdateNotice
+			var match bool = true
+			if _, ok := m["sessionUpdate"]; !ok {
+				match = false
+			}
+			if _, ok := m["severity"]; !ok {
+				match = false
+			}
+			if _, ok := m["title"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Notice = &v
+				return nil
+			}
+		}
+		{
 			var v SessionCompactionUpdate
 			var match bool = true
 			if _, ok := m["sessionUpdate"]; !ok {
@@ -13542,6 +13700,13 @@ func (u *SessionUpdate) UnmarshalJSON(b []byte) error {
 		}
 	}
 	{
+		var v SessionUpdateNotice
+		if json.Unmarshal(b, &v) == nil {
+			u.Notice = &v
+			return nil
+		}
+	}
+	{
 		var v SessionCompactionUpdate
 		if json.Unmarshal(b, &v) == nil {
 			u.CompactionUpdate = &v
@@ -13596,6 +13761,9 @@ func (u SessionUpdate) MarshalJSON() ([]byte, error) {
 		_set++
 	}
 	if u.UsageUpdate != nil {
+		_set++
+	}
+	if u.Notice != nil {
 		_set++
 	}
 	if u.CompactionUpdate != nil {
@@ -13763,6 +13931,18 @@ func (u SessionUpdate) MarshalJSON() ([]byte, error) {
 		m["sessionUpdate"] = "usage_update"
 		return json.Marshal(m)
 	}
+	if u.Notice != nil {
+		_b, _e := json.Marshal(*u.Notice)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["sessionUpdate"] = "notice"
+		return json.Marshal(m)
+	}
 	if u.CompactionUpdate != nil {
 		_b, _e := json.Marshal(*u.CompactionUpdate)
 		if _e != nil {
@@ -13829,6 +14009,9 @@ func (u *SessionUpdate) Validate() error {
 		count++
 	}
 	if u.UsageUpdate != nil {
+		count++
+	}
+	if u.Notice != nil {
 		count++
 	}
 	if u.CompactionUpdate != nil {
@@ -14839,10 +15022,6 @@ type ToolCall struct {
 	// File locations affected by this tool call.
 	// Enables "follow-along" features in clients.
 	Locations []ToolCallLocation `json:"locations,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Programmatic name of the tool being invoked.
 	//
 	// This field is optional. Omitting it or sending 'null' both mean that no
@@ -15272,10 +15451,6 @@ type ToolCallUpdate struct {
 	Kind *ToolKind `json:"kind,omitempty"`
 	// Replace the locations collection.
 	Locations []ToolCallLocation `json:"locations,omitempty"`
-	// **UNSTABLE**
-	//
-	// This capability is not part of the spec yet, and may be removed or changed at any point.
-	//
 	// Update the programmatic name of the tool being invoked.
 	//
 	// This field is optional. Omitting it or sending 'null' both mean that
@@ -16634,7 +16809,7 @@ type UnstableMcpServer struct {
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// ACP transport configuration
+	// # ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.

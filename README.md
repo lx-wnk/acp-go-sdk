@@ -28,7 +28,7 @@ resolves to Coder's repository, which has no such version — the module proxy a
 <!-- `$ printf 'go mod edit -replace github.com/coder/acp-go-sdk=github.com/lx-wnk/acp-go-sdk@v%s\ngo get github.com/coder/acp-go-sdk\ngo mod tidy\n' "$(cat schema/version)"` as bash -->
 
 ```bash
-go mod edit -replace github.com/coder/acp-go-sdk=github.com/lx-wnk/acp-go-sdk@v1.21.0
+go mod edit -replace github.com/coder/acp-go-sdk=github.com/lx-wnk/acp-go-sdk@v1.23.0
 go get github.com/coder/acp-go-sdk
 go mod tidy
 ```
