@@ -35,6 +35,7 @@ jobs:
         with:
           install: true
           cache: true
+          cache_key: "{{default}}-{{env.ImageOS}}"
 
       - name: Check formatting (treefmt)
         run: mise exec -- make check
