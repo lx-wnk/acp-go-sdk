@@ -64,13 +64,22 @@ func TestConnection_OversizedMessageIsSkipped(t *testing.T) {
 		_, _ = inW.Write([]byte(`{"jsonrpc":"2.0","id":2,"method":"x","params":{}}` + "\n"))
 	}()
 
-	var res anyMessage
-	if err := json.Unmarshal(awaitLine(t, lines), &res); err != nil {
-		t.Fatalf("decode response: %v", err)
+	// The dropped message also gets a -32700 reply with a null id, sent asynchronously,
+	// so the result for id 2 may be the first or the second line.
+	for i := 0; i < 2; i++ {
+		var res anyMessage
+		if err := json.Unmarshal(awaitLine(t, lines), &res); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		if res.ID == nil {
+			continue
+		}
+		if res.Error != nil || string(*res.ID) != "2" {
+			t.Fatalf("response = %+v, want a result for id 2", res)
+		}
+		return
 	}
-	if res.Error != nil || res.ID == nil || string(*res.ID) != "2" {
-		t.Fatalf("response = %+v, want a result for id 2", res)
-	}
+	t.Fatal("no result for id 2 after the oversized message")
 }
 
 // A message well above the old 1 MB initial buffer but under the cap must still be

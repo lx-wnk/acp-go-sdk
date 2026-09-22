@@ -396,6 +396,7 @@ func (c *Connection) receive() {
 		line, err := readMessage(reader, maxMessageSize, buf[:0])
 		if errors.Is(err, errMessageTooLarge) {
 			c.loggerOrDefault().Error("dropped incoming message above the size limit", "limit", maxMessageSize)
+			c.replyParseError(errMessageTooLarge.Error())
 			continue
 		}
 		if err != nil {
@@ -413,6 +414,7 @@ func (c *Connection) receive() {
 		var msg anyMessage
 		if err := json.Unmarshal(line, &msg); err != nil {
 			c.loggerOrDefault().Error("failed to parse incoming message", "err", err, "len", len(line))
+			c.replyParseError(err.Error())
 			continue
 		}
 
@@ -491,6 +493,18 @@ func (c *Connection) receive() {
 }
 
 var errMessageTooLarge = errors.New("message exceeds the size limit")
+
+// replyParseError answers a message that could not be read with -32700. Its id could
+// not be determined, so JSON-RPC 2.0 §5 requires the reply's id to be present and null;
+// a nil ID would be omitted instead. The reply is sent from its own goroutine because
+// receive must never block on a write: a peer that has stopped reading would otherwise
+// stop this side reading too.
+func (c *Connection) replyParseError(reason string) {
+	nullID := json.RawMessage("null")
+	go func() {
+		_ = c.sendMessage(anyMessage{ID: &nullID, Error: NewParseError(map[string]any{"error": reason})})
+	}()
+}
 
 // readMessage returns the next line from r without its "\n" or "\r\n" terminator,
 // reusing buf, and returns a final line that lacks a newline at EOF — the framing
