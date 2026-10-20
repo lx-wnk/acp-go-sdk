@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// The schema marks 249 properties x-deserialize-default-on-error: a peer may send one in
+// The schema marks 245 properties x-deserialize-default-on-error: a peer may send one in
 // a shape this build cannot decode, and the message should lose that property rather than
 // be rejected. Without it a peer one protocol revision away drops whole messages.
 func TestDeserializeTolerance_BadShapeLosesOnlyThatProperty(t *testing.T) {
@@ -44,11 +44,11 @@ func TestDeserializeTolerance_ValidPayloadUnaffected(t *testing.T) {
 // The motivating case: a typed map whose value arrives in the wrong type used to reject
 // the enclosing message outright.
 func TestDeserializeTolerance_TypedMapValueOfWrongType(t *testing.T) {
-	var req CreateTerminalRequest
-	if err := json.Unmarshal([]byte(`{"sessionId":"s","command":"ls","env":{"FOO":123}}`), &req); err != nil {
-		t.Fatalf("a bad env value rejected the whole request: %v", err)
+	var upd ToolCallUpdate
+	if err := json.Unmarshal([]byte(`{"toolCallId":"t","locations":{"FOO":123}}`), &upd); err != nil {
+		t.Fatalf("a bad locations value rejected the whole update: %v", err)
 	}
-	if req.Command != "ls" {
-		t.Fatalf("the surrounding request was not preserved: %+v", req)
+	if upd.ToolCallId != "t" {
+		t.Fatalf("the surrounding update was not preserved: %+v", upd)
 	}
 }
