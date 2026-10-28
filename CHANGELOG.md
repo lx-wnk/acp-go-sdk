@@ -1,5 +1,90 @@
 # Changelog
 
+## 1.27.0
+
+Generated from the ACP schema. The module version tracks the schema tag, so a
+minor bump may still require code changes.
+
+### Changed (6)
+
+- `SessionMessage`
+- `SessionMessageChunk`
+- `SessionUpdateSessionMessage`
+- `SessionUpdateSessionMessageChunk`
+- `UnstableMcpServerHttp`
+- `UnstableMcpServerSse`
+
+### Added (68)
+
+- `NewUnstableContentBlockAudio`
+- `NewUnstableContentBlockImage`
+- `NewUnstableContentBlockResource`
+- `NewUnstableContentBlockResourceLink`
+- `NewUnstableContentBlockText`
+- `NewUnstableSessionConfigOptionBoolean`
+- `NewUnstableSessionConfigOptionSelect`
+- `UnstableAnnotations`
+- `UnstableAnnotations.UnmarshalJSON`
+- `UnstableAudioContent`
+- `UnstableAudioContent.UnmarshalJSON`
+- `UnstableBlobResourceContents`
+- `UnstableBlobResourceContents.UnmarshalJSON`
+- `UnstableContentBlock`
+- `UnstableContentBlock.MarshalJSON`
+- `UnstableContentBlock.UnmarshalJSON`
+- `UnstableContentBlock.Validate`
+- `UnstableContentBlockAudio`
+- `UnstableContentBlockImage`
+- `UnstableContentBlockResource`
+- `UnstableContentBlockResourceLink`
+- `UnstableContentBlockText`
+- `UnstableEmbeddedResource`
+- `UnstableEmbeddedResource.UnmarshalJSON`
+- `UnstableEmbeddedResourceResource`
+- `UnstableEmbeddedResourceResource.MarshalJSON`
+- `UnstableEmbeddedResourceResource.UnmarshalJSON`
+- `UnstableEmbeddedResourceResource.Validate`
+- `UnstableEnvVariable`
+- `UnstableEnvVariable.UnmarshalJSON`
+- `UnstableHttpHeader`
+- `UnstableHttpHeader.UnmarshalJSON`
+- `UnstableImageContent`
+- `UnstableImageContent.UnmarshalJSON`
+- `UnstableMcpServerHttp.UnmarshalJSON`
+- `UnstableMcpServerHttpInline`
+- `UnstableMcpServerSse.UnmarshalJSON`
+- `UnstableMcpServerSseInline`
+- `UnstableMcpServerStdio`
+- `UnstableMcpServerStdio.UnmarshalJSON`
+- `UnstableResourceLink`
+- `UnstableResourceLink.UnmarshalJSON`
+- `UnstableSessionConfigOption`
+- `UnstableSessionConfigOption.MarshalJSON`
+- `UnstableSessionConfigOption.UnmarshalJSON`
+- `UnstableSessionConfigOption.Validate`
+- `UnstableSessionConfigOptionBoolean`
+- `UnstableSessionConfigOptionSelect`
+- `UnstableSessionConfigSelect`
+- `UnstableSessionConfigSelectGroup`
+- `UnstableSessionConfigSelectGroup.UnmarshalJSON`
+- `UnstableSessionConfigSelectOption`
+- `UnstableSessionConfigSelectOption.UnmarshalJSON`
+- `UnstableSessionConfigSelectOptions`
+- `UnstableSessionConfigSelectOptions.MarshalJSON`
+- `UnstableSessionConfigSelectOptions.UnmarshalJSON`
+- `UnstableSessionConfigSelectOptions.Validate`
+- `UnstableSessionConfigSelectOptionsGrouped`
+- `UnstableSessionConfigSelectOptionsUngrouped`
+- `UnstableSessionId`
+- `UnstableSessionMode`
+- `UnstableSessionMode.UnmarshalJSON`
+- `UnstableSessionModeState`
+- `UnstableSessionModeState.UnmarshalJSON`
+- `UnstableTextContent`
+- `UnstableTextContent.UnmarshalJSON`
+- `UnstableTextResourceContents`
+- `UnstableTextResourceContents.UnmarshalJSON`
+
 ## 1.26.0
 
 Generated from the ACP schema. The module version tracks the schema tag, so a
