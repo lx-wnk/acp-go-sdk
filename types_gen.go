@@ -15,7 +15,7 @@ type AgentAuthCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the agent supports the logout method.
 	//
@@ -69,13 +69,13 @@ func (v *AgentAuthCapabilities) UnmarshalJSON(b []byte) error {
 // Advertised during initialization to inform the client about
 // available features and content types.
 //
-// See protocol docs: [Agent Capabilities](https://agentclientprotocol.com/protocol/initialization#agent-capabilities)
+// See protocol docs: [Agent Capabilities](https://agentclientprotocol.com/protocol/v1/draft/initialization#agent-capabilities)
 type AgentCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Authentication-related capabilities supported by the agent.
 	//
@@ -355,7 +355,7 @@ type Annotations struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Intended recipients for this content, such as the user or assistant.
 	Audience []Role `json:"audience,omitempty"`
@@ -411,7 +411,7 @@ type AudioContent struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -471,7 +471,7 @@ type AuthCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the client supports 'terminal' authentication methods.
 	//
@@ -547,7 +547,7 @@ type AuthMethodTerminalInline struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional arguments to append to the configured agent invocation for terminal auth.
 	Args []string `json:"args,omitempty"`
@@ -738,7 +738,7 @@ type AuthMethodAgent struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional description providing more details about this authentication method.
 	Description *string `json:"description,omitempty"`
@@ -803,7 +803,7 @@ type AuthMethodTerminal struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional arguments to append to the configured agent invocation for terminal auth.
 	Args []string `json:"args,omitempty"`
@@ -866,7 +866,7 @@ type AuthenticateRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the authentication method to use.
 	// Must be one of the methods advertised in the initialize response.
@@ -926,7 +926,7 @@ type AuthenticateResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -980,7 +980,7 @@ type AvailableCommand struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable description of what the command does.
 	Description string `json:"description"`
@@ -1106,7 +1106,7 @@ type AvailableCommandsUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Commands the agent can execute
 	AvailableCommands []AvailableCommand `json:"availableCommands"`
@@ -1158,7 +1158,7 @@ type BlobResourceContents struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Base64-encoded bytes for a binary resource payload.
 	Blob string `json:"blob"`
@@ -1216,7 +1216,7 @@ type BooleanConfigOptionCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -1268,7 +1268,7 @@ type BooleanPropertySchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -1326,13 +1326,13 @@ func (v *BooleanPropertySchema) UnmarshalJSON(b []byte) error {
 
 // Notification to cancel ongoing operations for a session.
 //
-// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
+// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#cancellation)
 type CancelNotification struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the session to cancel operations for.
 	SessionId SessionId `json:"sessionId"`
@@ -1387,13 +1387,13 @@ func (v *CancelNotification) Validate() error {
 
 // Notification to cancel an ongoing request.
 //
-// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/cancellation)
+// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/v1/draft/cancellation)
 type CancelRequestNotification struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the request to cancel.
 	RequestId RequestId `json:"requestId"`
@@ -1448,13 +1448,13 @@ func (v *CancelRequestNotification) Validate() error {
 // Advertised during initialization to inform the agent about
 // available features and methods.
 //
-// See protocol docs: [Client Capabilities](https://agentclientprotocol.com/protocol/initialization#client-capabilities)
+// See protocol docs: [Client Capabilities](https://agentclientprotocol.com/protocol/v1/draft/initialization#client-capabilities)
 type ClientCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Authentication capabilities supported by the client.
 	// Determines which authentication method types the agent may include
@@ -1739,7 +1739,7 @@ type ClientSessionCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Support for ID-addressed context compaction updates. Omitted or 'null'
 	// means unsupported; '{}' advertises the complete compaction contract.
@@ -1808,7 +1808,7 @@ type CloseSessionRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the session to close.
 	SessionId SessionId `json:"sessionId"`
@@ -1867,7 +1867,7 @@ type CloseSessionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -1934,7 +1934,7 @@ const (
 // A content block appended to a compaction's summary. A first-seen ID creates
 // an in-progress compaction. Chunks append in receive order.
 // Agents MUST only send this update when the Client advertised
-// ['ClientSessionCapabilities::compaction'].
+// the 'session.compaction' Client capability.
 type CompactionSummaryChunk struct {
 	// Metadata scoped to this chunk. Omission and 'null' both mean absent.
 	Meta map[string]any `json:"_meta,omitempty"`
@@ -1987,7 +1987,7 @@ func (v *CompactionSummaryChunk) UnmarshalJSON(b []byte) error {
 // A context compaction upsert. The first notification fixes the compaction's
 // timeline position. Later updates with the same ID patch that entity in place.
 // Agents MUST only send this update when the Client advertised
-// ['ClientSessionCapabilities::compaction'].
+// the 'session.compaction' Client capability.
 //
 // 'summary', 'error', and '_meta' have patch semantics: omission leaves the
 // stored value unchanged, 'null' clears it, and a concrete value replaces it.
@@ -2053,7 +2053,7 @@ type CompleteElicitationNotification struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the elicitation that completed.
 	ElicitationId ElicitationId `json:"elicitationId"`
@@ -2112,7 +2112,7 @@ type ConfigOptionUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The full set of configuration options and their current values.
 	ConfigOptions []SessionConfigOption `json:"configOptions"`
@@ -2164,7 +2164,7 @@ type Content struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The actual content block.
 	Content ContentBlock `json:"content"`
@@ -2223,7 +2223,7 @@ func (v *Content) UnmarshalJSON(b []byte) error {
 // This structure is compatible with the Model Context Protocol (MCP), enabling
 // agents to seamlessly forward content from MCP tool outputs without transformation.
 //
-// See protocol docs: [Content](https://agentclientprotocol.com/protocol/content)
+// See protocol docs: [Content](https://agentclientprotocol.com/protocol/v1/draft/content)
 // Text content. May be plain text or formatted with Markdown.
 //
 // All agents MUST support text content blocks in prompts.
@@ -2233,7 +2233,7 @@ type ContentBlockText struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -2250,7 +2250,7 @@ type ContentBlockImage struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -2271,7 +2271,7 @@ type ContentBlockAudio struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -2290,7 +2290,7 @@ type ContentBlockResourceLink struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -2319,7 +2319,7 @@ type ContentBlockResource struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -2741,7 +2741,7 @@ type ContentChunk struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A single item of content
 	Content ContentBlock `json:"content"`
@@ -2798,11 +2798,12 @@ type Cost struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Total cumulative cost for session.
 	Amount float64 `json:"amount"`
-	// ISO 4217 currency code (e.g., "USD", "EUR").
+	// Unit of 'amount': an ISO 4217 currency code (e.g., "USD", "EUR") for money, or another
+	// unit such as "credits".
 	Currency string `json:"currency"`
 }
 
@@ -2859,7 +2860,7 @@ type CreateElicitationForm struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A human-readable message describing what input is needed.
 	Message string `json:"message"`
@@ -2885,7 +2886,7 @@ type CreateElicitationUrl struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The unique identifier for this elicitation.
 	ElicitationId ElicitationId `json:"elicitationId"`
@@ -2921,7 +2922,7 @@ type CreateElicitationOther struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A human-readable message describing what input is needed.
 	Message string `json:"message"`
@@ -3189,7 +3190,7 @@ type CreateElicitationAccept struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta   map[string]any `json:"_meta,omitempty"`
 	Action string         `json:"action"`
 	// The user-provided content, if any, as an object matching the requested schema.
@@ -3204,7 +3205,7 @@ type CreateElicitationDecline struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta   map[string]any `json:"_meta,omitempty"`
 	Action string         `json:"action"`
 }
@@ -3217,7 +3218,7 @@ type CreateElicitationCancel struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta   map[string]any `json:"_meta,omitempty"`
 	Action string         `json:"action"`
 }
@@ -3238,7 +3239,7 @@ type CreateElicitationResponseOther struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Custom or future elicitation action.
 	//
@@ -3544,7 +3545,7 @@ type CreateTerminalRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Array of command arguments.
 	Args []string `json:"args,omitempty"`
@@ -3623,7 +3624,7 @@ type CreateTerminalResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The unique identifier for the created terminal.
 	TerminalId TerminalId `json:"terminalId"`
@@ -3678,13 +3679,13 @@ func (v *CreateTerminalResponse) Validate() error {
 
 // The current mode of the session has changed
 //
-// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 type CurrentModeUpdate struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the current mode
 	CurrentModeId SessionModeId `json:"currentModeId"`
@@ -3738,7 +3739,7 @@ type DeleteSessionRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the session to delete.
 	SessionId SessionId `json:"sessionId"`
@@ -3797,7 +3798,7 @@ type DeleteSessionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -3849,17 +3850,17 @@ func (v *DeleteSessionResponse) Validate() error {
 //
 // Shows changes to files in a format suitable for display in the client UI.
 //
-// See protocol docs: [Content](https://agentclientprotocol.com/protocol/tool-calls#content)
+// See protocol docs: [Content](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#content)
 type Diff struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The new content after modification.
 	NewText string `json:"newText"`
-	// The original content (None for new files).
+	// The original content (omitted or 'null' for new files).
 	OldText *string `json:"oldText,omitempty"`
 	// The absolute file path being modified.
 	Path string `json:"path"`
@@ -3919,7 +3920,7 @@ type ElicitationCapabilities struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the client supports form-based elicitation.
 	//
@@ -3973,7 +3974,7 @@ func (v *ElicitationCapabilities) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Allowed wire representations for ['ElicitationContentValue'].
+// Allowed wire representations for 'ElicitationContentValue'.
 // String value accepted in elicitation response content.
 type ElicitationContentValueString string
 
@@ -4138,7 +4139,7 @@ type ElicitationFormCapabilities struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -4305,8 +4306,8 @@ type ElicitationId string
 // Property schema for elicitation form fields.
 //
 // Each variant corresponds to a JSON Schema '"type"' value.
-// Single-select enums use the 'String' variant with 'enum' or 'oneOf' set.
-// Multi-select enums use the 'Array' variant.
+// Single-select enums use 'type: "string"' with 'enum' or 'oneOf' set.
+// Multi-select enums use 'type: "array"'.
 // String property (or single-select enum when 'enum'/'oneOf' is set).
 type ElicitationPropertySchemaString struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
@@ -4315,7 +4316,7 @@ type ElicitationPropertySchemaString struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -4364,7 +4365,7 @@ type ElicitationPropertySchemaNumber struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -4397,7 +4398,7 @@ type ElicitationPropertySchemaInteger struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -4430,7 +4431,7 @@ type ElicitationPropertySchemaBoolean struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -4455,7 +4456,7 @@ type ElicitationPropertySchemaArray struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default selected values.
 	//
@@ -4916,7 +4917,7 @@ type ElicitationSchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional description of what this schema represents.
 	//
@@ -5011,7 +5012,7 @@ const (
 
 // Session-scoped elicitation, optionally tied to a specific tool call.
 //
-// When 'tool_call_id' is set, the elicitation is tied to a specific tool call.
+// When 'toolCallId' is set, the elicitation is tied to a specific tool call.
 // This is useful when an agent receives an elicitation from an MCP server
 // during a tool call and needs to redirect it to the user.
 type ElicitationSessionScope struct {
@@ -5074,7 +5075,7 @@ type ElicitationUrlCapabilities struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -5247,7 +5248,7 @@ type EmbeddedResource struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -5419,7 +5420,7 @@ type EnumOption struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The constant value for this option.
 	Const string `json:"const"`
@@ -5477,7 +5478,7 @@ type EnvVariable struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The name of the environment variable.
 	Name string `json:"name"`
@@ -5585,8 +5586,9 @@ func (v *Error) UnmarshalJSON(b []byte) error {
 
 // Predefined error codes for common JSON-RPC and ACP-specific errors.
 //
-// These codes follow the JSON-RPC 2.0 specification for standard errors
-// and use the reserved range (-32000 to -32099) for protocol-specific errors.
+// Standard errors use the JSON-RPC 2.0 codes. ACP-specific errors use the JSON-RPC
+// server-error range (-32000 to -32099), and request cancellation uses -32800 from the
+// range LSP reserves (-32899 to -32800).
 // **Parse error**: Invalid JSON was received by the server.
 // An error occurred on the server while parsing the JSON text.
 type ErrorCodeParseError int
@@ -5601,7 +5603,6 @@ type ErrorCodeMethodNotFound int
 type ErrorCodeInvalidParams int
 
 // **Internal error**: Internal JSON-RPC error.
-// Reserved for implementation-defined server errors.
 type ErrorCodeInternalError int
 
 // **Request cancelled**: Execution of the method was aborted either due to a cancellation request from the caller or
@@ -5611,7 +5612,7 @@ type ErrorCodeRequestCancelled int
 // **Authentication required**: Authentication is required before this operation can be performed.
 type ErrorCodeAuthenticationRequired int
 
-// **Resource not found**: A given resource, such as a file, was not found.
+// **Resource not found**: A given resource, such as a session or file, was not found.
 type ErrorCodeResourceNotFound int
 
 // Other undefined error code.
@@ -5628,14 +5629,13 @@ type ErrorCode struct {
 	// **Invalid params**: Invalid method parameter(s).
 	InvalidParams *ErrorCodeInvalidParams `json:"-"`
 	// **Internal error**: Internal JSON-RPC error.
-	// Reserved for implementation-defined server errors.
 	InternalError *ErrorCodeInternalError `json:"-"`
 	// **Request cancelled**: Execution of the method was aborted either due to a cancellation request from the caller or
 	// because of resource constraints or shutdown.
 	RequestCancelled *ErrorCodeRequestCancelled `json:"-"`
 	// **Authentication required**: Authentication is required before this operation can be performed.
 	AuthenticationRequired *ErrorCodeAuthenticationRequired `json:"-"`
-	// **Resource not found**: A given resource, such as a file, was not found.
+	// **Resource not found**: A given resource, such as a session or file, was not found.
 	ResourceNotFound *ErrorCodeResourceNotFound `json:"-"`
 	// Other undefined error code.
 	Other *ErrorCodeOther `json:"-"`
@@ -5900,11 +5900,11 @@ func (v *ErrorStopReason) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// Allows the Agent to send an arbitrary notification that is not part of the ACP spec.
+// Allows either side to send an arbitrary notification that is not part of the ACP spec.
 // Extension notifications provide a way to send one-way messages for custom functionality
 // while maintaining protocol compatibility.
 //
-// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/extensibility)
 // ExtNotification is a union or complex schema; represented generically.
 type ExtNotification any
 
@@ -5912,27 +5912,27 @@ type ExtNotification any
 // Extension methods provide a way to add custom functionality while maintaining
 // protocol compatibility.
 //
-// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/extensibility)
 // ExtRequest is a union or complex schema; represented generically.
 type ExtRequest any
 
-// Allows for sending an arbitrary response to an ['ExtRequest'] that is not part of the ACP spec.
+// Allows for sending an arbitrary response to an extension request that is not part of the ACP spec.
 // Extension methods provide a way to add custom functionality while maintaining
 // protocol compatibility.
 //
-// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/extensibility)
 // ExtResponse is a union or complex schema; represented generically.
 type ExtResponse any
 
 // File system capabilities that a client may support.
 //
-// See protocol docs: [FileSystem](https://agentclientprotocol.com/protocol/initialization#filesystem)
+// See protocol docs: [FileSystem](https://agentclientprotocol.com/protocol/v1/draft/initialization#filesystem)
 type FileSystemCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the Client supports 'fs/read_text_file' requests.
 	//
@@ -6009,7 +6009,7 @@ type HttpHeader struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The name of the HTTP header.
 	Name string `json:"name"`
@@ -6636,7 +6636,7 @@ type ImageContent struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -6696,7 +6696,7 @@ type Implementation struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Intended for programmatic or logical use, but can be used as a display
 	// name fallback if title isn’t present.
@@ -6755,13 +6755,13 @@ func (v *Implementation) UnmarshalJSON(b []byte) error {
 //
 // Sent by the client to establish connection and negotiate capabilities.
 //
-// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/initialization)
+// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/v1/draft/initialization)
 type InitializeRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Capabilities supported by the client.
 	//
@@ -6836,13 +6836,13 @@ func (v *InitializeRequest) Validate() error {
 //
 // Contains the negotiated protocol version and agent capabilities.
 //
-// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/initialization)
+// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/v1/draft/initialization)
 type InitializeResponse struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Capabilities supported by the agent.
 	//
@@ -6937,7 +6937,7 @@ type IntegerPropertySchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -7007,7 +7007,7 @@ type KillTerminalRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The session ID for this request.
 	SessionId SessionId `json:"sessionId"`
@@ -7071,7 +7071,7 @@ type KillTerminalResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -7127,7 +7127,7 @@ type ListSessionsRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Opaque cursor token from a previous response's nextCursor field for cursor-based pagination
 	Cursor *string `json:"cursor,omitempty"`
@@ -7185,7 +7185,7 @@ type ListSessionsResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Opaque cursor token. If present, pass this in the next request's cursor parameter
 	// to fetch the next page. If absent, there are no more results.
@@ -7245,13 +7245,13 @@ func (v *ListSessionsResponse) Validate() error {
 //
 // Only available if the Agent supports the 'loadSession' capability.
 //
-// See protocol docs: [Loading Sessions](https://agentclientprotocol.com/protocol/session-setup#loading-sessions)
+// See protocol docs: [Loading Sessions](https://agentclientprotocol.com/protocol/v1/draft/session-setup#loading-sessions)
 type LoadSessionRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional workspace roots to activate for this session. Each path must be absolute.
 	//
@@ -7339,13 +7339,13 @@ type LoadSessionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Initial session configuration options if supported by the Agent.
 	ConfigOptions []SessionConfigOption `json:"configOptions,omitempty"`
 	// Initial mode state if supported by the Agent
 	//
-	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 	Modes *SessionModeState `json:"modes,omitempty"`
 }
 
@@ -7401,7 +7401,7 @@ type LogoutCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -7453,7 +7453,7 @@ type LogoutRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -7507,7 +7507,7 @@ type LogoutResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -7561,21 +7561,21 @@ type McpCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// **UNSTABLE**
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// Agent supports ['McpServer::Acp'].
+	// Agent supports 'acp' MCP servers.
 	//
 	// Defaults to false if unset.
 	Acp bool `json:"acp,omitempty"`
-	// Agent supports ['McpServer::Http'].
+	// Agent supports 'http' MCP servers.
 	//
 	// Defaults to false if unset.
 	Http bool `json:"http,omitempty"`
-	// Agent supports ['McpServer::Sse'].
+	// Agent supports 'sse' MCP servers.
 	//
 	// Defaults to false if unset.
 	Sse bool `json:"sse,omitempty"`
@@ -7651,7 +7651,7 @@ func (v *McpCapabilities) UnmarshalJSON(b []byte) error {
 // MCP servers provide tools and context that the agent can use when
 // processing prompts.
 //
-// See protocol docs: [MCP Servers](https://agentclientprotocol.com/protocol/session-setup#mcp-servers)
+// See protocol docs: [MCP Servers](https://agentclientprotocol.com/protocol/v1/draft/session-setup#mcp-servers)
 // HTTP transport configuration
 //
 // Only available when the Agent capabilities indicate 'mcp_capabilities.http' is 'true'.
@@ -7660,7 +7660,7 @@ type McpServerHttpInline struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
 	Headers []HttpHeader `json:"headers"`
@@ -7679,7 +7679,7 @@ type McpServerSseInline struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
 	Headers []HttpHeader `json:"headers"`
@@ -7703,7 +7703,7 @@ type McpServerAcpInline struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
@@ -7728,7 +7728,7 @@ type McpServer struct {
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// ACP transport configuration
+	// # ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.
@@ -8055,7 +8055,7 @@ type McpServerAcp struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
@@ -8122,7 +8122,7 @@ type McpServerHttp struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
 	Headers []HttpHeader `json:"headers"`
@@ -8178,7 +8178,7 @@ type McpServerSse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
 	Headers []HttpHeader `json:"headers"`
@@ -8234,7 +8234,7 @@ type McpServerStdio struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Command-line arguments to pass to the MCP server.
 	Args []string `json:"args"`
@@ -8298,7 +8298,7 @@ type MultiSelectItemsString struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Allowed enum values.
 	Enum []string `json:"enum"`
@@ -8358,6 +8358,8 @@ type MultiSelectItems struct {
 	// Custom or future typed multi-select items.
 	Other *MultiSelectItemsOther `json:"-"`
 	// Titled multi-select items with human-readable labels.
+	//
+	// As in MCP, titled items omit 'type' and are identified by 'anyOf'.
 	Titled *TitledMultiSelectItems `json:"-"`
 }
 
@@ -8540,7 +8542,7 @@ type MultiSelectPropertySchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default selected values.
 	//
@@ -8608,13 +8610,13 @@ func (v *MultiSelectPropertySchema) UnmarshalJSON(b []byte) error {
 
 // Request parameters for creating a new session.
 //
-// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/session-setup#creating-a-session)
+// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/v1/draft/session-setup#creating-a-session)
 type NewSessionRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional workspace roots for this session. Each path must be absolute.
 	//
@@ -8690,19 +8692,19 @@ func (v *NewSessionRequest) Validate() error {
 
 // Response from creating a new session.
 //
-// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/session-setup#creating-a-session)
+// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/v1/draft/session-setup#creating-a-session)
 type NewSessionResponse struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Initial session configuration options if supported by the Agent.
 	ConfigOptions []SessionConfigOption `json:"configOptions,omitempty"`
 	// Initial mode state if supported by the Agent
 	//
-	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 	Modes *SessionModeState `json:"modes,omitempty"`
 	// Unique identifier for the created session.
 	//
@@ -8762,7 +8764,7 @@ func (v *NewSessionResponse) Validate() error {
 // Notices are live events rather than session history. Agents must not rely on
 // a notice being received, displayed, or seen by the user.
 // Agents MUST only send notices when the Client advertised
-// ['ClientSessionCapabilities::notices']. Otherwise, Agents may use an agent
+// the 'session.notices' Client capability. Otherwise, Agents may use an agent
 // message when the information should still be surfaced to the user.
 //
 // See RFD: [Session Notices](https://agentclientprotocol.com/rfds/session-notices)
@@ -8841,7 +8843,7 @@ type NumberPropertySchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -8911,7 +8913,7 @@ type PermissionOption struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Hint about the nature of this permission option.
 	Kind PermissionOptionKind `json:"kind"`
@@ -8982,13 +8984,13 @@ const (
 // Agents report plans to clients to provide visibility into their execution strategy.
 // Plans can evolve during execution as the agent discovers new requirements or completes tasks.
 //
-// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/agent-plan)
+// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/v1/draft/agent-plan)
 type Plan struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The list of tasks to be accomplished.
 	//
@@ -9047,7 +9049,7 @@ type PlanCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -9095,13 +9097,13 @@ func (v *PlanCapabilities) UnmarshalJSON(b []byte) error {
 //
 // Represents a task or goal that the assistant intends to accomplish
 // as part of fulfilling the user's request.
-// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/agent-plan#plan-entries)
+// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/v1/draft/agent-plan#plan-entries)
 type PlanEntry struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable description of what this task aims to accomplish.
 	Content string `json:"content"`
@@ -9156,7 +9158,7 @@ func (v *PlanEntry) UnmarshalJSON(b []byte) error {
 //
 // Used to indicate the relative importance or urgency of different
 // tasks in the execution plan.
-// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/agent-plan#plan-entries)
+// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/v1/draft/agent-plan#plan-entries)
 type PlanEntryPriority string
 
 const (
@@ -9168,7 +9170,7 @@ const (
 // Status of a plan entry in the execution flow.
 //
 // Tracks the lifecycle of each task from planning through completion.
-// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/agent-plan#plan-entries)
+// See protocol docs: [Plan Entries](https://agentclientprotocol.com/protocol/v1/draft/agent-plan#plan-entries)
 type PlanEntryStatus string
 
 const (
@@ -9187,7 +9189,7 @@ type PlanFile struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The plan ID to update.
 	PlanId PlanId `json:"planId"`
@@ -9252,7 +9254,7 @@ type PlanItems struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The list of tasks to be accomplished.
 	//
@@ -9313,7 +9315,7 @@ type PlanMarkdown struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Markdown content for the plan.
 	Content string `json:"content"`
@@ -9371,7 +9373,7 @@ type PlanRemoved struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The plan ID to remove.
 	PlanId PlanId `json:"planId"`
@@ -9427,7 +9429,7 @@ type PlanUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The updated plan content.
 	Plan PlanUpdateContent `json:"plan"`
@@ -9484,7 +9486,7 @@ type PlanUpdateContentItems struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The list of tasks to be accomplished.
 	//
@@ -9502,7 +9504,7 @@ type PlanUpdateContentFile struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The plan ID to update.
 	PlanId PlanId `json:"planId"`
@@ -9517,7 +9519,7 @@ type PlanUpdateContentMarkdown struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Markdown content for the plan.
 	Content string `json:"content"`
@@ -9760,8 +9762,8 @@ func (u *PlanUpdateContent) Validate() error {
 
 // Prompt capabilities supported by the agent in 'session/prompt' requests.
 //
-// Baseline agent functionality requires support for ['ContentBlock::Text']
-// and ['ContentBlock::ResourceLink'] in prompt requests.
+// Baseline agent functionality requires support for 'text'
+// and 'resource_link' content blocks in prompt requests.
 //
 // Other variants must be explicitly opted in to.
 // Capabilities for different types of content in prompt requests.
@@ -9769,26 +9771,26 @@ func (u *PlanUpdateContent) Validate() error {
 // Indicates which content types beyond the baseline (text and resource links)
 // the agent can process.
 //
-// See protocol docs: [Prompt Capabilities](https://agentclientprotocol.com/protocol/initialization#prompt-capabilities)
+// See protocol docs: [Prompt Capabilities](https://agentclientprotocol.com/protocol/v1/draft/initialization#prompt-capabilities)
 type PromptCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
-	// Agent supports ['ContentBlock::Audio'].
+	// Agent supports 'audio' content blocks.
 	//
 	// Defaults to false if unset.
 	Audio bool `json:"audio,omitempty"`
 	// Agent supports embedded context in 'session/prompt' requests.
 	//
-	// When enabled, the Client is allowed to include ['ContentBlock::Resource']
+	// When enabled, the Client is allowed to include 'resource' content blocks
 	// in prompt requests for pieces of context that are referenced in the message.
 	//
 	// Defaults to false if unset.
 	EmbeddedContext bool `json:"embeddedContext,omitempty"`
-	// Agent supports ['ContentBlock::Image'].
+	// Agent supports 'image' content blocks.
 	//
 	// Defaults to false if unset.
 	Image bool `json:"image,omitempty"`
@@ -9863,25 +9865,25 @@ func (v *PromptCapabilities) UnmarshalJSON(b []byte) error {
 //
 // Contains the user's message and any additional context.
 //
-// See protocol docs: [User Message](https://agentclientprotocol.com/protocol/prompt-turn#1-user-message)
+// See protocol docs: [User Message](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#1-user-message)
 type PromptRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The blocks of content that compose the user's message.
 	//
-	// As a baseline, the Agent MUST support ['ContentBlock::Text'] and ['ContentBlock::ResourceLink'],
-	// while other variants are optionally enabled via ['PromptCapabilities'].
+	// As a baseline, the Agent MUST support 'text' and 'resource_link' content blocks,
+	// while other variants are optionally enabled via 'PromptCapabilities'.
 	//
-	// The Client MUST adapt its interface according to ['PromptCapabilities'].
+	// The Client MUST adapt its interface according to 'PromptCapabilities'.
 	//
 	// The client MAY include referenced pieces of context as either
-	// ['ContentBlock::Resource'] or ['ContentBlock::ResourceLink'].
+	// 'resource' or 'resource_link' content blocks.
 	//
-	// When available, ['ContentBlock::Resource'] is preferred
+	// When available, 'resource' is preferred
 	// as it avoids extra round-trips and allows the message to include
 	// pieces of context from sources the agent may not have access to.
 	Prompt []ContentBlock `json:"prompt"`
@@ -9941,13 +9943,13 @@ func (v *PromptRequest) Validate() error {
 
 // Response from processing a user prompt.
 //
-// See protocol docs: [Check for Completion](https://agentclientprotocol.com/protocol/prompt-turn#4-check-for-completion)
+// See protocol docs: [Check for Completion](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#4-check-for-completion)
 type PromptResponse struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Indicates why the agent stopped processing the turn.
 	StopReason StopReason `json:"stopReason"`
@@ -10021,7 +10023,7 @@ type ProvidersCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -10073,7 +10075,7 @@ type ReadTextFileRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Maximum number of lines to read.
 	Limit *int `json:"limit,omitempty"`
@@ -10141,7 +10143,7 @@ type ReadTextFileResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Content payload returned by this response.
 	Content string `json:"content"`
@@ -10200,7 +10202,7 @@ type ReleaseTerminalRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The session ID for this request.
 	SessionId SessionId `json:"sessionId"`
@@ -10264,7 +10266,7 @@ type ReleaseTerminalResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -10430,9 +10432,9 @@ func (u *RequestId) Validate() error {
 //
 // When a client sends a 'session/cancel' notification to cancel an ongoing
 // prompt turn, it MUST respond to all pending 'session/request_permission'
-// requests with this 'Cancelled' outcome.
+// requests with this 'cancelled' outcome.
 //
-// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
+// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#cancellation)
 type RequestPermissionOutcomeCancelled struct {
 	Outcome string `json:"outcome"`
 }
@@ -10443,7 +10445,7 @@ type RequestPermissionOutcomeSelected struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the option the user selected.
 	OptionId PermissionOptionId `json:"optionId"`
@@ -10455,9 +10457,9 @@ type RequestPermissionOutcome struct {
 	//
 	// When a client sends a 'session/cancel' notification to cancel an ongoing
 	// prompt turn, it MUST respond to all pending 'session/request_permission'
-	// requests with this 'Cancelled' outcome.
+	// requests with this 'cancelled' outcome.
 	//
-	// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
+	// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#cancellation)
 	Cancelled *RequestPermissionOutcomeCancelled `json:"-"`
 	// The user selected one of the provided options.
 	Selected *RequestPermissionOutcomeSelected `json:"-"`
@@ -10611,13 +10613,13 @@ func (u *RequestPermissionOutcome) Validate() error {
 //
 // Sent when the agent needs authorization before performing a sensitive operation.
 //
-// See protocol docs: [Requesting Permission](https://agentclientprotocol.com/protocol/tool-calls#requesting-permission)
+// See protocol docs: [Requesting Permission](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#requesting-permission)
 type RequestPermissionRequest struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Available permission options for the user to choose from.
 	Options []PermissionOption `json:"options"`
@@ -10683,7 +10685,7 @@ type RequestPermissionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The user's decision on the permission request.
 	Outcome RequestPermissionOutcome `json:"outcome"`
@@ -10787,7 +10789,7 @@ type ResourceLink struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -10856,7 +10858,7 @@ type ResumeSessionRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional workspace roots to activate for this session. Each path must be absolute.
 	//
@@ -10941,13 +10943,13 @@ type ResumeSessionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Initial session configuration options if supported by the Agent.
 	ConfigOptions []SessionConfigOption `json:"configOptions,omitempty"`
 	// Initial mode state if supported by the Agent
 	//
-	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 	Modes *SessionModeState `json:"modes,omitempty"`
 }
 
@@ -11057,7 +11059,7 @@ type SelectedPermissionOutcome struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the option the user selected.
 	OptionId PermissionOptionId `json:"optionId"`
@@ -11114,7 +11116,7 @@ type SessionAdditionalDirectoriesCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -11170,7 +11172,7 @@ type SessionCancelCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -11220,15 +11222,15 @@ func (v *SessionCancelCapabilities) UnmarshalJSON(b []byte) error {
 //
 // Optionally, they **MAY** support other session methods and notifications by specifying additional capabilities.
 //
-// Note: 'session/load' is still handled by the top-level 'load_session' capability. This will be unified in future versions of the protocol.
+// Note: 'session/load' is still handled by the top-level 'loadSession' capability. This will be unified in future versions of the protocol.
 //
-// See protocol docs: [Session Capabilities](https://agentclientprotocol.com/protocol/initialization#session-capabilities)
+// See protocol docs: [Session Capabilities](https://agentclientprotocol.com/protocol/v1/draft/initialization#session-capabilities)
 type SessionCapabilities struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the agent supports 'additionalDirectories' on supported session lifecycle requests.
 	//
@@ -11328,7 +11330,7 @@ type SessionCloseCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -11391,7 +11393,7 @@ type SessionConfigOptionSelect struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional semantic category for this option (UX only).
 	Category *SessionConfigOptionCategory `json:"category,omitempty"`
@@ -11414,7 +11416,7 @@ type SessionConfigOptionBoolean struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional semantic category for this option (UX only).
 	Category *SessionConfigOptionCategory `json:"category,omitempty"`
@@ -11640,7 +11642,7 @@ type SessionConfigOptionsCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the client supports boolean session configuration options.
 	//
@@ -11705,7 +11707,7 @@ type SessionConfigSelectGroup struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Unique identifier for this group.
 	Group SessionConfigGroupId `json:"group"`
@@ -11761,7 +11763,7 @@ type SessionConfigSelectOption struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional description for this option value.
 	Description *string `json:"description,omitempty"`
@@ -11946,7 +11948,7 @@ type SessionDeleteCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -12002,7 +12004,7 @@ type SessionForkCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -12051,7 +12053,7 @@ func (v *SessionForkCapabilities) UnmarshalJSON(b []byte) error {
 // Sessions maintain their own context, conversation history, and state,
 // allowing multiple independent interactions with the same agent.
 //
-// See protocol docs: [Session ID](https://agentclientprotocol.com/protocol/session-setup#session-id)
+// See protocol docs: [Session ID](https://agentclientprotocol.com/protocol/v1/draft/session-setup#session-id)
 type SessionId string
 
 // Information about a session returned by session/list
@@ -12060,7 +12062,7 @@ type SessionInfo struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional workspace roots reported for this session. Each path must be absolute.
 	//
@@ -12127,7 +12129,7 @@ type SessionInfoUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable title for the session. Set to null to clear.
 	Title *string `json:"title,omitempty"`
@@ -12183,7 +12185,7 @@ type SessionListCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -12242,9 +12244,25 @@ type SessionMessage struct {
 	Content []ContentBlock `json:"content,omitempty"`
 	// Identifier of this message within the enclosing session's transcript.
 	MessageId MessageId `json:"messageId"`
-	// Optional receiving session identity; omission or 'null' retains a known value.
+	// On an outgoing view, the 'messageId' of the same message's incoming view in the
+	// recipient's transcript.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it. It can arrive
+	// after the message starts streaming.
+	RecipientMessageId *MessageId `json:"recipientMessageId,omitempty"`
+	// The receiving session.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it.
 	RecipientSessionId *SessionId `json:"recipientSessionId,omitempty"`
-	// Optional sending session identity; omission or 'null' retains a known value.
+	// On an incoming view, the 'messageId' of the same message's outgoing view in the
+	// sender's transcript.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it. It can arrive
+	// after the message starts streaming.
+	SenderMessageId *MessageId `json:"senderMessageId,omitempty"`
+	// The sending session.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it.
 	SenderSessionId *SessionId `json:"senderSessionId,omitempty"`
 }
 
@@ -12257,7 +12275,7 @@ func (v *SessionMessage) UnmarshalJSON(b []byte) error {
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
 		dropped := false
-		for _, k := range []string{"_meta", "content", "recipientSessionId", "senderSessionId"} {
+		for _, k := range []string{"_meta", "content", "recipientMessageId", "recipientSessionId", "senderMessageId", "senderSessionId"} {
 			raw, ok := m[k]
 			if !ok {
 				continue
@@ -12293,6 +12311,9 @@ func (v *SessionMessage) UnmarshalJSON(b []byte) error {
 // This capability is not part of the spec yet, and may be removed or changed at any point.
 //
 // A streamed content block of an inter-session message.
+//
+// A chunk carries only content. The message's participants and references come from
+// 'session_message' upserts, which can arrive before, between, or after its chunks.
 type SessionMessageChunk struct {
 	// Optional and nullable chunk-scoped metadata; omitted or 'null' means none.
 	//
@@ -12302,10 +12323,6 @@ type SessionMessageChunk struct {
 	Content ContentBlock `json:"content"`
 	// Identifier of this message within the enclosing session's transcript.
 	MessageId MessageId `json:"messageId"`
-	// Optional receiving session identity; omission or 'null' retains a known value.
-	RecipientSessionId *SessionId `json:"recipientSessionId,omitempty"`
-	// Optional sending session identity; omission or 'null' retains a known value.
-	SenderSessionId *SessionId `json:"senderSessionId,omitempty"`
 }
 
 func (v *SessionMessageChunk) UnmarshalJSON(b []byte) error {
@@ -12317,7 +12334,7 @@ func (v *SessionMessageChunk) UnmarshalJSON(b []byte) error {
 	var a Alias
 	if err := json.Unmarshal(b, &a); err != nil {
 		dropped := false
-		for _, k := range []string{"_meta", "recipientSessionId", "senderSessionId"} {
+		for _, k := range []string{"_meta"} {
 			raw, ok := m[k]
 			if !ok {
 				continue
@@ -12350,13 +12367,13 @@ func (v *SessionMessageChunk) UnmarshalJSON(b []byte) error {
 
 // A mode the agent can operate in.
 //
-// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 type SessionMode struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional human-readable details shown with this protocol object.
 	Description *string `json:"description,omitempty"`
@@ -12415,7 +12432,7 @@ type SessionModeState struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The set of modes that the Agent can operate in
 	AvailableModes []SessionMode `json:"availableModes"`
@@ -12467,13 +12484,13 @@ func (v *SessionModeState) UnmarshalJSON(b []byte) error {
 //
 // Used to stream real-time progress and results during prompt processing.
 //
-// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/prompt-turn#3-agent-reports-output)
+// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#3-agent-reports-output)
 type SessionNotification struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the session this update pertains to.
 	SessionId SessionId `json:"sessionId"`
@@ -12536,7 +12553,7 @@ type SessionResumeCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -12593,7 +12610,7 @@ type SessionSystemPromptCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Delivery modes the agent supports in addition to 'append'.
 	//
@@ -12654,7 +12671,7 @@ type SessionSystemPromptModeCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Whether the agent supports 'override' mode.
 	//
@@ -12717,7 +12734,7 @@ type SessionSystemPromptOverrideCapabilities struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -12765,14 +12782,14 @@ func (v *SessionSystemPromptOverrideCapabilities) UnmarshalJSON(b []byte) error 
 //
 // These updates provide real-time feedback about the agent's progress.
 //
-// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/prompt-turn#3-agent-reports-output)
+// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#3-agent-reports-output)
 // A chunk of the user's message being streamed.
 type SessionUpdateUserMessageChunk struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A single item of content
 	Content ContentBlock `json:"content"`
@@ -12790,7 +12807,7 @@ type SessionUpdateAgentMessageChunk struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A single item of content
 	Content ContentBlock `json:"content"`
@@ -12808,7 +12825,7 @@ type SessionUpdateAgentThoughtChunk struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A single item of content
 	Content ContentBlock `json:"content"`
@@ -12826,7 +12843,7 @@ type SessionUpdateToolCall struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Content produced by the tool call.
 	Content []ToolCallContent `json:"content,omitempty"`
@@ -12860,7 +12877,7 @@ type SessionToolCallUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Replace the content collection.
 	Content []ToolCallContent `json:"content,omitempty"`
@@ -12887,13 +12904,13 @@ type SessionToolCallUpdate struct {
 }
 
 // The agent's execution plan for complex tasks.
-// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/agent-plan)
+// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/v1/draft/agent-plan)
 type SessionUpdatePlan struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The list of tasks to be accomplished.
 	//
@@ -12913,7 +12930,7 @@ type SessionPlanUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The updated plan content.
 	Plan          PlanUpdateContent `json:"plan"`
@@ -12930,7 +12947,7 @@ type SessionUpdatePlanRemoved struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The plan ID to remove.
 	PlanId        PlanId `json:"planId"`
@@ -12943,7 +12960,7 @@ type SessionAvailableCommandsUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Commands the agent can execute
 	AvailableCommands []AvailableCommand `json:"availableCommands"`
@@ -12952,13 +12969,13 @@ type SessionAvailableCommandsUpdate struct {
 
 // The current mode of the session has changed
 //
-// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 type SessionCurrentModeUpdate struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the current mode
 	CurrentModeId SessionModeId `json:"currentModeId"`
@@ -12971,7 +12988,7 @@ type SessionConfigOptionUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The full set of configuration options and their current values.
 	ConfigOptions []SessionConfigOption `json:"configOptions"`
@@ -12984,7 +13001,7 @@ type SessionSessionInfoUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta          map[string]any `json:"_meta,omitempty"`
 	SessionUpdate string         `json:"sessionUpdate"`
 	// Human-readable title for the session. Set to null to clear.
@@ -12999,7 +13016,7 @@ type SessionUsageUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Cumulative session cost (optional).
 	Cost          *Cost  `json:"cost,omitempty"`
@@ -13013,7 +13030,7 @@ type SessionUsageUpdate struct {
 // Information for the user that is not part of session history.
 //
 // Agents MUST only send this update when the Client advertised
-// ['ClientSessionCapabilities::notices'].
+// the 'session.notices' Client capability.
 type SessionUpdateNotice struct {
 	// Metadata scoped to this notice.
 	//
@@ -13033,7 +13050,7 @@ type SessionUpdateNotice struct {
 // A context compaction has been created or updated.
 //
 // Agents MUST only send this update when the Client advertised
-// ['ClientSessionCapabilities::compaction'].
+// the 'session.compaction' Client capability.
 type SessionCompactionUpdate struct {
 	// Extensible metadata patch for this compaction.
 	Meta map[string]any `json:"_meta,omitempty"`
@@ -13051,7 +13068,7 @@ type SessionCompactionUpdate struct {
 // A content block appended to a context compaction's retained summary.
 //
 // Agents MUST only send this update when the Client advertised
-// ['ClientSessionCapabilities::compaction'].
+// the 'session.compaction' Client capability.
 type SessionUpdateCompactionSummaryChunk struct {
 	// Metadata scoped to this chunk. Omission and 'null' both mean absent.
 	Meta map[string]any `json:"_meta,omitempty"`
@@ -13073,9 +13090,17 @@ type SessionSubagentUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	// Omitted means unchanged; 'null' removes the metadata.
 	Meta map[string]any `json:"_meta,omitempty"`
+	// Additional workspace roots for the child. Each path must be absolute.
+	//
+	// Optional and nullable. Omitted means unchanged; 'null' clears the
+	// reported value. While unset, the child inherits its immediate parent's
+	// effective additional directories, independently of 'cwd'. A concrete
+	// array replaces the whole list; '[]' reports no additional directories.
+	// Clients use these values for the child's root set.
+	AdditionalDirectories []string `json:"additionalDirectories,omitempty"`
 	// Client-initiated session mutations permitted for this subagent session.
 	//
 	// Omitted means unchanged; 'null' clears the capability set and disables
@@ -13083,6 +13108,13 @@ type SessionSubagentUpdate struct {
 	// Read-only operations retain their normal protocol semantics and capability
 	// requirements. A concrete object replaces the whole capability set.
 	Capabilities *SubagentSessionCapabilities `json:"capabilities,omitempty"`
+	// The child's working directory. Must be an absolute path.
+	//
+	// Optional and nullable. Omitted means unchanged; 'null' clears the
+	// reported value. While unset, the child inherits its immediate parent's
+	// effective working directory. Clients use this value for the child's
+	// root set and as the default terminal working directory.
+	Cwd *string `json:"cwd,omitempty"`
 	// The parent's human-readable description of the child's role or purpose.
 	//
 	// Omitted means unchanged; 'null' clears it. If unset, the Client chooses
@@ -13122,9 +13154,25 @@ type SessionUpdateSessionMessage struct {
 	Content []ContentBlock `json:"content,omitempty"`
 	// Identifier of this message within the enclosing session's transcript.
 	MessageId MessageId `json:"messageId"`
-	// Optional receiving session identity; omission or 'null' retains a known value.
+	// On an outgoing view, the 'messageId' of the same message's incoming view in the
+	// recipient's transcript.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it. It can arrive
+	// after the message starts streaming.
+	RecipientMessageId *MessageId `json:"recipientMessageId,omitempty"`
+	// The receiving session.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it.
 	RecipientSessionId *SessionId `json:"recipientSessionId,omitempty"`
-	// Optional sending session identity; omission or 'null' retains a known value.
+	// On an incoming view, the 'messageId' of the same message's outgoing view in the
+	// sender's transcript.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it. It can arrive
+	// after the message starts streaming.
+	SenderMessageId *MessageId `json:"senderMessageId,omitempty"`
+	// The sending session.
+	//
+	// Omitted leaves the stored value unchanged; 'null' clears it; a value replaces it.
 	SenderSessionId *SessionId `json:"senderSessionId,omitempty"`
 	SessionUpdate   string     `json:"sessionUpdate"`
 }
@@ -13142,12 +13190,8 @@ type SessionUpdateSessionMessageChunk struct {
 	// A single content block appended to the message.
 	Content ContentBlock `json:"content"`
 	// Identifier of this message within the enclosing session's transcript.
-	MessageId MessageId `json:"messageId"`
-	// Optional receiving session identity; omission or 'null' retains a known value.
-	RecipientSessionId *SessionId `json:"recipientSessionId,omitempty"`
-	// Optional sending session identity; omission or 'null' retains a known value.
-	SenderSessionId *SessionId `json:"senderSessionId,omitempty"`
-	SessionUpdate   string     `json:"sessionUpdate"`
+	MessageId     MessageId `json:"messageId"`
+	SessionUpdate string    `json:"sessionUpdate"`
 }
 
 type SessionUpdate struct {
@@ -13162,7 +13206,7 @@ type SessionUpdate struct {
 	// Update on the status or results of a tool call.
 	ToolCallUpdate *SessionToolCallUpdate `json:"-"`
 	// The agent's execution plan for complex tasks.
-	// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/agent-plan)
+	// See protocol docs: [Agent Plan](https://agentclientprotocol.com/protocol/v1/draft/agent-plan)
 	Plan *SessionUpdatePlan `json:"-"`
 	// **UNSTABLE**
 	//
@@ -13180,7 +13224,7 @@ type SessionUpdate struct {
 	AvailableCommandsUpdate *SessionAvailableCommandsUpdate `json:"-"`
 	// The current mode of the session has changed
 	//
-	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
+	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
 	CurrentModeUpdate *SessionCurrentModeUpdate `json:"-"`
 	// Session configuration options have been updated.
 	ConfigOptionUpdate *SessionConfigOptionUpdate `json:"-"`
@@ -13191,17 +13235,17 @@ type SessionUpdate struct {
 	// Information for the user that is not part of session history.
 	//
 	// Agents MUST only send this update when the Client advertised
-	// ['ClientSessionCapabilities::notices'].
+	// the 'session.notices' Client capability.
 	Notice *SessionUpdateNotice `json:"-"`
 	// A context compaction has been created or updated.
 	//
 	// Agents MUST only send this update when the Client advertised
-	// ['ClientSessionCapabilities::compaction'].
+	// the 'session.compaction' Client capability.
 	CompactionUpdate *SessionCompactionUpdate `json:"-"`
 	// A content block appended to a context compaction's retained summary.
 	//
 	// Agents MUST only send this update when the Client advertised
-	// ['ClientSessionCapabilities::compaction'].
+	// the 'session.compaction' Client capability.
 	CompactionSummaryChunk *SessionUpdateCompactionSummaryChunk `json:"-"`
 	// **UNSTABLE**
 	//
@@ -14347,7 +14391,7 @@ type SetSessionConfigOptionBoolean struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the configuration option to set.
 	ConfigId SessionConfigId `json:"configId"`
@@ -14358,7 +14402,7 @@ type SetSessionConfigOptionBoolean struct {
 	Value bool `json:"value"`
 }
 
-// A ['SessionConfigValueId'] string value.
+// A 'SessionConfigValueId' string value.
 //
 // This is the default when 'type' is absent on the wire. Unknown 'type'
 // values with string payloads also gracefully deserialize into this
@@ -14368,7 +14412,7 @@ type SetSessionConfigOptionValueId struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the configuration option to set.
 	ConfigId SessionConfigId `json:"configId"`
@@ -14381,7 +14425,7 @@ type SetSessionConfigOptionValueId struct {
 type SetSessionConfigOptionRequest struct {
 	// A boolean value ('type: "boolean"').
 	Boolean *SetSessionConfigOptionBoolean `json:"-"`
-	// A ['SessionConfigValueId'] string value.
+	// A 'SessionConfigValueId' string value.
 	//
 	// This is the default when 'type' is absent on the wire. Unknown 'type'
 	// values with string payloads also gracefully deserialize into this
@@ -14564,7 +14608,7 @@ type SetSessionConfigOptionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The full set of configuration options and their current values.
 	ConfigOptions []SessionConfigOption `json:"configOptions"`
@@ -14623,7 +14667,7 @@ type SetSessionModeRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The ID of the mode to set.
 	ModeId SessionModeId `json:"modeId"`
@@ -14687,7 +14731,7 @@ type SetSessionModeResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -15146,7 +15190,7 @@ func (u *StateUpdate) Validate() error {
 
 // Reasons why an agent stops processing a prompt turn.
 //
-// See protocol docs: [Stop Reasons](https://agentclientprotocol.com/protocol/prompt-turn#stop-reasons)
+// See protocol docs: [Stop Reasons](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#stop-reasons)
 type StopReason string
 
 const (
@@ -15175,7 +15219,7 @@ type StringMultiSelectItems struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Allowed enum values.
 	Enum []string `json:"enum"`
@@ -15232,7 +15276,7 @@ type StringPropertySchema struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Default value.
 	//
@@ -15437,7 +15481,7 @@ func (v *SubagentSessionCapabilities) UnmarshalJSON(b []byte) error {
 // Later updates modify the existing association's metadata, not its ownership.
 //
 // Sent on the immediate parent session. The first update for an unknown
-// ['SubagentUpdate::session_id'] announces the child and MUST be sent
+// 'sessionId' announces the child and MUST be sent
 // before any live child traffic or live message naming the child as sender
 // or recipient. Parents may message and reuse an announced child across
 // multiple operations.
@@ -15451,14 +15495,24 @@ func (v *SubagentSessionCapabilities) UnmarshalJSON(b []byte) error {
 // state replaces the entire previous state object, not the session.
 // The title and description provide the parent's display metadata for the
 // child. They do not replace the content of individual messages or operations.
+// 'cwd' and 'additionalDirectories' report where the Agent placed the child;
+// while unset, each inherits the immediate parent's effective value.
 type SubagentUpdate struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	// Omitted means unchanged; 'null' removes the metadata.
 	Meta map[string]any `json:"_meta,omitempty"`
+	// Additional workspace roots for the child. Each path must be absolute.
+	//
+	// Optional and nullable. Omitted means unchanged; 'null' clears the
+	// reported value. While unset, the child inherits its immediate parent's
+	// effective additional directories, independently of 'cwd'. A concrete
+	// array replaces the whole list; '[]' reports no additional directories.
+	// Clients use these values for the child's root set.
+	AdditionalDirectories []string `json:"additionalDirectories,omitempty"`
 	// Client-initiated session mutations permitted for this subagent session.
 	//
 	// Omitted means unchanged; 'null' clears the capability set and disables
@@ -15466,6 +15520,13 @@ type SubagentUpdate struct {
 	// Read-only operations retain their normal protocol semantics and capability
 	// requirements. A concrete object replaces the whole capability set.
 	Capabilities *SubagentSessionCapabilities `json:"capabilities,omitempty"`
+	// The child's working directory. Must be an absolute path.
+	//
+	// Optional and nullable. Omitted means unchanged; 'null' clears the
+	// reported value. While unset, the child inherits its immediate parent's
+	// effective working directory. Clients use this value for the child's
+	// root set and as the default terminal working directory.
+	Cwd *string `json:"cwd,omitempty"`
 	// The parent's human-readable description of the child's role or purpose.
 	//
 	// Omitted means unchanged; 'null' clears it. If unset, the Client chooses
@@ -15544,11 +15605,11 @@ type SystemPrompt struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The system prompt content.
 	//
-	// Agents advertising the capability MUST accept ['ContentBlock::Text'].
+	// Agents advertising the capability MUST accept 'text' content blocks.
 	// Clients MUST NOT send other content block types until a future
 	// capability allows them, and Agents MUST return an error for content
 	// blocks they do not support.
@@ -15556,8 +15617,8 @@ type SystemPrompt struct {
 	// How the Agent combines 'content' with its own instructions.
 	//
 	// Required on the wire, so every request states its mode. In Rust,
-	// ['SystemPrompt::new'] starts it as ['SystemPromptMode::Append']. Unknown
-	// values parse as ['SystemPromptMode::Other']; Agents MUST return an error
+	// Unknown
+	// values are preserved; Agents MUST return an error
 	// for modes they do not support.
 	Mode SystemPromptMode `json:"mode"`
 }
@@ -15608,7 +15669,7 @@ func (v *SystemPrompt) UnmarshalJSON(b []byte) error {
 //
 // How the Agent combines a client-provided system prompt with its own instructions.
 //
-// Unknown modes parse as ['SystemPromptMode::Other'] so they can be stored,
+// Unknown modes are preserved so they can be stored,
 // proxied, or forwarded. An Agent MUST return an error for a mode it does not
 // support rather than treating it as 'append' or 'override'.
 type SystemPromptMode string
@@ -15622,13 +15683,13 @@ const (
 //
 // The terminal must be added before calling 'terminal/release'.
 //
-// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/terminals)
+// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/v1/draft/terminals)
 type Terminal struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Identifier of the terminal instance to embed in the content stream.
 	TerminalId TerminalId `json:"terminalId"`
@@ -15680,7 +15741,7 @@ type TerminalExitStatus struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The process exit code (may be null if terminated by signal).
 	ExitCode *int `json:"exitCode,omitempty"`
@@ -15737,7 +15798,7 @@ type TerminalOutputRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The session ID for this request.
 	SessionId SessionId `json:"sessionId"`
@@ -15801,7 +15862,7 @@ type TerminalOutputResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Exit status if the command has completed.
 	ExitStatus *TerminalExitStatus `json:"exitStatus,omitempty"`
@@ -15864,7 +15925,7 @@ type TextContent struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Optional annotations that help clients decide how to display or route this content.
 	Annotations *Annotations `json:"annotations,omitempty"`
@@ -15918,7 +15979,7 @@ type TextResourceContents struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// MIME type describing the encoded media payload.
 	MimeType *string `json:"mimeType,omitempty"`
@@ -15976,7 +16037,7 @@ type TitledMultiSelectItems struct {
 	//
 	// Optional. Omitted and 'null' are equivalent and mean no metadata.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Titled enum options.
 	AnyOf []EnumOption `json:"anyOf"`
@@ -16027,13 +16088,13 @@ func (v *TitledMultiSelectItems) UnmarshalJSON(b []byte) error {
 // Tool calls are actions that the agent executes on behalf of the language model,
 // such as reading files, executing code, or fetching data from external sources.
 //
-// See protocol docs: [Tool Calls](https://agentclientprotocol.com/protocol/tool-calls)
+// See protocol docs: [Tool Calls](https://agentclientprotocol.com/protocol/v1/draft/tool-calls)
 type ToolCall struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Content produced by the tool call.
 	Content []ToolCallContent `json:"content,omitempty"`
@@ -16105,14 +16166,14 @@ func (v *ToolCall) UnmarshalJSON(b []byte) error {
 // Tool calls can produce different types of content including
 // standard content blocks (text, images) or file diffs.
 //
-// See protocol docs: [Content](https://agentclientprotocol.com/protocol/tool-calls#content)
+// See protocol docs: [Content](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#content)
 // Standard content block (text, images, resources).
 type ToolCallContentContent struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The actual content block.
 	Content ContentBlock `json:"content"`
@@ -16125,11 +16186,11 @@ type ToolCallContentDiff struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The new content after modification.
 	NewText string `json:"newText"`
-	// The original content (None for new files).
+	// The original content (omitted or 'null' for new files).
 	OldText *string `json:"oldText,omitempty"`
 	// The absolute file path being modified.
 	Path string `json:"path"`
@@ -16140,13 +16201,13 @@ type ToolCallContentDiff struct {
 //
 // The terminal must be added before calling 'terminal/release'.
 //
-// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/terminals)
+// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/v1/draft/terminals)
 type ToolCallContentTerminal struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Identifier of the terminal instance to embed in the content stream.
 	TerminalId TerminalId `json:"terminalId"`
@@ -16162,7 +16223,7 @@ type ToolCallContent struct {
 	//
 	// The terminal must be added before calling 'terminal/release'.
 	//
-	// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/terminals)
+	// See protocol docs: [Terminal](https://agentclientprotocol.com/protocol/v1/draft/terminals)
 	Terminal *ToolCallContentTerminal `json:"-"`
 }
 
@@ -16385,15 +16446,15 @@ type ToolCallId string
 // Enables clients to implement "follow-along" features that track
 // which files the agent is working with in real-time.
 //
-// See protocol docs: [Following the Agent](https://agentclientprotocol.com/protocol/tool-calls#following-the-agent)
+// See protocol docs: [Following the Agent](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#following-the-agent)
 type ToolCallLocation struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
-	// Optional line number within the file.
+	// Optional 1-based line number within the file.
 	Line *int `json:"line,omitempty"`
 	// The absolute file path being accessed or modified.
 	Path string `json:"path"`
@@ -16443,7 +16504,7 @@ func (v *ToolCallLocation) UnmarshalJSON(b []byte) error {
 //
 // Tool calls progress through different statuses during their lifecycle.
 //
-// See protocol docs: [Status](https://agentclientprotocol.com/protocol/tool-calls#status)
+// See protocol docs: [Status](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#status)
 type ToolCallStatus string
 
 const (
@@ -16458,13 +16519,13 @@ const (
 // Used to report progress and results as tools execute. All fields except
 // the tool call ID are optional - only changed fields need to be included.
 //
-// See protocol docs: [Updating](https://agentclientprotocol.com/protocol/tool-calls#updating)
+// See protocol docs: [Updating](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#updating)
 type ToolCallUpdate struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Replace the content collection.
 	Content []ToolCallContent `json:"content,omitempty"`
@@ -16541,7 +16602,7 @@ func (t *ToolCallUpdate) Validate() error {
 // Tool kinds help clients choose appropriate icons and optimize how they
 // display tool execution progress.
 //
-// See protocol docs: [Creating](https://agentclientprotocol.com/protocol/tool-calls#creating)
+// See protocol docs: [Creating](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#creating)
 type ToolKind string
 
 const (
@@ -16617,6 +16678,651 @@ func (v *UnknownStateUpdate) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// Optional annotations for the client. The client can use annotations to inform how objects are used or displayed
+type UnstableAnnotations struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Intended recipients for this content, such as the user or assistant.
+	Audience []Role `json:"audience,omitempty"`
+	// Timestamp indicating when the underlying resource was last modified.
+	LastModified *string `json:"lastModified,omitempty"`
+	// Relative importance of this content when clients choose what to surface.
+	Priority *float64 `json:"priority,omitempty"`
+}
+
+func (v *UnstableAnnotations) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableAnnotations
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "audience", "lastModified", "priority"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableAnnotations(a)
+	return nil
+}
+
+// Audio provided to or from an LLM.
+type UnstableAudioContent struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Base64-encoded media payload.
+	Data string `json:"data"`
+	// MIME type describing the encoded media payload.
+	MimeType string `json:"mimeType"`
+}
+
+func (v *UnstableAudioContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableAudioContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableAudioContent(a)
+	return nil
+}
+
+// Binary resource contents.
+type UnstableBlobResourceContents struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Base64-encoded bytes for a binary resource payload.
+	Blob string `json:"blob"`
+	// MIME type describing the encoded media payload.
+	MimeType *string `json:"mimeType,omitempty"`
+	// URI associated with this resource or media payload.
+	Uri string `json:"uri"`
+}
+
+func (v *UnstableBlobResourceContents) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableBlobResourceContents
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "mimeType"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableBlobResourceContents(a)
+	return nil
+}
+
+// Content blocks represent displayable information in the Agent Client Protocol.
+//
+// They provide a structured way to handle various types of user-facing content—whether
+// it's text from language models, images for analysis, or embedded resources for context.
+//
+// Content blocks appear in:
+// - User prompts sent via 'session/prompt'
+// - Language model output streamed through 'session/update' notifications
+// - Progress updates and results from tool calls
+//
+// This structure is compatible with the Model Context Protocol (MCP), enabling
+// agents to seamlessly forward content from MCP tool outputs without transformation.
+//
+// See protocol docs: [Content](https://agentclientprotocol.com/protocol/v1/draft/content)
+// Text content. May be plain text or formatted with Markdown.
+//
+// All agents MUST support text content blocks in prompts.
+// Clients SHOULD render this text as Markdown.
+type UnstableContentBlockText struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Text payload carried by this content block.
+	Text string `json:"text"`
+	Type string `json:"type"`
+}
+
+// Images for visual context or analysis.
+//
+// Requires the 'image' prompt capability when included in prompts.
+type UnstableContentBlockImage struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Base64-encoded media payload.
+	Data string `json:"data"`
+	// MIME type describing the encoded media payload.
+	MimeType string `json:"mimeType"`
+	Type     string `json:"type"`
+	// URI associated with this resource or media payload.
+	Uri *string `json:"uri,omitempty"`
+}
+
+// Audio data for transcription or analysis.
+//
+// Requires the 'audio' prompt capability when included in prompts.
+type UnstableContentBlockAudio struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Base64-encoded media payload.
+	Data string `json:"data"`
+	// MIME type describing the encoded media payload.
+	MimeType string `json:"mimeType"`
+	Type     string `json:"type"`
+}
+
+// References to resources that the agent can access.
+//
+// All agents MUST support resource links in prompts.
+type UnstableContentBlockResourceLink struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Optional human-readable details shown with this protocol object.
+	Description *string `json:"description,omitempty"`
+	// MIME type describing the encoded media payload.
+	MimeType *string `json:"mimeType,omitempty"`
+	// Human-readable name shown for this protocol object.
+	Name string `json:"name"`
+	// Optional size of the linked resource in bytes, if known.
+	Size *int `json:"size,omitempty"`
+	// Optional display title for end-user UI.
+	Title *string `json:"title,omitempty"`
+	Type  string  `json:"type"`
+	// URI associated with this resource or media payload.
+	Uri string `json:"uri"`
+}
+
+// Complete resource contents embedded directly in the message.
+//
+// Preferred for including context as it avoids extra round-trips.
+//
+// Requires the 'embeddedContext' prompt capability when included in prompts.
+type UnstableContentBlockResource struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Embedded resource payload, either text or binary data.
+	Resource UnstableEmbeddedResourceResource `json:"resource"`
+	Type     string                           `json:"type"`
+}
+
+type UnstableContentBlock struct {
+	// Text content. May be plain text or formatted with Markdown.
+	//
+	// All agents MUST support text content blocks in prompts.
+	// Clients SHOULD render this text as Markdown.
+	Text *UnstableContentBlockText `json:"-"`
+	// Images for visual context or analysis.
+	//
+	// Requires the 'image' prompt capability when included in prompts.
+	Image *UnstableContentBlockImage `json:"-"`
+	// Audio data for transcription or analysis.
+	//
+	// Requires the 'audio' prompt capability when included in prompts.
+	Audio *UnstableContentBlockAudio `json:"-"`
+	// References to resources that the agent can access.
+	//
+	// All agents MUST support resource links in prompts.
+	ResourceLink *UnstableContentBlockResourceLink `json:"-"`
+	// Complete resource contents embedded directly in the message.
+	//
+	// Preferred for including context as it avoids extra round-trips.
+	//
+	// Requires the 'embeddedContext' prompt capability when included in prompts.
+	Resource *UnstableContentBlockResource `json:"-"`
+}
+
+func (u *UnstableContentBlock) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			discPresent := false
+			if v, ok := m["type"]; ok {
+				discPresent = true
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "text":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock text variant requires type")
+				}
+				if rv, ok := m["text"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock text variant requires text")
+				}
+				var v UnstableContentBlockText
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Text = &v
+				return nil
+			case "image":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock image variant requires type")
+				}
+				if rv, ok := m["data"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock image variant requires data")
+				}
+				if rv, ok := m["mimeType"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock image variant requires mimeType")
+				}
+				var v UnstableContentBlockImage
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Image = &v
+				return nil
+			case "audio":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock audio variant requires type")
+				}
+				if rv, ok := m["data"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock audio variant requires data")
+				}
+				if rv, ok := m["mimeType"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock audio variant requires mimeType")
+				}
+				var v UnstableContentBlockAudio
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Audio = &v
+				return nil
+			case "resource_link":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock resource_link variant requires type")
+				}
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock resource_link variant requires name")
+				}
+				if rv, ok := m["uri"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock resource_link variant requires uri")
+				}
+				var v UnstableContentBlockResourceLink
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.ResourceLink = &v
+				return nil
+			case "resource":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock resource variant requires type")
+				}
+				if rv, ok := m["resource"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableContentBlock resource variant requires resource")
+				}
+				var v UnstableContentBlockResource
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Resource = &v
+				return nil
+			default:
+				if discPresent {
+					return errors.New("UnstableContentBlock: unrecognized type value")
+				}
+			}
+		}
+		{
+			var v UnstableContentBlockText
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["text"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Text = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableContentBlockImage
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["data"]; !ok {
+				match = false
+			}
+			if _, ok := m["mimeType"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Image = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableContentBlockAudio
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["data"]; !ok {
+				match = false
+			}
+			if _, ok := m["mimeType"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Audio = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableContentBlockResourceLink
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["name"]; !ok {
+				match = false
+			}
+			if _, ok := m["uri"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.ResourceLink = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableContentBlockResource
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["resource"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Resource = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	{
+		var v UnstableContentBlockText
+		if json.Unmarshal(b, &v) == nil {
+			u.Text = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableContentBlockImage
+		if json.Unmarshal(b, &v) == nil {
+			u.Image = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableContentBlockAudio
+		if json.Unmarshal(b, &v) == nil {
+			u.Audio = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableContentBlockResourceLink
+		if json.Unmarshal(b, &v) == nil {
+			u.ResourceLink = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableContentBlockResource
+		if json.Unmarshal(b, &v) == nil {
+			u.Resource = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u UnstableContentBlock) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Text != nil {
+		_set++
+	}
+	if u.Image != nil {
+		_set++
+	}
+	if u.Audio != nil {
+		_set++
+	}
+	if u.ResourceLink != nil {
+		_set++
+	}
+	if u.Resource != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableContentBlock has multiple variants set")
+	}
+	if u.Text != nil {
+		_b, _e := json.Marshal(*u.Text)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "text"
+		return json.Marshal(m)
+	}
+	if u.Image != nil {
+		_b, _e := json.Marshal(*u.Image)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "image"
+		return json.Marshal(m)
+	}
+	if u.Audio != nil {
+		_b, _e := json.Marshal(*u.Audio)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "audio"
+		return json.Marshal(m)
+	}
+	if u.ResourceLink != nil {
+		_b, _e := json.Marshal(*u.ResourceLink)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "resource_link"
+		return json.Marshal(m)
+	}
+	if u.Resource != nil {
+		_b, _e := json.Marshal(*u.Resource)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "resource"
+		return json.Marshal(m)
+	}
+	return nil, errors.New("UnstableContentBlock must have at least one variant set")
+}
+
+func (u *UnstableContentBlock) Validate() error {
+	var count int
+	if u.Text != nil {
+		count++
+	}
+	if u.Image != nil {
+		count++
+	}
+	if u.Audio != nil {
+		count++
+	}
+	if u.ResourceLink != nil {
+		count++
+	}
+	if u.Resource != nil {
+		count++
+	}
+	if count != 1 {
+		return errors.New("UnstableContentBlock must have exactly one variant set")
+	}
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -16627,7 +17333,7 @@ type UnstableDisableProviderRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Provider ID to disable.
 	ProviderId UnstableProviderId `json:"providerId"`
@@ -16690,7 +17396,7 @@ type UnstableDisableProviderResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -16738,6 +17444,230 @@ func (v *UnstableDisableProviderResponse) Validate() error {
 	return nil
 }
 
+// The contents of a resource, embedded into a prompt or tool call result.
+type UnstableEmbeddedResource struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Embedded resource payload, either text or binary data.
+	Resource UnstableEmbeddedResourceResource `json:"resource"`
+}
+
+func (v *UnstableEmbeddedResource) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableEmbeddedResource
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableEmbeddedResource(a)
+	return nil
+}
+
+// Resource content that can be embedded in a message.
+type UnstableEmbeddedResourceResource struct {
+	// Text resource contents embedded directly in the message.
+	TextResourceContents *UnstableTextResourceContents `json:"-"`
+	// Binary resource contents embedded directly in the message.
+	BlobResourceContents *UnstableBlobResourceContents `json:"-"`
+}
+
+func (u *UnstableEmbeddedResourceResource) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var v UnstableTextResourceContents
+			var match bool = true
+			if _, ok := m["text"]; !ok {
+				match = false
+			}
+			if _, ok := m["uri"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.TextResourceContents = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableBlobResourceContents
+			var match bool = true
+			if _, ok := m["blob"]; !ok {
+				match = false
+			}
+			if _, ok := m["uri"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.BlobResourceContents = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	{
+		var v UnstableTextResourceContents
+		if json.Unmarshal(b, &v) == nil {
+			u.TextResourceContents = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableBlobResourceContents
+		if json.Unmarshal(b, &v) == nil {
+			u.BlobResourceContents = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u UnstableEmbeddedResourceResource) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.TextResourceContents != nil {
+		_set++
+	}
+	if u.BlobResourceContents != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableEmbeddedResourceResource has multiple variants set")
+	}
+	if u.TextResourceContents != nil {
+		_b, _e := json.Marshal(*u.TextResourceContents)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	if u.BlobResourceContents != nil {
+		_b, _e := json.Marshal(*u.BlobResourceContents)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		return json.Marshal(m)
+	}
+	return nil, errors.New("UnstableEmbeddedResourceResource must have at least one variant set")
+}
+
+func (u *UnstableEmbeddedResourceResource) Validate() error {
+	var count int
+	if u.TextResourceContents != nil {
+		count++
+	}
+	if u.BlobResourceContents != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("UnstableEmbeddedResourceResource must have at least one variant set")
+	}
+	return nil
+}
+
+// An environment variable to set when launching an MCP server.
+type UnstableEnvVariable struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The name of the environment variable.
+	Name string `json:"name"`
+	// The value to set for the environment variable.
+	Value string `json:"value"`
+}
+
+func (v *UnstableEnvVariable) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableEnvVariable
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableEnvVariable(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -16753,7 +17683,7 @@ type UnstableForkSessionRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Additional workspace roots to activate for this session. Each path must be absolute.
 	//
@@ -16766,7 +17696,7 @@ type UnstableForkSessionRequest struct {
 	// List of MCP servers to connect to for this session.
 	McpServers []UnstableMcpServer `json:"mcpServers,omitempty"`
 	// The ID of the session to fork.
-	SessionId SessionId `json:"sessionId"`
+	SessionId UnstableSessionId `json:"sessionId"`
 	// **UNSTABLE**
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -16841,16 +17771,16 @@ type UnstableForkSessionResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Initial session configuration options if supported by the Agent.
-	ConfigOptions []SessionConfigOption `json:"configOptions,omitempty"`
+	ConfigOptions []UnstableSessionConfigOption `json:"configOptions,omitempty"`
 	// Initial mode state if supported by the Agent
 	//
-	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/session-modes)
-	Modes *SessionModeState `json:"modes,omitempty"`
+	// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
+	Modes *UnstableSessionModeState `json:"modes,omitempty"`
 	// Unique identifier for the newly created forked session.
-	SessionId SessionId `json:"sessionId"`
+	SessionId UnstableSessionId `json:"sessionId"`
 }
 
 func (v *UnstableForkSessionResponse) UnmarshalJSON(b []byte) error {
@@ -16900,6 +17830,118 @@ func (v *UnstableForkSessionResponse) Validate() error {
 	return nil
 }
 
+// An HTTP header to set when making requests to the MCP server.
+type UnstableHttpHeader struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The name of the HTTP header.
+	Name string `json:"name"`
+	// The value to set for the HTTP header.
+	Value string `json:"value"`
+}
+
+func (v *UnstableHttpHeader) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableHttpHeader
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableHttpHeader(a)
+	return nil
+}
+
+// An image provided to or from an LLM.
+type UnstableImageContent struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Base64-encoded media payload.
+	Data string `json:"data"`
+	// MIME type describing the encoded media payload.
+	MimeType string `json:"mimeType"`
+	// URI associated with this resource or media payload.
+	Uri *string `json:"uri,omitempty"`
+}
+
+func (v *UnstableImageContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableImageContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations", "uri"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableImageContent(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -16910,7 +17952,7 @@ type UnstableListProvidersRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -16968,7 +18010,7 @@ type UnstableListProvidersResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Configurable providers with current routing info suitable for UI display.
 	Providers []UnstableProviderInfo `json:"providers"`
@@ -17071,19 +18113,19 @@ type UnstableMcpRequestId string
 // MCP servers provide tools and context that the agent can use when
 // processing prompts.
 //
-// See protocol docs: [MCP Servers](https://agentclientprotocol.com/protocol/session-setup#mcp-servers)
+// See protocol docs: [MCP Servers](https://agentclientprotocol.com/protocol/v1/draft/session-setup#mcp-servers)
 // HTTP transport configuration
 //
 // Only available when the Agent capabilities indicate 'mcp_capabilities.http' is 'true'.
-type UnstableMcpServerHttp struct {
+type UnstableMcpServerHttpInline struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
-	Headers []HttpHeader `json:"headers"`
+	Headers []UnstableHttpHeader `json:"headers"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
 	Type string `json:"type"`
@@ -17094,15 +18136,15 @@ type UnstableMcpServerHttp struct {
 // SSE transport configuration
 //
 // Only available when the Agent capabilities indicate 'mcp_capabilities.sse' is 'true'.
-type UnstableMcpServerSse struct {
+type UnstableMcpServerSseInline struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// HTTP headers to set when making requests to the MCP server.
-	Headers []HttpHeader `json:"headers"`
+	Headers []UnstableHttpHeader `json:"headers"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
 	Type string `json:"type"`
@@ -17123,7 +18165,7 @@ type UnstableMcpServerAcpInline struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
@@ -17139,16 +18181,16 @@ type UnstableMcpServer struct {
 	// HTTP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.http' is 'true'.
-	Http *UnstableMcpServerHttp `json:"-"`
+	Http *UnstableMcpServerHttpInline `json:"-"`
 	// SSE transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.sse' is 'true'.
-	Sse *UnstableMcpServerSse `json:"-"`
+	Sse *UnstableMcpServerSseInline `json:"-"`
 	// **UNSTABLE**
 	//
 	// This capability is not part of the spec yet, and may be removed or changed at any point.
 	//
-	// ACP transport configuration
+	// # ACP transport configuration
 	//
 	// Only available when the Agent capabilities indicate 'mcp_capabilities.acp' is 'true'.
 	// The MCP server is provided by an ACP component and communicates over the ACP channel.
@@ -17156,7 +18198,7 @@ type UnstableMcpServer struct {
 	// Stdio transport configuration
 	//
 	// All Agents MUST support this transport.
-	Stdio *McpServerStdio `json:"-"`
+	Stdio *UnstableMcpServerStdio `json:"-"`
 }
 
 func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
@@ -17183,7 +18225,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer http variant requires headers")
 				}
-				var v UnstableMcpServerHttp
+				var v UnstableMcpServerHttpInline
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
 				}
@@ -17202,7 +18244,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 				if rv, ok := m["headers"]; !ok || string(rv) == "null" {
 					return errors.New("UnstableMcpServer sse variant requires headers")
 				}
-				var v UnstableMcpServerSse
+				var v UnstableMcpServerSseInline
 				if json.Unmarshal(b, &v) != nil {
 					return errors.New("invalid variant payload")
 				}
@@ -17240,7 +18282,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 						match = false
 					}
 					if match {
-						var v McpServerStdio
+						var v UnstableMcpServerStdio
 						if json.Unmarshal(b, &v) != nil {
 							return errors.New("invalid variant payload")
 						}
@@ -17252,7 +18294,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			}
 		}
 		{
-			var v UnstableMcpServerHttp
+			var v UnstableMcpServerHttpInline
 			var match bool = true
 			if _, ok := m["type"]; !ok {
 				match = false
@@ -17275,7 +18317,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			}
 		}
 		{
-			var v UnstableMcpServerSse
+			var v UnstableMcpServerSseInline
 			var match bool = true
 			if _, ok := m["type"]; !ok {
 				match = false
@@ -17318,7 +18360,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 			}
 		}
 		{
-			var v McpServerStdio
+			var v UnstableMcpServerStdio
 			var match bool = true
 			if _, ok := m["name"]; !ok {
 				match = false
@@ -17346,14 +18388,14 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 		}
 	}
 	{
-		var v UnstableMcpServerHttp
+		var v UnstableMcpServerHttpInline
 		if json.Unmarshal(b, &v) == nil {
 			u.Http = &v
 			return nil
 		}
 	}
 	{
-		var v UnstableMcpServerSse
+		var v UnstableMcpServerSseInline
 		if json.Unmarshal(b, &v) == nil {
 			u.Sse = &v
 			return nil
@@ -17367,7 +18409,7 @@ func (u *UnstableMcpServer) UnmarshalJSON(b []byte) error {
 		}
 	}
 	{
-		var v McpServerStdio
+		var v UnstableMcpServerStdio
 		if json.Unmarshal(b, &v) == nil {
 			u.Stdio = &v
 			return nil
@@ -17475,7 +18517,7 @@ type UnstableMcpServerAcp struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Human-readable name identifying this MCP server.
 	Name string `json:"name"`
@@ -17536,6 +18578,176 @@ func (v *UnstableMcpServerAcp) UnmarshalJSON(b []byte) error {
 // used by 'mcp/message' to route requests to the component that declared the server.
 type UnstableMcpServerAcpId string
 
+// HTTP transport configuration for MCP.
+type UnstableMcpServerHttp struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// HTTP headers to set when making requests to the MCP server.
+	Headers []UnstableHttpHeader `json:"headers"`
+	// Human-readable name identifying this MCP server.
+	Name string `json:"name"`
+	// URL to the MCP server.
+	Url string `json:"url"`
+}
+
+func (v *UnstableMcpServerHttp) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMcpServerHttp
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMcpServerHttp(a)
+	return nil
+}
+
+// SSE transport configuration for MCP.
+type UnstableMcpServerSse struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// HTTP headers to set when making requests to the MCP server.
+	Headers []UnstableHttpHeader `json:"headers"`
+	// Human-readable name identifying this MCP server.
+	Name string `json:"name"`
+	// URL to the MCP server.
+	Url string `json:"url"`
+}
+
+func (v *UnstableMcpServerSse) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMcpServerSse
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMcpServerSse(a)
+	return nil
+}
+
+// Stdio transport configuration for MCP.
+type UnstableMcpServerStdio struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Command-line arguments to pass to the MCP server.
+	Args []string `json:"args"`
+	// Absolute path to the MCP server executable.
+	Command string `json:"command"`
+	// Environment variables to set when launching the MCP server.
+	Env []UnstableEnvVariable `json:"env"`
+	// Human-readable name identifying this MCP server.
+	Name string `json:"name"`
+}
+
+func (v *UnstableMcpServerStdio) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableMcpServerStdio
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableMcpServerStdio(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -17549,7 +18761,7 @@ type UnstableMessageMcpNotification struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The inner MCP method name.
 	Method string `json:"method"`
@@ -17626,7 +18838,7 @@ type UnstableMessageMcpRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The inner MCP method name.
 	Method string `json:"method"`
@@ -17838,7 +19050,7 @@ type UnstableProviderCurrentConfig struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Protocol currently used by this provider.
 	ApiType UnstableLlmProtocol `json:"apiType"`
@@ -17903,7 +19115,7 @@ type UnstableProviderInfo struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Current effective non-secret routing config.
 	// Null or omitted means provider is disabled.
@@ -17957,6 +19169,666 @@ func (v *UnstableProviderInfo) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// A resource that the server is capable of reading, included in a prompt or tool call result.
+type UnstableResourceLink struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Optional human-readable details shown with this protocol object.
+	Description *string `json:"description,omitempty"`
+	// MIME type describing the encoded media payload.
+	MimeType *string `json:"mimeType,omitempty"`
+	// Human-readable name shown for this protocol object.
+	Name string `json:"name"`
+	// Optional size of the linked resource in bytes, if known.
+	Size *int `json:"size,omitempty"`
+	// Optional display title for end-user UI.
+	Title *string `json:"title,omitempty"`
+	// URI associated with this resource or media payload.
+	Uri string `json:"uri"`
+}
+
+func (v *UnstableResourceLink) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableResourceLink
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations", "description", "mimeType", "size", "title"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableResourceLink(a)
+	return nil
+}
+
+// A session configuration option selector and its current state.
+// Single-value selector (dropdown).
+type UnstableSessionConfigOptionSelect struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional semantic category for this option (UX only).
+	Category *SessionConfigOptionCategory `json:"category,omitempty"`
+	// The currently selected value.
+	CurrentValue SessionConfigValueId `json:"currentValue"`
+	// Optional description for the Client to display to the user.
+	Description *string `json:"description,omitempty"`
+	// Unique identifier for the configuration option.
+	Id SessionConfigId `json:"id"`
+	// Human-readable label for the option.
+	Name string `json:"name"`
+	// The set of selectable options.
+	Options UnstableSessionConfigSelectOptions `json:"options"`
+	Type    string                             `json:"type"`
+}
+
+// Boolean on/off toggle.
+type UnstableSessionConfigOptionBoolean struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional semantic category for this option (UX only).
+	Category *SessionConfigOptionCategory `json:"category,omitempty"`
+	// The current value of the boolean option.
+	CurrentValue bool `json:"currentValue"`
+	// Optional description for the Client to display to the user.
+	Description *string `json:"description,omitempty"`
+	// Unique identifier for the configuration option.
+	Id SessionConfigId `json:"id"`
+	// Human-readable label for the option.
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+type UnstableSessionConfigOption struct {
+	// Single-value selector (dropdown).
+	Select *UnstableSessionConfigOptionSelect `json:"-"`
+	// Boolean on/off toggle.
+	Boolean *UnstableSessionConfigOptionBoolean `json:"-"`
+}
+
+func (u *UnstableSessionConfigOption) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+		{
+			var disc string
+			discPresent := false
+			if v, ok := m["type"]; ok {
+				discPresent = true
+				json.Unmarshal(v, &disc)
+			}
+			switch disc {
+			case "select":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption select variant requires type")
+				}
+				if rv, ok := m["currentValue"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption select variant requires currentValue")
+				}
+				if rv, ok := m["options"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption select variant requires options")
+				}
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption select variant requires id")
+				}
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption select variant requires name")
+				}
+				var v UnstableSessionConfigOptionSelect
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Select = &v
+				return nil
+			case "boolean":
+				if rv, ok := m["type"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption boolean variant requires type")
+				}
+				if rv, ok := m["currentValue"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption boolean variant requires currentValue")
+				}
+				if rv, ok := m["id"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption boolean variant requires id")
+				}
+				if rv, ok := m["name"]; !ok || string(rv) == "null" {
+					return errors.New("UnstableSessionConfigOption boolean variant requires name")
+				}
+				var v UnstableSessionConfigOptionBoolean
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Boolean = &v
+				return nil
+			default:
+				if discPresent {
+					return errors.New("UnstableSessionConfigOption: unrecognized type value")
+				}
+			}
+		}
+		{
+			var v UnstableSessionConfigOptionSelect
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["currentValue"]; !ok {
+				match = false
+			}
+			if _, ok := m["options"]; !ok {
+				match = false
+			}
+			if _, ok := m["id"]; !ok {
+				match = false
+			}
+			if _, ok := m["name"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Select = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableSessionConfigOptionBoolean
+			var match bool = true
+			if _, ok := m["type"]; !ok {
+				match = false
+			}
+			if _, ok := m["currentValue"]; !ok {
+				match = false
+			}
+			if _, ok := m["id"]; !ok {
+				match = false
+			}
+			if _, ok := m["name"]; !ok {
+				match = false
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Boolean = &v
+				return nil
+			}
+		}
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	{
+		var v UnstableSessionConfigOptionSelect
+		if json.Unmarshal(b, &v) == nil {
+			u.Select = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableSessionConfigOptionBoolean
+		if json.Unmarshal(b, &v) == nil {
+			u.Boolean = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u UnstableSessionConfigOption) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Select != nil {
+		_set++
+	}
+	if u.Boolean != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableSessionConfigOption has multiple variants set")
+	}
+	if u.Select != nil {
+		_b, _e := json.Marshal(*u.Select)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "select"
+		return json.Marshal(m)
+	}
+	if u.Boolean != nil {
+		_b, _e := json.Marshal(*u.Boolean)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		var m map[string]any
+		if json.Unmarshal(_b, &m) != nil {
+			return []byte{}, errors.New("invalid variant payload")
+		}
+		m["type"] = "boolean"
+		return json.Marshal(m)
+	}
+	return nil, errors.New("UnstableSessionConfigOption must have at least one variant set")
+}
+
+func (u *UnstableSessionConfigOption) Validate() error {
+	var count int
+	if u.Select != nil {
+		count++
+	}
+	if u.Boolean != nil {
+		count++
+	}
+	if count != 1 {
+		return errors.New("UnstableSessionConfigOption must have exactly one variant set")
+	}
+	return nil
+}
+
+// A single-value selector (dropdown) session configuration option payload.
+type UnstableSessionConfigSelect struct {
+	// The currently selected value.
+	CurrentValue SessionConfigValueId `json:"currentValue"`
+	// The set of selectable options.
+	Options UnstableSessionConfigSelectOptions `json:"options"`
+}
+
+// A group of possible values for a session configuration option.
+type UnstableSessionConfigSelectGroup struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Unique identifier for this group.
+	Group SessionConfigGroupId `json:"group"`
+	// Human-readable label for this group.
+	Name string `json:"name"`
+	// The set of option values in this group.
+	Options []UnstableSessionConfigSelectOption `json:"options"`
+}
+
+func (v *UnstableSessionConfigSelectGroup) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSessionConfigSelectGroup
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "options"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSessionConfigSelectGroup(a)
+	return nil
+}
+
+// A possible value for a session configuration option.
+type UnstableSessionConfigSelectOption struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional description for this option value.
+	Description *string `json:"description,omitempty"`
+	// Human-readable label for this option value.
+	Name string `json:"name"`
+	// Unique identifier for this option value.
+	Value SessionConfigValueId `json:"value"`
+}
+
+func (v *UnstableSessionConfigSelectOption) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSessionConfigSelectOption
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSessionConfigSelectOption(a)
+	return nil
+}
+
+// Possible values for a session configuration option.
+// A flat list of options with no grouping.
+type UnstableSessionConfigSelectOptionsUngrouped []UnstableSessionConfigSelectOption
+
+// A list of options grouped under headers.
+type UnstableSessionConfigSelectOptionsGrouped []UnstableSessionConfigSelectGroup
+
+type UnstableSessionConfigSelectOptions struct {
+	// A flat list of options with no grouping.
+	Ungrouped *UnstableSessionConfigSelectOptionsUngrouped `json:"-"`
+	// A list of options grouped under headers.
+	Grouped *UnstableSessionConfigSelectOptionsGrouped `json:"-"`
+}
+
+func (u *UnstableSessionConfigSelectOptions) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err == nil {
+	} else {
+		if _, ok := err.(*json.UnmarshalTypeError); !ok {
+			return err
+		}
+	}
+	var arr []map[string]json.RawMessage
+	if json.Unmarshal(b, &arr) == nil {
+		{
+			var v UnstableSessionConfigSelectOptionsUngrouped
+			var match bool = true
+			for _, elem := range arr {
+				if _, ok := elem["name"]; !ok {
+					match = false
+				}
+				if _, ok := elem["value"]; !ok {
+					match = false
+				}
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Ungrouped = &v
+				return nil
+			}
+		}
+		{
+			var v UnstableSessionConfigSelectOptionsGrouped
+			var match bool = true
+			for _, elem := range arr {
+				if _, ok := elem["group"]; !ok {
+					match = false
+				}
+				if _, ok := elem["name"]; !ok {
+					match = false
+				}
+				if _, ok := elem["options"]; !ok {
+					match = false
+				}
+			}
+			if match {
+				if json.Unmarshal(b, &v) != nil {
+					return errors.New("invalid variant payload")
+				}
+				u.Grouped = &v
+				return nil
+			}
+		}
+	}
+	{
+		var v UnstableSessionConfigSelectOptionsUngrouped
+		if json.Unmarshal(b, &v) == nil {
+			u.Ungrouped = &v
+			return nil
+		}
+	}
+	{
+		var v UnstableSessionConfigSelectOptionsGrouped
+		if json.Unmarshal(b, &v) == nil {
+			u.Grouped = &v
+			return nil
+		}
+	}
+	return errors.New("no matching variant for union")
+}
+func (u UnstableSessionConfigSelectOptions) MarshalJSON() ([]byte, error) {
+	var _set int
+	if u.Ungrouped != nil {
+		_set++
+	}
+	if u.Grouped != nil {
+		_set++
+	}
+	if _set > 1 {
+		return nil, errors.New("UnstableSessionConfigSelectOptions has multiple variants set")
+	}
+	if u.Ungrouped != nil {
+		_b, _e := json.Marshal(*u.Ungrouped)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+	}
+	if u.Grouped != nil {
+		_b, _e := json.Marshal(*u.Grouped)
+		if _e != nil {
+			return []byte{}, _e
+		}
+		return _b, nil
+	}
+	return nil, errors.New("UnstableSessionConfigSelectOptions must have at least one variant set")
+}
+
+func (u *UnstableSessionConfigSelectOptions) Validate() error {
+	var count int
+	if u.Ungrouped != nil {
+		count++
+	}
+	if u.Grouped != nil {
+		count++
+	}
+	if count < 1 {
+		return errors.New("UnstableSessionConfigSelectOptions must have at least one variant set")
+	}
+	return nil
+}
+
+// A unique identifier for a conversation session between a client and agent.
+//
+// Sessions maintain their own context, conversation history, and state,
+// allowing multiple independent interactions with the same agent.
+//
+// See protocol docs: [Session ID](https://agentclientprotocol.com/protocol/v1/draft/session-setup#session-id)
+type UnstableSessionId string
+
+// A mode the agent can operate in.
+//
+// See protocol docs: [Session Modes](https://agentclientprotocol.com/protocol/v1/draft/session-modes)
+type UnstableSessionMode struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional human-readable details shown with this protocol object.
+	Description *string `json:"description,omitempty"`
+	// Stable identifier used to refer to this protocol object in later messages.
+	Id SessionModeId `json:"id"`
+	// Human-readable name shown for this protocol object.
+	Name string `json:"name"`
+}
+
+func (v *UnstableSessionMode) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSessionMode
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "description"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSessionMode(a)
+	return nil
+}
+
+// The set of modes and the one currently active.
+type UnstableSessionModeState struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// The set of modes that the Agent can operate in
+	AvailableModes []UnstableSessionMode `json:"availableModes"`
+	// The current mode the Agent is in.
+	CurrentModeId SessionModeId `json:"currentModeId"`
+}
+
+func (v *UnstableSessionModeState) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableSessionModeState
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "availableModes"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableSessionModeState(a)
+	return nil
+}
+
 // **UNSTABLE**
 //
 // This capability is not part of the spec yet, and may be removed or changed at any point.
@@ -17969,7 +19841,7 @@ type UnstableSetProviderRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Protocol type for this provider.
 	ApiType UnstableLlmProtocol `json:"apiType"`
@@ -18042,7 +19914,7 @@ type UnstableSetProviderResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -18106,20 +19978,20 @@ type UnstableSystemPrompt struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The system prompt content.
 	//
-	// Agents advertising the capability MUST accept ['ContentBlock::Text'].
+	// Agents advertising the capability MUST accept 'text' content blocks.
 	// Clients MUST NOT send other content block types until a future
 	// capability allows them, and Agents MUST return an error for content
 	// blocks they do not support.
-	Content []ContentBlock `json:"content"`
+	Content []UnstableContentBlock `json:"content"`
 	// How the Agent combines 'content' with its own instructions.
 	//
 	// Required on the wire, so every request states its mode. In Rust,
-	// ['SystemPrompt::new'] starts it as ['SystemPromptMode::Append']. Unknown
-	// values parse as ['SystemPromptMode::Other']; Agents MUST return an error
+	// Unknown
+	// values are preserved; Agents MUST return an error
 	// for modes they do not support.
 	Mode UnstableSystemPromptMode `json:"mode"`
 }
@@ -18170,7 +20042,7 @@ func (v *UnstableSystemPrompt) UnmarshalJSON(b []byte) error {
 //
 // How the Agent combines a client-provided system prompt with its own instructions.
 //
-// Unknown modes parse as ['SystemPromptMode::Other'] so they can be stored,
+// Unknown modes are preserved so they can be stored,
 // proxied, or forwarded. An Agent MUST return an error for a mode it does not
 // support rather than treating it as 'append' or 'override'.
 type UnstableSystemPromptMode string
@@ -18180,13 +20052,123 @@ const (
 	UnstableSystemPromptModeOverride UnstableSystemPromptMode = "override"
 )
 
+// Text provided to or from an LLM.
+type UnstableTextContent struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// Optional annotations that help clients decide how to display or route this content.
+	Annotations *UnstableAnnotations `json:"annotations,omitempty"`
+	// Text payload carried by this content block.
+	Text string `json:"text"`
+}
+
+func (v *UnstableTextContent) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableTextContent
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "annotations"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableTextContent(a)
+	return nil
+}
+
+// Text-based resource contents.
+type UnstableTextResourceContents struct {
+	// The _meta property is reserved by ACP to allow clients and agents to attach additional
+	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
+	// these keys.
+	//
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
+	Meta map[string]any `json:"_meta,omitempty"`
+	// MIME type describing the encoded media payload.
+	MimeType *string `json:"mimeType,omitempty"`
+	// Text payload carried by this content block.
+	Text string `json:"text"`
+	// URI associated with this resource or media payload.
+	Uri string `json:"uri"`
+}
+
+func (v *UnstableTextResourceContents) UnmarshalJSON(b []byte) error {
+	var m map[string]json.RawMessage
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+	type Alias UnstableTextResourceContents
+	var a Alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		dropped := false
+		for _, k := range []string{"_meta", "mimeType"} {
+			raw, ok := m[k]
+			if !ok {
+				continue
+			}
+			pb, pe := json.Marshal(map[string]json.RawMessage{k: raw})
+			if pe != nil {
+				continue
+			}
+			var probe Alias
+			if json.Unmarshal(pb, &probe) != nil {
+				delete(m, k)
+				dropped = true
+			}
+		}
+		if !dropped {
+			return err
+		}
+		rb, re := json.Marshal(m)
+		if re != nil {
+			return err
+		}
+		a = Alias{}
+		if json.Unmarshal(rb, &a) != nil {
+			return err
+		}
+	}
+	*v = UnstableTextResourceContents(a)
+	return nil
+}
+
 // All text that was typed after the command name is provided as input.
 type UnstructuredCommandInput struct {
 	// The _meta property is reserved by ACP to allow clients and agents to attach additional
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// A hint to display when the input hasn't been provided yet
 	Hint string `json:"hint"`
@@ -18242,7 +20224,7 @@ type Usage struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Total cache read tokens.
 	CachedReadTokens *int `json:"cachedReadTokens,omitempty"`
@@ -18304,7 +20286,7 @@ type UsageUpdate struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// Cumulative session cost (optional).
 	Cost *Cost `json:"cost,omitempty"`
@@ -18360,7 +20342,7 @@ type WaitForTerminalExitRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The session ID for this request.
 	SessionId SessionId `json:"sessionId"`
@@ -18424,7 +20406,7 @@ type WaitForTerminalExitResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The process exit code (may be null if terminated by signal).
 	ExitCode *int `json:"exitCode,omitempty"`
@@ -18484,7 +20466,7 @@ type WriteTextFileRequest struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 	// The text content to write to the file.
 	Content string `json:"content"`
@@ -18553,7 +20535,7 @@ type WriteTextFileResponse struct {
 	// metadata to their interactions. Implementations MUST NOT make assumptions about values at
 	// these keys.
 	//
-	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/extensibility)
+	// See protocol docs: [Extensibility](https://agentclientprotocol.com/protocol/v1/draft/extensibility)
 	Meta map[string]any `json:"_meta,omitempty"`
 }
 
@@ -18610,7 +20592,7 @@ type Agent interface {
 	//
 	// Sent by the client to establish connection and negotiate capabilities.
 	//
-	// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/initialization)
+	// See protocol docs: [Initialization](https://agentclientprotocol.com/protocol/v1/draft/initialization)
 	Initialize(ctx context.Context, params InitializeRequest) (InitializeResponse, error)
 	// Request parameters for the logout method.
 	//
@@ -18618,7 +20600,7 @@ type Agent interface {
 	Logout(ctx context.Context, params LogoutRequest) (LogoutResponse, error)
 	// Notification to cancel ongoing operations for a session.
 	//
-	// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/prompt-turn#cancellation)
+	// See protocol docs: [Cancellation](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#cancellation)
 	Cancel(ctx context.Context, params CancelNotification) error
 	// Request parameters for closing an active session.
 	//
@@ -18638,13 +20620,13 @@ type Agent interface {
 	ListSessions(ctx context.Context, params ListSessionsRequest) (ListSessionsResponse, error)
 	// Request parameters for creating a new session.
 	//
-	// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/session-setup#creating-a-session)
+	// See protocol docs: [Creating a Session](https://agentclientprotocol.com/protocol/v1/draft/session-setup#creating-a-session)
 	NewSession(ctx context.Context, params NewSessionRequest) (NewSessionResponse, error)
 	// Request parameters for sending a user prompt to the agent.
 	//
 	// Contains the user's message and any additional context.
 	//
-	// See protocol docs: [User Message](https://agentclientprotocol.com/protocol/prompt-turn#1-user-message)
+	// See protocol docs: [User Message](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#1-user-message)
 	Prompt(ctx context.Context, params PromptRequest) (PromptResponse, error)
 	// Request parameters for resuming an existing session.
 	//
@@ -18665,7 +20647,7 @@ type AgentLoader interface {
 	//
 	// Only available if the Agent supports the 'loadSession' capability.
 	//
-	// See protocol docs: [Loading Sessions](https://agentclientprotocol.com/protocol/session-setup#loading-sessions)
+	// See protocol docs: [Loading Sessions](https://agentclientprotocol.com/protocol/v1/draft/session-setup#loading-sessions)
 	LoadSession(ctx context.Context, params LoadSessionRequest) (LoadSessionResponse, error)
 }
 
@@ -18733,13 +20715,13 @@ type Client interface {
 	//
 	// Sent when the agent needs authorization before performing a sensitive operation.
 	//
-	// See protocol docs: [Requesting Permission](https://agentclientprotocol.com/protocol/tool-calls#requesting-permission)
+	// See protocol docs: [Requesting Permission](https://agentclientprotocol.com/protocol/v1/draft/tool-calls#requesting-permission)
 	RequestPermission(ctx context.Context, params RequestPermissionRequest) (RequestPermissionResponse, error)
 	// Notification containing a session update from the agent.
 	//
 	// Used to stream real-time progress and results during prompt processing.
 	//
-	// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/prompt-turn#3-agent-reports-output)
+	// See protocol docs: [Agent Reports Output](https://agentclientprotocol.com/protocol/v1/draft/prompt-turn#3-agent-reports-output)
 	SessionUpdate(ctx context.Context, params SessionNotification) error
 	// Request to create a new terminal and execute a command.
 	CreateTerminal(ctx context.Context, params CreateTerminalRequest) (CreateTerminalResponse, error)
