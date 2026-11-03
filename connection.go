@@ -384,16 +384,28 @@ func formatCanonicalJSONRPCNumericID(negative bool, digits string, exp10 int) (s
 
 func (c *Connection) receive() {
 	const (
-		initialBufSize = 1024 * 1024
-		maxBufSize     = 10 * 1024 * 1024
+		readBufSize    = 64 * 1024
+		maxMessageSize = 10 * 1024 * 1024
 	)
 
-	scanner := bufio.NewScanner(c.r)
-	buf := make([]byte, 0, initialBufSize)
-	scanner.Buffer(buf, maxBufSize)
+	reader := bufio.NewReaderSize(c.r, readBufSize)
+	var buf []byte
+	var readErr error
 
-	for scanner.Scan() {
-		line := scanner.Bytes()
+	for {
+		line, err := readMessage(reader, maxMessageSize, buf[:0])
+		if errors.Is(err, errMessageTooLarge) {
+			c.loggerOrDefault().Error("dropped incoming message above the size limit", "limit", maxMessageSize)
+			continue
+		}
+		if err != nil {
+			if !errors.Is(err, io.EOF) {
+				readErr = err
+			}
+			break
+		}
+		buf = line
+
 		if len(bytes.TrimSpace(line)) == 0 {
 			continue
 		}
@@ -472,10 +484,56 @@ func (c *Connection) receive() {
 	}
 
 	cause := errors.New("peer connection closed")
-	if err := scanner.Err(); err != nil {
-		cause = err
+	if readErr != nil {
+		cause = readErr
 	}
 	c.shutdownReceive(cause)
+}
+
+var errMessageTooLarge = errors.New("message exceeds the size limit")
+
+// readMessage returns the next line from r without its "\n" or "\r\n" terminator,
+// reusing buf, and returns a final line that lacks a newline at EOF — the framing
+// bufio.ScanLines applies. Unlike bufio.Scanner, which stops for good at its first
+// over-long line, a line longer than max is read to its end and discarded, and
+// errMessageTooLarge is returned in its place, so the stream stays aligned on the
+// next message.
+func readMessage(r *bufio.Reader, max int, buf []byte) ([]byte, error) {
+	line := buf[:0]
+	for {
+		chunk, err := r.ReadSlice('\n')
+		line = append(line, chunk...)
+		if len(line) > max+len("\r\n") {
+			return nil, discardLine(r, err)
+		}
+		switch {
+		case err == nil:
+			return trimEOL(line), nil
+		case errors.Is(err, bufio.ErrBufferFull):
+			continue
+		case errors.Is(err, io.EOF) && len(line) > 0:
+			return trimEOL(line), nil
+		default:
+			return nil, err
+		}
+	}
+}
+
+// discardLine consumes the rest of an over-long line. A read error other than EOF is
+// passed on; otherwise the oversize is reported, and EOF surfaces on the next read.
+func discardLine(r *bufio.Reader, err error) error {
+	for errors.Is(err, bufio.ErrBufferFull) {
+		_, err = r.ReadSlice('\n')
+	}
+	if err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+	return errMessageTooLarge
+}
+
+func trimEOL(line []byte) []byte {
+	line = bytes.TrimSuffix(line, []byte("\n"))
+	return bytes.TrimSuffix(line, []byte("\r"))
 }
 
 func (c *Connection) shutdownReceive(cause error) {
