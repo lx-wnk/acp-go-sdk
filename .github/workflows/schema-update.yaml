@@ -55,11 +55,7 @@ jobs:
         env:
           LATEST: ${{ steps.latest.outputs.latest }}
 
-      - name: Verify
-        if: steps.latest.outputs.changed == 'true'
-        run: mise exec -- make test
-
-      - name: Open a pull request
+      - name: Open a draft pull request
         if: steps.latest.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -68,15 +64,17 @@ jobs:
         run: |
           set -euo pipefail
           branch="schema/update-${LATEST}"
-          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
-            echo "Branch ${branch} already exists, nothing to do."
+          if [ "$(gh pr list --head "${branch}" --state all --json number --jq length)" != "0" ]; then
+            echo "A pull request for ${branch} already exists, nothing to do."
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "${branch}"
-          git commit -am "chore(schema): bump ACP schema to ${LATEST}"
-          git push origin "${branch}"
-          gh pr create --base "${DEFAULT_BRANCH}" --head "${branch}" \
+          if ! git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git switch -c "${branch}"
+            git commit -am "chore(schema): bump ACP schema to ${LATEST}"
+            git push origin "${branch}"
+          fi
+          gh pr create --draft --base "${DEFAULT_BRANCH}" --head "${branch}" \
             --title "chore(schema): bump ACP schema to ${LATEST}" \
             --body "Automated regeneration against schema-v${LATEST}."
